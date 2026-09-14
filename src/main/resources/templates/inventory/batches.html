@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Material Batches</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
+          rel="stylesheet">
+</head>
+
+<body>
+
+<div class="container py-4">
+
+    <div class="d-flex justify-content-between">
+
+        <h2>Material Batches</h2>
+
+        <a class="btn btn-primary"
+           th:href="@{/inventory/batches/new}">
+            Receive Material Batch
+        </a>
+
+    </div>
+
+    <table class="table table-bordered mt-4">
+
+        <thead class="table-dark">
+        <tr>
+            <th>Batch</th>
+            <th>Material</th>
+            <th>Supplier ID</th>
+            <th>Date</th>
+            <th>Cost</th>
+            <th>Available Qty</th>
+            <th>Location</th>
+        </tr>
+        </thead>
+
+        <tbody>
+
+        <tr th:each="batch : ${batches}">
+
+            <td th:text="${batch.batchNo}"></td>
+
+            <td th:text="${batch.material.materialName}"></td>
+
+            <td th:text="${batch.supplierId}"></td>
+
+            <td th:text="${batch.receivedDate}"></td>
+
+            <td th:text="${batch.unitCost}"></td>
+
+            <td th:text="${batch.availableQty}"></td>
+
+            <td th:text="${batch.location}"></td>
+
+        </tr>
+
+        </tbody>
+
+    </table>
+
+    <a th:href="@{/inventory}">
+        Back to Dashboard
+    </a>
+
+</div>
+
+</body>
+</html>
