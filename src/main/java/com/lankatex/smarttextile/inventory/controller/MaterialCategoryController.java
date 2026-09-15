@@ -7,6 +7,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 @Controller
 @RequestMapping("/inventory/categories")
@@ -20,6 +21,7 @@ public class MaterialCategoryController {
         this.categoryService = categoryService;
     }
 
+    // READ
     @GetMapping
     public String list(Model model) {
 
@@ -31,6 +33,7 @@ public class MaterialCategoryController {
         return "inventory/categories";
     }
 
+    // CREATE FORM
     @GetMapping("/new")
     public String newForm(Model model) {
 
@@ -42,6 +45,7 @@ public class MaterialCategoryController {
         return "inventory/category-form";
     }
 
+    // UPDATE FORM
     @GetMapping("/edit/{id}")
     public String edit(
             @PathVariable Long id,
@@ -55,6 +59,7 @@ public class MaterialCategoryController {
         return "inventory/category-form";
     }
 
+    // CREATE / UPDATE
     @PostMapping("/save")
     public String save(
             @Valid
@@ -64,6 +69,7 @@ public class MaterialCategoryController {
             Model model) {
 
         if (result.hasErrors()) {
+
             return "inventory/category-form";
         }
 
@@ -84,11 +90,54 @@ public class MaterialCategoryController {
         return "redirect:/inventory/categories";
     }
 
+    // SOFT DELETE / ARCHIVE
     @PostMapping("/archive/{id}")
     public String archive(
-            @PathVariable Long id) {
+            @PathVariable Long id,
+            RedirectAttributes redirectAttributes) {
 
-        categoryService.archive(id);
+        try {
+
+            categoryService.archive(id);
+
+            redirectAttributes.addFlashAttribute(
+                    "message",
+                    "Category archived successfully."
+            );
+
+        } catch (IllegalArgumentException e) {
+
+            redirectAttributes.addFlashAttribute(
+                    "error",
+                    e.getMessage()
+            );
+        }
+
+        return "redirect:/inventory/categories";
+    }
+
+    // HARD DELETE
+    @PostMapping("/delete/{id}")
+    public String delete(
+            @PathVariable Long id,
+            RedirectAttributes redirectAttributes) {
+
+        try {
+
+            categoryService.delete(id);
+
+            redirectAttributes.addFlashAttribute(
+                    "message",
+                    "Category permanently deleted successfully."
+            );
+
+        } catch (IllegalArgumentException e) {
+
+            redirectAttributes.addFlashAttribute(
+                    "error",
+                    e.getMessage()
+            );
+        }
 
         return "redirect:/inventory/categories";
     }

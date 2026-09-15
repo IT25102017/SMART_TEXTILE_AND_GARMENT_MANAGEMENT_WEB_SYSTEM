@@ -8,6 +8,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 @Controller
 @RequestMapping("/inventory/materials")
@@ -24,6 +25,7 @@ public class MaterialController {
         this.categoryService = categoryService;
     }
 
+    // READ - View/search materials
     @GetMapping
     public String list(
             @RequestParam(required = false)
@@ -44,6 +46,7 @@ public class MaterialController {
         return "inventory/materials";
     }
 
+    // Open CREATE form
     @GetMapping("/new")
     public String newForm(Model model) {
 
@@ -61,6 +64,7 @@ public class MaterialController {
         return "inventory/material-form";
     }
 
+    // Open UPDATE form
     @GetMapping("/edit/{id}")
     public String edit(
             @PathVariable Long id,
@@ -80,6 +84,7 @@ public class MaterialController {
         return "inventory/material-form";
     }
 
+    // CREATE / UPDATE - Save material
     @PostMapping("/save")
     public String save(
             @Valid
@@ -128,15 +133,59 @@ public class MaterialController {
         return "redirect:/inventory/materials";
     }
 
+    // SOFT DELETE - Archive
     @PostMapping("/archive/{id}")
     public String archive(
-            @PathVariable Long id) {
+            @PathVariable Long id,
+            RedirectAttributes redirectAttributes) {
 
-        materialService.archive(id);
+        try {
+
+            materialService.archive(id);
+
+            redirectAttributes.addFlashAttribute(
+                    "message",
+                    "Material archived successfully."
+            );
+
+        } catch (IllegalArgumentException e) {
+
+            redirectAttributes.addFlashAttribute(
+                    "error",
+                    e.getMessage()
+            );
+        }
 
         return "redirect:/inventory/materials";
     }
 
+    // HARD DELETE - Permanently delete
+    @PostMapping("/delete/{id}")
+    public String delete(
+            @PathVariable Long id,
+            RedirectAttributes redirectAttributes) {
+
+        try {
+
+            materialService.delete(id);
+
+            redirectAttributes.addFlashAttribute(
+                    "message",
+                    "Material permanently deleted successfully."
+            );
+
+        } catch (IllegalArgumentException e) {
+
+            redirectAttributes.addFlashAttribute(
+                    "error",
+                    e.getMessage()
+            );
+        }
+
+        return "redirect:/inventory/materials";
+    }
+
+    // Low-stock page
     @GetMapping("/low-stock")
     public String lowStock(Model model) {
 
