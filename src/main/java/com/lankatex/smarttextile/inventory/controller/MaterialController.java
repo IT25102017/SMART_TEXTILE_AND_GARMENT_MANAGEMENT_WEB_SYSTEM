@@ -25,7 +25,12 @@ public class MaterialController {
         this.categoryService = categoryService;
     }
 
-    // READ - View/search materials
+
+    // =====================================================
+    // READ / SEARCH
+    // Shows ACTIVE + ARCHIVED materials
+    // =====================================================
+
     @GetMapping
     public String list(
             @RequestParam(required = false)
@@ -34,8 +39,7 @@ public class MaterialController {
 
         model.addAttribute(
                 "materials",
-                materialService
-                        .getActiveMaterials(keyword)
+                materialService.getMaterials(keyword)
         );
 
         model.addAttribute(
@@ -46,7 +50,11 @@ public class MaterialController {
         return "inventory/materials";
     }
 
-    // Open CREATE form
+
+    // =====================================================
+    // CREATE FORM
+    // =====================================================
+
     @GetMapping("/new")
     public String newForm(Model model) {
 
@@ -64,7 +72,11 @@ public class MaterialController {
         return "inventory/material-form";
     }
 
-    // Open UPDATE form
+
+    // =====================================================
+    // UPDATE FORM
+    // =====================================================
+
     @GetMapping("/edit/{id}")
     public String edit(
             @PathVariable Long id,
@@ -78,13 +90,17 @@ public class MaterialController {
         model.addAttribute(
                 "categories",
                 categoryService
-                        .getActiveCategories()
+                        .getAllCategories()
         );
 
         return "inventory/material-form";
     }
 
-    // CREATE / UPDATE - Save material
+
+    // =====================================================
+    // CREATE / UPDATE SAVE
+    // =====================================================
+
     @PostMapping("/save")
     public String save(
             @Valid
@@ -104,7 +120,7 @@ public class MaterialController {
             model.addAttribute(
                     "categories",
                     categoryService
-                            .getActiveCategories()
+                            .getAllCategories()
             );
 
             return "inventory/material-form";
@@ -124,7 +140,7 @@ public class MaterialController {
             model.addAttribute(
                     "categories",
                     categoryService
-                            .getActiveCategories()
+                            .getAllCategories()
             );
 
             return "inventory/material-form";
@@ -133,7 +149,11 @@ public class MaterialController {
         return "redirect:/inventory/materials";
     }
 
-    // SOFT DELETE - Archive
+
+    // =====================================================
+    // ARCHIVE
+    // =====================================================
+
     @PostMapping("/archive/{id}")
     public String archive(
             @PathVariable Long id,
@@ -159,7 +179,41 @@ public class MaterialController {
         return "redirect:/inventory/materials";
     }
 
-    // HARD DELETE - Permanently delete
+
+    // =====================================================
+    // RESTORE
+    // =====================================================
+
+    @PostMapping("/restore/{id}")
+    public String restore(
+            @PathVariable Long id,
+            RedirectAttributes redirectAttributes) {
+
+        try {
+
+            materialService.restore(id);
+
+            redirectAttributes.addFlashAttribute(
+                    "message",
+                    "Material restored successfully."
+            );
+
+        } catch (IllegalArgumentException e) {
+
+            redirectAttributes.addFlashAttribute(
+                    "error",
+                    e.getMessage()
+            );
+        }
+
+        return "redirect:/inventory/materials";
+    }
+
+
+    // =====================================================
+    // HARD DELETE
+    // =====================================================
+
     @PostMapping("/delete/{id}")
     public String delete(
             @PathVariable Long id,
@@ -185,7 +239,11 @@ public class MaterialController {
         return "redirect:/inventory/materials";
     }
 
-    // Low-stock page
+
+    // =====================================================
+    // LOW STOCK
+    // =====================================================
+
     @GetMapping("/low-stock")
     public String lowStock(Model model) {
 

@@ -16,26 +16,29 @@
 
 <div class="container py-4">
 
-    <div class="d-flex justify-content-between">
+
+    <div class="d-flex justify-content-between align-items-center">
 
         <h2>Material Categories</h2>
 
         <a class="btn btn-primary"
            th:href="@{/inventory/categories/new}">
+
             Add Category
+
         </a>
 
     </div>
 
 
-    <!-- Success Message -->
+    <!-- Success -->
     <div th:if="${message}"
          class="alert alert-success mt-3"
          th:text="${message}">
     </div>
 
 
-    <!-- Error Message -->
+    <!-- Error -->
     <div th:if="${error}"
          class="alert alert-danger mt-3"
          th:text="${error}">
@@ -47,11 +50,13 @@
         <thead class="table-dark">
 
         <tr>
+
             <th>ID</th>
             <th>Category</th>
             <th>Description</th>
             <th>Status</th>
             <th>Actions</th>
+
         </tr>
 
         </thead>
@@ -61,21 +66,44 @@
 
         <tr th:each="category : ${categories}">
 
+
             <td th:text="${category.categoryId}">
             </td>
+
 
             <td th:text="${category.categoryName}">
             </td>
 
+
             <td th:text="${category.description}">
             </td>
 
-            <td th:text="${category.status}">
-            </td>
 
             <td>
 
+                <span th:if="${category.status == 'ACTIVE'}"
+                      class="badge bg-success">
+                    ACTIVE
+                </span>
+
+                <span th:if="${category.status == 'ARCHIVED'}"
+                      class="badge bg-secondary">
+                    ARCHIVED
+                </span>
+
+                <span th:if="${category.status != 'ACTIVE'
+                              and category.status != 'ARCHIVED'}"
+                      th:text="${category.status}">
+                </span>
+
+            </td>
+
+
+            <td class="text-nowrap">
+
+
                 <!-- UPDATE -->
+
                 <a class="btn btn-sm btn-warning"
                    th:href="@{/inventory/categories/edit/{id}
                    (id=${category.categoryId})}">
@@ -85,8 +113,11 @@
                 </a>
 
 
-                <!-- SOFT DELETE -->
-                <form class="d-inline"
+                <!-- ARCHIVE -->
+                <!-- ACTIVE only -->
+
+                <form th:if="${category.status == 'ACTIVE'}"
+                      class="d-inline"
                       method="post"
                       th:action="@{/inventory/categories/archive/{id}
                       (id=${category.categoryId})}">
@@ -102,7 +133,28 @@
                 </form>
 
 
+                <!-- RESTORE -->
+                <!-- ARCHIVED only -->
+
+                <form th:if="${category.status == 'ARCHIVED'}"
+                      class="d-inline"
+                      method="post"
+                      th:action="@{/inventory/categories/restore/{id}
+                      (id=${category.categoryId})}">
+
+                    <button class="btn btn-sm btn-success"
+                            type="submit"
+                            onclick="return confirm('Restore this category back to ACTIVE status?');">
+
+                        Restore
+
+                    </button>
+
+                </form>
+
+
                 <!-- HARD DELETE -->
+
                 <form class="d-inline"
                       method="post"
                       th:action="@{/inventory/categories/delete/{id}
@@ -117,6 +169,7 @@
                     </button>
 
                 </form>
+
 
             </td>
 

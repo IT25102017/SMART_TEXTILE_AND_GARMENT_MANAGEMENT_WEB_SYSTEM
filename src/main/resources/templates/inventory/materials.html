@@ -16,8 +16,8 @@
 
 <div class="container-fluid py-4 px-5">
 
-    <!-- Page title + Add Material button -->
-    <div class="d-flex justify-content-between">
+
+    <div class="d-flex justify-content-between align-items-center">
 
         <h2>Materials</h2>
 
@@ -59,6 +59,7 @@
 
         </div>
 
+
         <div class="col">
 
             <button class="btn btn-dark">
@@ -84,6 +85,10 @@
             <th>Unit</th>
             <th>Current Qty</th>
             <th>Reorder Level</th>
+
+            <!-- NEW -->
+            <th>Status</th>
+
             <th>Action</th>
 
         </tr>
@@ -95,31 +100,63 @@
 
         <tr th:each="material : ${materials}">
 
+
             <td th:text="${material.materialCode}">
             </td>
+
 
             <td th:text="${material.materialName}">
             </td>
 
+
             <td th:text="${material.category.categoryName}">
             </td>
+
 
             <td th:text="${material.colour}">
             </td>
 
+
             <td th:text="${material.unit}">
             </td>
 
+
             <td th:text="${material.currentQuantity}">
             </td>
+
 
             <td th:text="${material.reorderLevel}">
             </td>
 
 
+            <!-- STATUS -->
             <td>
 
-                <!-- UPDATE / EDIT -->
+                <span th:if="${material.status == 'ACTIVE'}"
+                      class="badge bg-success">
+                    ACTIVE
+                </span>
+
+                <span th:if="${material.status == 'ARCHIVED'}"
+                      class="badge bg-secondary">
+                    ARCHIVED
+                </span>
+
+                <span th:if="${material.status != 'ACTIVE'
+                              and material.status != 'ARCHIVED'}"
+                      th:text="${material.status}">
+                </span>
+
+            </td>
+
+
+            <td class="text-nowrap">
+
+
+                <!-- ================================= -->
+                <!-- UPDATE -->
+                <!-- ================================= -->
+
                 <a class="btn btn-sm btn-warning"
                    th:href="@{/inventory/materials/edit/{id}
                    (id=${material.materialId})}">
@@ -129,8 +166,13 @@
                 </a>
 
 
-                <!-- SOFT DELETE / ARCHIVE -->
-                <form method="post"
+                <!-- ================================= -->
+                <!-- ARCHIVE -->
+                <!-- Only ACTIVE records -->
+                <!-- ================================= -->
+
+                <form th:if="${material.status == 'ACTIVE'}"
+                      method="post"
                       class="d-inline"
                       th:action="@{/inventory/materials/archive/{id}
                       (id=${material.materialId})}">
@@ -146,7 +188,32 @@
                 </form>
 
 
-                <!-- HARD DELETE / PERMANENT DELETE -->
+                <!-- ================================= -->
+                <!-- RESTORE -->
+                <!-- Only ARCHIVED records -->
+                <!-- ================================= -->
+
+                <form th:if="${material.status == 'ARCHIVED'}"
+                      method="post"
+                      class="d-inline"
+                      th:action="@{/inventory/materials/restore/{id}
+                      (id=${material.materialId})}">
+
+                    <button type="submit"
+                            class="btn btn-sm btn-success"
+                            onclick="return confirm('Restore this material back to ACTIVE status?');">
+
+                        Restore
+
+                    </button>
+
+                </form>
+
+
+                <!-- ================================= -->
+                <!-- HARD DELETE -->
+                <!-- ================================= -->
+
                 <form method="post"
                       class="d-inline"
                       th:action="@{/inventory/materials/delete/{id}
@@ -161,6 +228,7 @@
                     </button>
 
                 </form>
+
 
             </td>
 

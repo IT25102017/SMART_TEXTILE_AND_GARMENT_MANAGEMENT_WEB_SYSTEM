@@ -3,6 +3,7 @@ package com.lankatex.smarttextile.inventory.service;
 import com.lankatex.smarttextile.inventory.entity.MaterialCategory;
 import com.lankatex.smarttextile.inventory.repository.MaterialCategoryRepository;
 import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -19,20 +20,41 @@ public class MaterialCategoryService {
         this.categoryRepository = categoryRepository;
     }
 
-    // READ - Active categories only
+
+    // =====================================================
+    // ACTIVE CATEGORIES
+    // Used when creating new materials
+    // =====================================================
+
     public List<MaterialCategory> getActiveCategories() {
 
         return categoryRepository
-                .findByStatusOrderByCategoryNameAsc("ACTIVE");
+                .findByStatusOrderByCategoryNameAsc(
+                        "ACTIVE"
+                );
     }
 
-    // READ - All categories
+
+    // =====================================================
+    // ALL CATEGORIES
+    // ACTIVE + ARCHIVED
+    // =====================================================
+
     public List<MaterialCategory> getAllCategories() {
 
-        return categoryRepository.findAll();
+        return categoryRepository.findAll(
+                Sort.by(
+                        Sort.Direction.ASC,
+                        "categoryName"
+                )
+        );
     }
 
-    // READ - Find one category by ID
+
+    // =====================================================
+    // FIND ONE
+    // =====================================================
+
     public MaterialCategory getById(Long id) {
 
         return categoryRepository.findById(id)
@@ -42,14 +64,18 @@ public class MaterialCategoryService {
                         ));
     }
 
+
+    // =====================================================
     // CREATE / UPDATE
+    // =====================================================
+
     @Transactional
     public MaterialCategory save(
             MaterialCategory category) {
 
+        // CREATE
         if (category.getCategoryId() == null) {
 
-            // CREATE validation
             if (categoryRepository
                     .existsByCategoryNameIgnoreCase(
                             category.getCategoryName())) {
@@ -61,7 +87,7 @@ public class MaterialCategoryService {
 
         } else {
 
-            // UPDATE validation
+            // UPDATE
             if (categoryRepository
                     .existsByCategoryNameIgnoreCaseAndCategoryIdNot(
                             category.getCategoryName(),
@@ -73,7 +99,8 @@ public class MaterialCategoryService {
             }
         }
 
-        if (category.getStatus() == null) {
+        if (category.getStatus() == null
+                || category.getStatus().isBlank()) {
 
             category.setStatus("ACTIVE");
         }
@@ -81,7 +108,12 @@ public class MaterialCategoryService {
         return categoryRepository.save(category);
     }
 
-    // SOFT DELETE / ARCHIVE
+
+    // =====================================================
+    // ARCHIVE
+    // ACTIVE -> ARCHIVED
+    // =====================================================
+
     @Transactional
     public void archive(Long id) {
 
@@ -93,7 +125,28 @@ public class MaterialCategoryService {
         categoryRepository.save(category);
     }
 
-    // HARD DELETE / PERMANENT DELETE
+
+    // =====================================================
+    // RESTORE
+    // ARCHIVED -> ACTIVE
+    // =====================================================
+
+    @Transactional
+    public void restore(Long id) {
+
+        MaterialCategory category =
+                getById(id);
+
+        category.setStatus("ACTIVE");
+
+        categoryRepository.save(category);
+    }
+
+
+    // =====================================================
+    // HARD DELETE
+    // =====================================================
+
     @Transactional
     public void delete(Long id) {
 
@@ -108,15 +161,10 @@ public class MaterialCategoryService {
 
             categoryRepository.delete(category);
 
-            // Force SQL DELETE immediately
             categoryRepository.flush();
 
         } catch (DataIntegrityViolationException e) {
 
-            /*
-             * Category එක Materials වලට use වෙලා නම්
-             * Foreign Key එක නිසා delete කරන්න බැහැ.
-             */
             throw new IllegalArgumentException(
                     "Cannot permanently delete this category because materials are already using it. Please Archive it instead."
             );

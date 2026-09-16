@@ -21,7 +21,12 @@ public class MaterialCategoryController {
         this.categoryService = categoryService;
     }
 
+
+    // =====================================================
     // READ
+    // ACTIVE + ARCHIVED
+    // =====================================================
+
     @GetMapping
     public String list(Model model) {
 
@@ -33,7 +38,11 @@ public class MaterialCategoryController {
         return "inventory/categories";
     }
 
+
+    // =====================================================
     // CREATE FORM
+    // =====================================================
+
     @GetMapping("/new")
     public String newForm(Model model) {
 
@@ -45,7 +54,11 @@ public class MaterialCategoryController {
         return "inventory/category-form";
     }
 
+
+    // =====================================================
     // UPDATE FORM
+    // =====================================================
+
     @GetMapping("/edit/{id}")
     public String edit(
             @PathVariable Long id,
@@ -59,7 +72,11 @@ public class MaterialCategoryController {
         return "inventory/category-form";
     }
 
+
+    // =====================================================
     // CREATE / UPDATE
+    // =====================================================
+
     @PostMapping("/save")
     public String save(
             @Valid
@@ -90,7 +107,11 @@ public class MaterialCategoryController {
         return "redirect:/inventory/categories";
     }
 
-    // SOFT DELETE / ARCHIVE
+
+    // =====================================================
+    // ARCHIVE
+    // =====================================================
+
     @PostMapping("/archive/{id}")
     public String archive(
             @PathVariable Long id,
@@ -116,7 +137,41 @@ public class MaterialCategoryController {
         return "redirect:/inventory/categories";
     }
 
+
+    // =====================================================
+    // RESTORE
+    // =====================================================
+
+    @PostMapping("/restore/{id}")
+    public String restore(
+            @PathVariable Long id,
+            RedirectAttributes redirectAttributes) {
+
+        try {
+
+            categoryService.restore(id);
+
+            redirectAttributes.addFlashAttribute(
+                    "message",
+                    "Category restored successfully."
+            );
+
+        } catch (IllegalArgumentException e) {
+
+            redirectAttributes.addFlashAttribute(
+                    "error",
+                    e.getMessage()
+            );
+        }
+
+        return "redirect:/inventory/categories";
+    }
+
+
+    // =====================================================
     // HARD DELETE
+    // =====================================================
+
     @PostMapping("/delete/{id}")
     public String delete(
             @PathVariable Long id,
