@@ -5,7 +5,6 @@ import com.lankatex.smarttextile.quality.entity.QualityHold;
 import com.lankatex.smarttextile.quality.entity.QualityInspection;
 import com.lankatex.smarttextile.quality.entity.WastageRecord;
 import com.lankatex.smarttextile.quality.service.QualityService;
-
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -17,9 +16,7 @@ public class QualityController {
 
     private final QualityService service;
 
-    public QualityController(
-            QualityService service) {
-
+    public QualityController(QualityService service) {
         this.service = service;
     }
 
@@ -46,8 +43,7 @@ public class QualityController {
 
     @GetMapping("/inspections")
     public String inspections(
-            @RequestParam(required = false)
-            Long editId,
+            @RequestParam(required = false) Long editId,
             Model model) {
 
         model.addAttribute(
@@ -65,10 +61,10 @@ public class QualityController {
         return "quality/inspections";
     }
 
+
     @PostMapping("/inspections/save")
     public String saveQualityInspection(
-            @ModelAttribute
-            QualityInspection qualityInspection,
+            @ModelAttribute QualityInspection qualityInspection,
             RedirectAttributes redirectAttributes) {
 
         try {
@@ -93,7 +89,7 @@ public class QualityController {
         return "redirect:/quality/inspections";
     }
 
-    // SOFT DELETE
+
     @GetMapping("/inspections/archive/{id}")
     public String archiveQualityInspection(
             @PathVariable Long id,
@@ -105,7 +101,7 @@ public class QualityController {
 
             redirectAttributes.addFlashAttribute(
                     "message",
-                    "Quality Inspection archived."
+                    "Quality Inspection archived successfully."
             );
 
         } catch (Exception ex) {
@@ -119,7 +115,33 @@ public class QualityController {
         return "redirect:/quality/inspections";
     }
 
-    // HARD DELETE
+
+    @GetMapping("/inspections/restore/{id}")
+    public String restoreQualityInspection(
+            @PathVariable Long id,
+            RedirectAttributes redirectAttributes) {
+
+        try {
+
+            service.restoreQualityInspection(id);
+
+            redirectAttributes.addFlashAttribute(
+                    "message",
+                    "Quality Inspection restored successfully."
+            );
+
+        } catch (Exception ex) {
+
+            redirectAttributes.addFlashAttribute(
+                    "error",
+                    "Cannot restore Quality Inspection."
+            );
+        }
+
+        return "redirect:/quality/inspections";
+    }
+
+
     @GetMapping("/inspections/delete/{id}")
     public String deleteQualityInspection(
             @PathVariable Long id,
@@ -138,7 +160,7 @@ public class QualityController {
 
             redirectAttributes.addFlashAttribute(
                     "error",
-                    "Cannot delete Quality Inspection."
+                    "Cannot delete Quality Inspection because it may be used by another record."
             );
         }
 
@@ -152,8 +174,7 @@ public class QualityController {
 
     @GetMapping("/defects")
     public String defects(
-            @RequestParam(required = false)
-            Long editId,
+            @RequestParam(required = false) Long editId,
             Model model) {
 
         model.addAttribute(
@@ -171,10 +192,10 @@ public class QualityController {
         return "quality/defects";
     }
 
+
     @PostMapping("/defects/save")
     public String saveDefectRecord(
-            @ModelAttribute
-            DefectRecord defectRecord,
+            @ModelAttribute DefectRecord defectRecord,
             RedirectAttributes redirectAttributes) {
 
         try {
@@ -199,7 +220,7 @@ public class QualityController {
         return "redirect:/quality/defects";
     }
 
-    // HARD DELETE
+
     @GetMapping("/defects/delete/{id}")
     public String deleteDefectRecord(
             @PathVariable Long id,
@@ -232,8 +253,7 @@ public class QualityController {
 
     @GetMapping("/wastage")
     public String wastage(
-            @RequestParam(required = false)
-            Long editId,
+            @RequestParam(required = false) Long editId,
             Model model) {
 
         model.addAttribute(
@@ -251,10 +271,10 @@ public class QualityController {
         return "quality/wastage";
     }
 
+
     @PostMapping("/wastage/save")
     public String saveWastageRecord(
-            @ModelAttribute
-            WastageRecord wastageRecord,
+            @ModelAttribute WastageRecord wastageRecord,
             RedirectAttributes redirectAttributes) {
 
         try {
@@ -279,7 +299,7 @@ public class QualityController {
         return "redirect:/quality/wastage";
     }
 
-    // SOFT DELETE
+
     @GetMapping("/wastage/archive/{id}")
     public String archiveWastageRecord(
             @PathVariable Long id,
@@ -291,7 +311,7 @@ public class QualityController {
 
             redirectAttributes.addFlashAttribute(
                     "message",
-                    "Wastage Record archived."
+                    "Wastage Record archived successfully."
             );
 
         } catch (Exception ex) {
@@ -305,7 +325,33 @@ public class QualityController {
         return "redirect:/quality/wastage";
     }
 
-    // HARD DELETE
+
+    @GetMapping("/wastage/restore/{id}")
+    public String restoreWastageRecord(
+            @PathVariable Long id,
+            RedirectAttributes redirectAttributes) {
+
+        try {
+
+            service.restoreWastageRecord(id);
+
+            redirectAttributes.addFlashAttribute(
+                    "message",
+                    "Wastage Record restored successfully."
+            );
+
+        } catch (Exception ex) {
+
+            redirectAttributes.addFlashAttribute(
+                    "error",
+                    "Cannot restore Wastage Record."
+            );
+        }
+
+        return "redirect:/quality/wastage";
+    }
+
+
     @GetMapping("/wastage/delete/{id}")
     public String deleteWastageRecord(
             @PathVariable Long id,
@@ -338,8 +384,7 @@ public class QualityController {
 
     @GetMapping("/holds")
     public String holds(
-            @RequestParam(required = false)
-            Long editId,
+            @RequestParam(required = false) Long editId,
             Model model) {
 
         model.addAttribute(
@@ -357,10 +402,10 @@ public class QualityController {
         return "quality/holds";
     }
 
+
     @PostMapping("/holds/save")
     public String saveQualityHold(
-            @ModelAttribute
-            QualityHold qualityHold,
+            @ModelAttribute QualityHold qualityHold,
             RedirectAttributes redirectAttributes) {
 
         try {
@@ -385,7 +430,7 @@ public class QualityController {
         return "redirect:/quality/holds";
     }
 
-    // SOFT DELETE
+
     @GetMapping("/holds/archive/{id}")
     public String archiveQualityHold(
             @PathVariable Long id,
@@ -397,7 +442,7 @@ public class QualityController {
 
             redirectAttributes.addFlashAttribute(
                     "message",
-                    "Quality Hold archived."
+                    "Quality Hold archived successfully."
             );
 
         } catch (Exception ex) {
@@ -411,7 +456,33 @@ public class QualityController {
         return "redirect:/quality/holds";
     }
 
-    // HARD DELETE
+
+    @GetMapping("/holds/restore/{id}")
+    public String restoreQualityHold(
+            @PathVariable Long id,
+            RedirectAttributes redirectAttributes) {
+
+        try {
+
+            service.restoreQualityHold(id);
+
+            redirectAttributes.addFlashAttribute(
+                    "message",
+                    "Quality Hold restored successfully."
+            );
+
+        } catch (Exception ex) {
+
+            redirectAttributes.addFlashAttribute(
+                    "error",
+                    "Cannot restore Quality Hold."
+            );
+        }
+
+        return "redirect:/quality/holds";
+    }
+
+
     @GetMapping("/holds/delete/{id}")
     public String deleteQualityHold(
             @PathVariable Long id,

@@ -249,7 +249,7 @@
           <th>Shift Name</th>
           <th>Start Time</th>
           <th>End Time</th>
-          <th>Break Duration (minutes)</th>
+          <th>Break Duration</th>
           <th>Working Days</th>
           <th>Status</th>
           <th>Actions</th>
@@ -289,7 +289,25 @@
           </td>
 
 
-          <td th:text="${row.status}">
+          <!-- Status -->
+          <td>
+
+                        <span th:if="${row.status == 'Active'}"
+                              class="badge bg-success">
+                            Active
+                        </span>
+
+            <span th:if="${row.status == 'Archived'}"
+                  class="badge bg-secondary">
+                            Archived
+                        </span>
+
+            <span th:if="${row.status != 'Active'
+                                      and row.status != 'Archived'}"
+                  class="badge bg-info text-dark"
+                  th:text="${row.status}">
+                        </span>
+
           </td>
 
 
@@ -304,11 +322,29 @@
             </a>
 
 
-            <!-- Archive -->
-            <a class="btn btn-outline-danger btn-sm"
+            <!-- Archive - only non archived shifts -->
+            <a th:if="${row.status != 'Archived'}"
+               class="btn btn-secondary btn-sm"
                th:href="@{/hr/shifts/archive/{id}(id=${row.shiftId})}"
                onclick="return confirm('Archive this shift record?');">
               Archive
+            </a>
+
+
+            <!-- Restore - only archived shifts -->
+            <a th:if="${row.status == 'Archived'}"
+               class="btn btn-success btn-sm"
+               th:href="@{/hr/shifts/restore/{id}(id=${row.shiftId})}"
+               onclick="return confirm('Restore this shift back to Active status?');">
+              Restore
+            </a>
+
+
+            <!-- Permanent Delete -->
+            <a class="btn btn-danger btn-sm"
+               th:href="@{/hr/shifts/delete/{id}(id=${row.shiftId})}"
+               onclick="return confirm('WARNING: This will permanently delete the shift. Are you sure?');">
+              Delete
             </a>
 
 

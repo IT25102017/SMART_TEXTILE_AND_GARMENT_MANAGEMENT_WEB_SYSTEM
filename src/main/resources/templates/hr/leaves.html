@@ -306,7 +306,37 @@
           </td>
 
 
-          <td th:text="${row.status}">
+          <!-- Status -->
+          <td>
+
+                        <span th:if="${row.status == 'Pending'}"
+                              class="badge bg-warning text-dark">
+                            Pending
+                        </span>
+
+            <span th:if="${row.status == 'Approved'}"
+                  class="badge bg-success">
+                            Approved
+                        </span>
+
+            <span th:if="${row.status == 'Rejected'}"
+                  class="badge bg-danger">
+                            Rejected
+                        </span>
+
+            <span th:if="${row.status == 'Archived'}"
+                  class="badge bg-secondary">
+                            Archived
+                        </span>
+
+            <span th:if="${row.status != 'Pending'
+                                      and row.status != 'Approved'
+                                      and row.status != 'Rejected'
+                                      and row.status != 'Archived'}"
+                  class="badge bg-info text-dark"
+                  th:text="${row.status}">
+                        </span>
+
           </td>
 
 
@@ -325,11 +355,29 @@
             </a>
 
 
-            <!-- Archive -->
-            <a class="btn btn-outline-danger btn-sm"
+            <!-- Archive - only non archived records -->
+            <a th:if="${row.status != 'Archived'}"
+               class="btn btn-secondary btn-sm"
                th:href="@{/hr/leaves/archive/{id}(id=${row.leaveId})}"
                onclick="return confirm('Archive this leave request?');">
               Archive
+            </a>
+
+
+            <!-- Restore - only archived records -->
+            <a th:if="${row.status == 'Archived'}"
+               class="btn btn-success btn-sm"
+               th:href="@{/hr/leaves/restore/{id}(id=${row.leaveId})}"
+               onclick="return confirm('Restore this leave request back to Pending status?');">
+              Restore
+            </a>
+
+
+            <!-- Permanent Delete -->
+            <a class="btn btn-danger btn-sm"
+               th:href="@{/hr/leaves/delete/{id}(id=${row.leaveId})}"
+               onclick="return confirm('WARNING: This will permanently delete the leave request. Are you sure?');">
+              Delete
             </a>
 
 

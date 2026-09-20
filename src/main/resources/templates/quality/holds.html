@@ -282,30 +282,43 @@
                     <td th:text="${row.holdId}">
                     </td>
 
-
                     <td th:text="${row.planId}">
                     </td>
-
 
                     <td th:text="${row.orderId}">
                     </td>
 
-
                     <td th:text="${row.inspectionId}">
                     </td>
-
 
                     <td th:text="${row.reason}">
                     </td>
 
 
-                    <td th:text="${row.status}">
+                    <!-- Status -->
+                    <td>
+
+                        <span th:if="${row.status == 'Pending'}"
+                              class="badge bg-warning text-dark">
+                            Pending
+                        </span>
+
+                        <span th:if="${row.status == 'Archived'}"
+                              class="badge bg-secondary">
+                            Archived
+                        </span>
+
+                        <span th:if="${row.status != 'Pending'
+                                      and row.status != 'Archived'}"
+                              class="badge bg-info text-dark"
+                              th:text="${row.status}">
+                        </span>
+
                     </td>
 
 
                     <td th:text="${row.releasedBy}">
                     </td>
-
 
                     <td th:text="${row.releasedAt}">
                     </td>
@@ -323,14 +336,24 @@
 
 
                         <!-- Archive -->
-                        <a class="btn btn-outline-secondary btn-sm"
+                        <a th:if="${row.status != 'Archived'}"
+                           class="btn btn-secondary btn-sm"
                            th:href="@{/quality/holds/archive/{id}(id=${row.holdId})}"
                            onclick="return confirm('Archive this Quality Hold?');">
                             Archive
                         </a>
 
 
-                        <!-- Delete -->
+                        <!-- Restore -->
+                        <a th:if="${row.status == 'Archived'}"
+                           class="btn btn-success btn-sm"
+                           th:href="@{/quality/holds/restore/{id}(id=${row.holdId})}"
+                           onclick="return confirm('Restore this Quality Hold back to Pending status?');">
+                            Restore
+                        </a>
+
+
+                        <!-- Permanent Delete -->
                         <a class="btn btn-danger btn-sm"
                            th:href="@{/quality/holds/delete/{id}(id=${row.holdId})}"
                            onclick="return confirm('WARNING: Permanently delete this Quality Hold?');">
@@ -345,7 +368,6 @@
 
 
                 </tbody>
-
 
             </table>
 

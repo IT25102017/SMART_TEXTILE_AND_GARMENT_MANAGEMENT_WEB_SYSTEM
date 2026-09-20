@@ -284,28 +284,41 @@
                     <td th:text="${row.wastageId}">
                     </td>
 
-
                     <td th:text="${row.planId}">
                     </td>
-
 
                     <td th:text="${row.materialId}">
                     </td>
 
-
                     <td th:text="${row.quantity}">
                     </td>
 
-
                     <td th:text="${row.unit}">
                     </td>
-
 
                     <td th:text="${row.reason}">
                     </td>
 
 
-                    <td th:text="${row.approvalStatus}">
+                    <!-- Approval Status -->
+                    <td>
+
+                        <span th:if="${row.approvalStatus == 'Pending'}"
+                              class="badge bg-warning text-dark">
+                            Pending
+                        </span>
+
+                        <span th:if="${row.approvalStatus == 'Archived'}"
+                              class="badge bg-secondary">
+                            Archived
+                        </span>
+
+                        <span th:if="${row.approvalStatus != 'Pending'
+                                      and row.approvalStatus != 'Archived'}"
+                              class="badge bg-info text-dark"
+                              th:text="${row.approvalStatus}">
+                        </span>
+
                     </td>
 
 
@@ -325,14 +338,24 @@
 
 
                         <!-- Archive -->
-                        <a class="btn btn-outline-secondary btn-sm"
+                        <a th:if="${row.approvalStatus != 'Archived'}"
+                           class="btn btn-secondary btn-sm"
                            th:href="@{/quality/wastage/archive/{id}(id=${row.wastageId})}"
                            onclick="return confirm('Archive this Wastage Record?');">
                             Archive
                         </a>
 
 
-                        <!-- Delete -->
+                        <!-- Restore -->
+                        <a th:if="${row.approvalStatus == 'Archived'}"
+                           class="btn btn-success btn-sm"
+                           th:href="@{/quality/wastage/restore/{id}(id=${row.wastageId})}"
+                           onclick="return confirm('Restore this Wastage Record back to Pending status?');">
+                            Restore
+                        </a>
+
+
+                        <!-- Permanent Delete -->
                         <a class="btn btn-danger btn-sm"
                            th:href="@{/quality/wastage/delete/{id}(id=${row.wastageId})}"
                            onclick="return confirm('WARNING: Permanently delete this Wastage Record?');">
@@ -347,7 +370,6 @@
 
 
                 </tbody>
-
 
             </table>
 

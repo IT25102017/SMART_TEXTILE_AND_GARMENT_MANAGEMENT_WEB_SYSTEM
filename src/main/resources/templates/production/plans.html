@@ -75,14 +75,12 @@
     </div>
 
 
-    <!-- Success Message -->
     <div th:if="${message}"
          class="alert alert-success"
          th:text="${message}">
     </div>
 
 
-    <!-- Error Message -->
     <div th:if="${error}"
          class="alert alert-danger"
          th:text="${error}">
@@ -115,7 +113,6 @@
                 <div class="row">
 
 
-                    <!-- Customer Order ID -->
                     <div class="col-md-6 mb-3">
 
                         <label class="form-label">
@@ -130,7 +127,6 @@
                     </div>
 
 
-                    <!-- Planned Quantity -->
                     <div class="col-md-6 mb-3">
 
                         <label class="form-label">
@@ -146,7 +142,6 @@
                     </div>
 
 
-                    <!-- Start Date -->
                     <div class="col-md-6 mb-3">
 
                         <label class="form-label">
@@ -161,7 +156,6 @@
                     </div>
 
 
-                    <!-- End Date -->
                     <div class="col-md-6 mb-3">
 
                         <label class="form-label">
@@ -176,7 +170,6 @@
                     </div>
 
 
-                    <!-- Production Line -->
                     <div class="col-md-6 mb-3">
 
                         <label class="form-label">
@@ -191,7 +184,6 @@
                     </div>
 
 
-                    <!-- Supervisor Employee ID -->
                     <div class="col-md-6 mb-3">
 
                         <label class="form-label">
@@ -205,7 +197,6 @@
                     </div>
 
 
-                    <!-- Status -->
                     <div class="col-md-6 mb-3">
 
                         <label class="form-label">
@@ -286,55 +277,71 @@
                     <td th:text="${row.planId}">
                     </td>
 
-
                     <td th:text="${row.orderId}">
                     </td>
-
 
                     <td th:text="${row.plannedQty}">
                     </td>
 
-
                     <td th:text="${row.startDate}">
                     </td>
-
 
                     <td th:text="${row.endDate}">
                     </td>
 
-
                     <td th:text="${row.productionLine}">
                     </td>
-
 
                     <td th:text="${row.supervisorId}">
                     </td>
 
 
-                    <td th:text="${row.status}">
+                    <td>
+
+                        <span th:if="${row.status == 'Pending'}"
+                              class="badge bg-warning text-dark">
+                            Pending
+                        </span>
+
+                        <span th:if="${row.status == 'Archived'}"
+                              class="badge bg-secondary">
+                            Archived
+                        </span>
+
+                        <span th:if="${row.status != 'Pending'
+                                      and row.status != 'Archived'}"
+                              class="badge bg-info text-dark"
+                              th:text="${row.status}">
+                        </span>
+
                     </td>
 
 
-                    <!-- Actions -->
                     <td class="text-nowrap">
 
 
-                        <!-- Edit -->
                         <a class="btn btn-warning btn-sm"
                            th:href="@{/production/plans(editId=${row.planId})}">
                             Edit
                         </a>
 
 
-                        <!-- Archive -->
-                        <a class="btn btn-outline-secondary btn-sm"
+                        <a th:if="${row.status != 'Archived'}"
+                           class="btn btn-secondary btn-sm"
                            th:href="@{/production/plans/archive/{id}(id=${row.planId})}"
                            onclick="return confirm('Archive this Production Plan?');">
                             Archive
                         </a>
 
 
-                        <!-- Delete -->
+                        <a th:if="${row.status == 'Archived'}"
+                           class="btn btn-success btn-sm"
+                           th:href="@{/production/plans/restore/{id}(id=${row.planId})}"
+                           onclick="return confirm('Restore this Production Plan back to Pending status?');">
+                            Restore
+                        </a>
+
+
                         <a class="btn btn-danger btn-sm"
                            th:href="@{/production/plans/delete/{id}(id=${row.planId})}"
                            onclick="return confirm('WARNING: Permanently delete this Production Plan?');">
@@ -349,7 +356,6 @@
 
 
                 </tbody>
-
 
             </table>
 

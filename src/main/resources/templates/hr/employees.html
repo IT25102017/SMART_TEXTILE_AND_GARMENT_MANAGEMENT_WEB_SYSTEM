@@ -64,7 +64,7 @@
 
     <a class="btn btn-outline-primary btn-sm me-2 mb-2"
        th:href="@{/hr/attendance}">
-      Attendance
+      Attendance Record
     </a>
 
     <a class="btn btn-outline-primary btn-sm me-2 mb-2"
@@ -310,7 +310,25 @@
           </td>
 
 
-          <td th:text="${row.status}">
+          <!-- Status -->
+          <td>
+
+                        <span th:if="${row.status == 'Active'}"
+                              class="badge bg-success">
+                            Active
+                        </span>
+
+            <span th:if="${row.status == 'Archived'}"
+                  class="badge bg-secondary">
+                            Archived
+                        </span>
+
+            <span th:if="${row.status != 'Active'
+                                      and row.status != 'Archived'}"
+                  class="badge bg-info text-dark"
+                  th:text="${row.status}">
+                        </span>
+
           </td>
 
 
@@ -325,11 +343,29 @@
             </a>
 
 
-            <!-- Archive -->
-            <a class="btn btn-outline-danger btn-sm"
+            <!-- Archive - only Active -->
+            <a th:if="${row.status != 'Archived'}"
+               class="btn btn-secondary btn-sm"
                th:href="@{/hr/employees/archive/{id}(id=${row.employeeId})}"
                onclick="return confirm('Archive this employee record?');">
               Archive
+            </a>
+
+
+            <!-- Restore - only Archived -->
+            <a th:if="${row.status == 'Archived'}"
+               class="btn btn-success btn-sm"
+               th:href="@{/hr/employees/restore/{id}(id=${row.employeeId})}"
+               onclick="return confirm('Restore this employee back to Active status?');">
+              Restore
+            </a>
+
+
+            <!-- Permanent Delete -->
+            <a class="btn btn-danger btn-sm"
+               th:href="@{/hr/employees/delete/{id}(id=${row.employeeId})}"
+               onclick="return confirm('WARNING: This will permanently delete the employee. Are you sure?');">
+              Delete
             </a>
 
 

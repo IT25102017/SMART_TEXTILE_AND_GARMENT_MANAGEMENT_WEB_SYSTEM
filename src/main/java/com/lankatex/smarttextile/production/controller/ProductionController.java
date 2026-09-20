@@ -5,7 +5,6 @@ import com.lankatex.smarttextile.production.entity.MaterialRequest;
 import com.lankatex.smarttextile.production.entity.ProductionPlan;
 import com.lankatex.smarttextile.production.entity.ProductionProgress;
 import com.lankatex.smarttextile.production.service.ProductionService;
-
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -24,9 +23,9 @@ public class ProductionController {
     }
 
 
-    // =========================
+    // =========================================================
     // DASHBOARD
-    // =========================
+    // =========================================================
 
     @GetMapping
     public String dashboard(Model model) {
@@ -40,14 +39,13 @@ public class ProductionController {
     }
 
 
-    // =========================
+    // =========================================================
     // PRODUCTION PLAN
-    // =========================
+    // =========================================================
 
     @GetMapping("/plans")
     public String plans(
-            @RequestParam(required = false)
-            Long editId,
+            @RequestParam(required = false) Long editId,
             Model model) {
 
         model.addAttribute(
@@ -65,10 +63,10 @@ public class ProductionController {
         return "production/plans";
     }
 
+
     @PostMapping("/plans/save")
     public String saveProductionPlan(
-            @ModelAttribute
-            ProductionPlan productionPlan,
+            @ModelAttribute ProductionPlan productionPlan,
             RedirectAttributes redirectAttributes) {
 
         try {
@@ -93,7 +91,7 @@ public class ProductionController {
         return "redirect:/production/plans";
     }
 
-    // Soft Delete
+
     @GetMapping("/plans/archive/{id}")
     public String archiveProductionPlan(
             @PathVariable Long id,
@@ -112,15 +110,40 @@ public class ProductionController {
 
             redirectAttributes.addFlashAttribute(
                     "error",
-                    "Cannot archive Production Plan: "
-                            + ex.getMessage()
+                    "Cannot archive Production Plan."
             );
         }
 
         return "redirect:/production/plans";
     }
 
-    // Hard Delete
+
+    @GetMapping("/plans/restore/{id}")
+    public String restoreProductionPlan(
+            @PathVariable Long id,
+            RedirectAttributes redirectAttributes) {
+
+        try {
+
+            service.restoreProductionPlan(id);
+
+            redirectAttributes.addFlashAttribute(
+                    "message",
+                    "Production Plan restored successfully."
+            );
+
+        } catch (Exception ex) {
+
+            redirectAttributes.addFlashAttribute(
+                    "error",
+                    "Cannot restore Production Plan."
+            );
+        }
+
+        return "redirect:/production/plans";
+    }
+
+
     @GetMapping("/plans/delete/{id}")
     public String deleteProductionPlan(
             @PathVariable Long id,
@@ -139,8 +162,7 @@ public class ProductionController {
 
             redirectAttributes.addFlashAttribute(
                     "error",
-                    "Cannot delete Production Plan. "
-                            + "It may already be used by another production record."
+                    "Cannot delete Production Plan. It may already be used by another production record."
             );
         }
 
@@ -148,14 +170,13 @@ public class ProductionController {
     }
 
 
-    // =========================
+    // =========================================================
     // MATERIAL REQUEST
-    // =========================
+    // =========================================================
 
     @GetMapping("/requests")
     public String requests(
-            @RequestParam(required = false)
-            Long editId,
+            @RequestParam(required = false) Long editId,
             Model model) {
 
         model.addAttribute(
@@ -173,10 +194,10 @@ public class ProductionController {
         return "production/requests";
     }
 
+
     @PostMapping("/requests/save")
     public String saveMaterialRequest(
-            @ModelAttribute
-            MaterialRequest materialRequest,
+            @ModelAttribute MaterialRequest materialRequest,
             RedirectAttributes redirectAttributes) {
 
         try {
@@ -201,7 +222,7 @@ public class ProductionController {
         return "redirect:/production/requests";
     }
 
-    // Soft Delete
+
     @GetMapping("/requests/archive/{id}")
     public String archiveMaterialRequest(
             @PathVariable Long id,
@@ -227,7 +248,33 @@ public class ProductionController {
         return "redirect:/production/requests";
     }
 
-    // Hard Delete
+
+    @GetMapping("/requests/restore/{id}")
+    public String restoreMaterialRequest(
+            @PathVariable Long id,
+            RedirectAttributes redirectAttributes) {
+
+        try {
+
+            service.restoreMaterialRequest(id);
+
+            redirectAttributes.addFlashAttribute(
+                    "message",
+                    "Material Request restored successfully."
+            );
+
+        } catch (Exception ex) {
+
+            redirectAttributes.addFlashAttribute(
+                    "error",
+                    "Cannot restore Material Request."
+            );
+        }
+
+        return "redirect:/production/requests";
+    }
+
+
     @GetMapping("/requests/delete/{id}")
     public String deleteMaterialRequest(
             @PathVariable Long id,
@@ -246,8 +293,7 @@ public class ProductionController {
 
             redirectAttributes.addFlashAttribute(
                     "error",
-                    "Cannot delete Material Request. "
-                            + "It may already be used by a Material Issue Note."
+                    "Cannot delete Material Request. It may already be used by a Material Issue Note."
             );
         }
 
@@ -255,14 +301,13 @@ public class ProductionController {
     }
 
 
-    // =========================
+    // =========================================================
     // MATERIAL ISSUE NOTE
-    // =========================
+    // =========================================================
 
     @GetMapping("/issues")
     public String issues(
-            @RequestParam(required = false)
-            Long editId,
+            @RequestParam(required = false) Long editId,
             Model model) {
 
         model.addAttribute(
@@ -280,10 +325,10 @@ public class ProductionController {
         return "production/issues";
     }
 
+
     @PostMapping("/issues/save")
     public String saveMaterialIssueNote(
-            @ModelAttribute
-            MaterialIssueNote materialIssueNote,
+            @ModelAttribute MaterialIssueNote materialIssueNote,
             RedirectAttributes redirectAttributes) {
 
         try {
@@ -307,6 +352,7 @@ public class ProductionController {
 
         return "redirect:/production/issues";
     }
+
 
     @GetMapping("/issues/delete/{id}")
     public String deleteMaterialIssueNote(
@@ -334,14 +380,13 @@ public class ProductionController {
     }
 
 
-    // =========================
+    // =========================================================
     // PRODUCTION PROGRESS
-    // =========================
+    // =========================================================
 
     @GetMapping("/progress")
     public String progress(
-            @RequestParam(required = false)
-            Long editId,
+            @RequestParam(required = false) Long editId,
             Model model) {
 
         model.addAttribute(
@@ -359,10 +404,10 @@ public class ProductionController {
         return "production/progress";
     }
 
+
     @PostMapping("/progress/save")
     public String saveProductionProgress(
-            @ModelAttribute
-            ProductionProgress productionProgress,
+            @ModelAttribute ProductionProgress productionProgress,
             RedirectAttributes redirectAttributes) {
 
         try {
@@ -386,6 +431,7 @@ public class ProductionController {
 
         return "redirect:/production/progress";
     }
+
 
     @GetMapping("/progress/delete/{id}")
     public String deleteProductionProgress(

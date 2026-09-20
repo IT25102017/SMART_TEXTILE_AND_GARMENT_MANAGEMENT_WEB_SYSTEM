@@ -305,7 +305,25 @@
           </td>
 
 
-          <td th:text="${row.status}">
+          <!-- Status -->
+          <td>
+
+                        <span th:if="${row.status == 'Pending'}"
+                              class="badge bg-warning text-dark">
+                            Pending
+                        </span>
+
+            <span th:if="${row.status == 'Archived'}"
+                  class="badge bg-secondary">
+                            Archived
+                        </span>
+
+            <span th:if="${row.status != 'Pending'
+                                      and row.status != 'Archived'}"
+                  class="badge bg-info text-dark"
+                  th:text="${row.status}">
+                        </span>
+
           </td>
 
 
@@ -324,11 +342,29 @@
             </a>
 
 
-            <!-- Archive -->
-            <a class="btn btn-outline-danger btn-sm"
+            <!-- Archive - only non archived records -->
+            <a th:if="${row.status != 'Archived'}"
+               class="btn btn-secondary btn-sm"
                th:href="@{/hr/attendance/archive/{id}(id=${row.attendanceId})}"
                onclick="return confirm('Archive this attendance record?');">
               Archive
+            </a>
+
+
+            <!-- Restore - only archived records -->
+            <a th:if="${row.status == 'Archived'}"
+               class="btn btn-success btn-sm"
+               th:href="@{/hr/attendance/restore/{id}(id=${row.attendanceId})}"
+               onclick="return confirm('Restore this attendance record back to Pending status?');">
+              Restore
+            </a>
+
+
+            <!-- Permanent Delete -->
+            <a class="btn btn-danger btn-sm"
+               th:href="@{/hr/attendance/delete/{id}(id=${row.attendanceId})}"
+               onclick="return confirm('WARNING: This will permanently delete the attendance record. Are you sure?');">
+              Delete
             </a>
 
 
