@@ -14,29 +14,47 @@ public class SecurityConfig {
         http
                 .authorizeHttpRequests(auth -> auth
 
-                        // Login නැතුව බලන්න පුළුවන් pages/files
+                        // Pages and static resources that can be accessed without login
                         .requestMatchers(
                                 "/",
                                 "/home",
+                                "/login",
                                 "/css/**",
                                 "/js/**",
                                 "/images/**"
                         )
                         .permitAll()
 
-                        // අනිත් pages වලට login ඕන
+                        // All other pages require authentication
                         .anyRequest()
                         .authenticated()
                 )
 
-                // දැනට Spring Boot default login page එක use කරනවා
                 .formLogin(form -> form
+
+                        // Use our custom login page
+                        .loginPage("/login")
+
+                        // URL used to process the login form
+                        .loginProcessingUrl("/login")
+
+                        // Redirect to the home page after successful login
                         .defaultSuccessUrl("/", true)
+
+                        // Redirect back to the login page if authentication fails
+                        .failureUrl("/login?error=true")
+
                         .permitAll()
                 )
 
                 .logout(logout -> logout
-                        .logoutSuccessUrl("/")
+
+                        // URL used to perform logout
+                        .logoutUrl("/logout")
+
+                        // Redirect to the login page after successful logout
+                        .logoutSuccessUrl("/login?logout=true")
+
                         .permitAll()
                 );
 
