@@ -1,5 +1,6 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
+<html lang="en"
+      xmlns:th="http://www.thymeleaf.org">
 
 <head>
 
@@ -9,23 +10,35 @@
         content="width=device-width, initial-scale=1">
 
   <title>
-    Supplier - Supplier and Purchase Order Management
+    Suppliers - LankaTex
   </title>
 
+  <!-- Bootstrap CSS -->
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
         rel="stylesheet">
 
+  <!-- Common LankaTex Navigation CSS -->
+  <link rel="stylesheet"
+        th:href="@{/css/common-navbar.css}">
+
 </head>
 
+
 <body class="bg-light">
+
+
+<!-- Common LankaTex Navigation Bar -->
+<div th:replace="~{fragments/common-navbar :: navbar}"></div>
+
 
 <div class="container py-4">
 
 
+  <!-- Page Header -->
   <div class="d-flex justify-content-between align-items-center mb-3">
 
     <h2>
-      Supplier and Purchase Order Management
+      Supplier Management
     </h2>
 
     <a class="btn btn-dark btn-sm"
@@ -36,9 +49,10 @@
   </div>
 
 
+  <!-- Purchasing Module Navigation -->
   <div class="mb-3">
 
-    <a class="btn btn-outline-primary btn-sm me-2 mb-2"
+    <a class="btn btn-primary btn-sm me-2 mb-2"
        th:href="@{/purchasing/suppliers}">
       Supplier
     </a>
@@ -61,18 +75,21 @@
   </div>
 
 
+  <!-- Success Message -->
   <div th:if="${message}"
        class="alert alert-success"
        th:text="${message}">
   </div>
 
 
+  <!-- Error Message -->
   <div th:if="${error}"
        class="alert alert-danger"
        th:text="${error}">
   </div>
 
 
+  <!-- Supplier Form -->
   <div class="card shadow-sm mb-4">
 
     <div class="card-header">
@@ -90,7 +107,6 @@
             th:object="${supplier}"
             method="post">
 
-
         <input type="hidden"
                th:field="*{supplierId}">
 
@@ -98,6 +114,7 @@
         <div class="row">
 
 
+          <!-- Supplier Name -->
           <div class="col-md-6 mb-3">
 
             <label class="form-label">
@@ -112,6 +129,7 @@
           </div>
 
 
+          <!-- Contact Person -->
           <div class="col-md-6 mb-3">
 
             <label class="form-label">
@@ -125,6 +143,7 @@
           </div>
 
 
+          <!-- Phone -->
           <div class="col-md-6 mb-3">
 
             <label class="form-label">
@@ -138,6 +157,7 @@
           </div>
 
 
+          <!-- Email -->
           <div class="col-md-6 mb-3">
 
             <label class="form-label">
@@ -151,6 +171,7 @@
           </div>
 
 
+          <!-- Address -->
           <div class="col-md-6 mb-3">
 
             <label class="form-label">
@@ -164,6 +185,7 @@
           </div>
 
 
+          <!-- Status -->
           <div class="col-md-6 mb-3">
 
             <label class="form-label">
@@ -199,6 +221,7 @@
   </div>
 
 
+  <!-- Supplier List -->
   <div class="card shadow-sm">
 
     <div class="card-header">
@@ -212,9 +235,7 @@
 
     <div class="card-body table-responsive">
 
-
       <table class="table table-striped table-bordered align-middle">
-
 
         <thead class="table-dark">
 
@@ -239,54 +260,53 @@
 
         <tr th:each="row : ${suppliersList}">
 
+          <td th:text="${row.supplierId}">
+          </td>
 
-          <td th:text="${row.supplierId}"></td>
+          <td th:text="${row.supplierName}">
+          </td>
 
-          <td th:text="${row.supplierName}"></td>
+          <td th:text="${row.contactPerson}">
+          </td>
 
-          <td th:text="${row.contactPerson}"></td>
+          <td th:text="${row.phone}">
+          </td>
 
-          <td th:text="${row.phone}"></td>
+          <td th:text="${row.email}">
+          </td>
 
-          <td th:text="${row.email}"></td>
+          <td th:text="${row.address}">
+          </td>
 
-          <td th:text="${row.address}"></td>
 
-
+          <!-- Status -->
           <td>
 
                         <span th:if="${row.status == 'Archived'}"
                               class="badge bg-secondary">
-
                             Archived
-
                         </span>
-
 
             <span th:unless="${row.status == 'Archived'}"
                   class="badge bg-success"
                   th:text="${row.status}">
-
                         </span>
 
           </td>
 
 
+          <!-- Actions -->
           <td class="text-nowrap">
 
 
-            <!-- EDIT -->
-
+            <!-- Edit -->
             <a class="btn btn-warning btn-sm"
                th:href="@{/purchasing/suppliers(editId=${row.supplierId})}">
-
               Edit
-
             </a>
 
 
-            <!-- ARCHIVE -->
-
+            <!-- Archive -->
             <form th:if="${row.status != 'Archived'}"
                   method="post"
                   class="d-inline"
@@ -295,16 +315,13 @@
               <button type="submit"
                       class="btn btn-secondary btn-sm"
                       onclick="return confirm('Archive this Supplier?');">
-
                 Archive
-
               </button>
 
             </form>
 
 
-            <!-- RESTORE -->
-
+            <!-- Restore -->
             <form th:if="${row.status == 'Archived'}"
                   method="post"
                   class="d-inline"
@@ -313,16 +330,13 @@
               <button type="submit"
                       class="btn btn-success btn-sm"
                       onclick="return confirm('Restore this Supplier?');">
-
                 Restore
-
               </button>
 
             </form>
 
 
-            <!-- HARD DELETE -->
-
+            <!-- Delete -->
             <form method="post"
                   class="d-inline"
                   th:action="@{/purchasing/suppliers/delete/{id}(id=${row.supplierId})}">
@@ -330,9 +344,7 @@
               <button type="submit"
                       class="btn btn-danger btn-sm"
                       onclick="return confirm('WARNING: Permanently delete this Supplier?');">
-
                 Delete
-
               </button>
 
             </form>
@@ -340,15 +352,12 @@
 
           </td>
 
-
         </tr>
 
 
         </tbody>
 
-
       </table>
-
 
     </div>
 
@@ -356,6 +365,7 @@
 
 
 </div>
+
 
 </body>
 
