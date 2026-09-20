@@ -31,9 +31,25 @@
     <a href="#sustainability">Sustainability</a>
     <a href="#contact">Contact</a>
 
-    <a class="login-button" th:href="@{/login}">
+    <!-- Show login button when the user is not authenticated -->
+    <a class="login-button"
+       th:if="${!loggedIn}"
+       th:href="@{/login}">
       Login
     </a>
+
+    <!-- Show logout button when the user is authenticated -->
+    <form th:if="${loggedIn}"
+          th:action="@{/logout}"
+          method="post"
+          class="logout-form">
+
+      <button type="submit"
+              class="logout-button">
+        Logout
+      </button>
+
+    </form>
   </nav>
 
 </header>

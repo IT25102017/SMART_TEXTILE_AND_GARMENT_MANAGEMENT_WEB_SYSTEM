@@ -618,3 +618,29 @@ footer p {
         font-size: 31px;
     }
 }
+/* ================= LOGOUT BUTTON ================= */
+
+.logout-form {
+    margin: 0;
+}
+
+.logout-button {
+    border: none;
+    background: #dc2626;
+    color: #ffffff;
+
+    padding: 11px 22px;
+
+    border-radius: 6px;
+
+    font-size: 14px;
+    font-weight: 600;
+
+    cursor: pointer;
+
+    transition: 0.2s;
+}
+
+.logout-button:hover {
+    background: #b91c1c;
+}
