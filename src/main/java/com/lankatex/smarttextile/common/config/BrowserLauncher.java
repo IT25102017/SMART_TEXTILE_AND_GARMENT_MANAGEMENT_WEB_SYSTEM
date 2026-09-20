@@ -4,27 +4,51 @@ import org.springframework.boot.context.event.ApplicationReadyEvent;
 import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Component;
 
-import java.awt.Desktop;
-import java.net.URI;
-
 @Component
 public class BrowserLauncher {
 
-    // Open the application home page after Spring Boot starts successfully
+    // Open the LankaTex home page after the application starts successfully
     @EventListener(ApplicationReadyEvent.class)
     public void openBrowser() {
 
+        String url = "http://localhost:8080/";
+
         try {
 
-            String url = "http://localhost:8080/";
+            String operatingSystem =
+                    System.getProperty("os.name").toLowerCase();
 
-            if (Desktop.isDesktopSupported()) {
+            if (operatingSystem.contains("win")) {
 
-                Desktop.getDesktop().browse(
-                        new URI(url)
-                );
+                // Windows
+                new ProcessBuilder(
+                        "cmd",
+                        "/c",
+                        "start",
+                        "",
+                        url
+                ).start();
 
+            } else if (operatingSystem.contains("mac")) {
+
+                // macOS
+                new ProcessBuilder(
+                        "open",
+                        url
+                ).start();
+
+            } else {
+
+                // Linux
+                new ProcessBuilder(
+                        "xdg-open",
+                        url
+                ).start();
             }
+
+            System.out.println(
+                    "LankaTex browser opened automatically: " + url
+            );
 
         } catch (Exception exception) {
 
