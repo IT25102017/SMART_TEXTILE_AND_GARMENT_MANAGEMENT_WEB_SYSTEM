@@ -20,4 +20,9 @@ public interface StockMovementRepository
     findByBatchBatchId(
             Long batchId
     );
+
+    boolean existsByReferenceTypeIgnoreCaseAndReferenceId(
+            String referenceType,
+            Long referenceId
+    );
 }
