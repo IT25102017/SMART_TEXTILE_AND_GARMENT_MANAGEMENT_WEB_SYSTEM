@@ -44,18 +44,17 @@ public class GoodsReceiptService {
 
 
     // =====================================================
-    // READ ALL GOODS RECEIPTS
+    // READ ALL
     // =====================================================
 
     public List<GoodsReceipt> getAll() {
 
-        return receiptRepository
-                .findAllByOrderByReceivedDateDesc();
+        return receiptRepository.findAll();
     }
 
 
     // =====================================================
-    // READ ONE GOODS RECEIPT
+    // READ ONE
     // =====================================================
 
     public GoodsReceipt getById(Long id) {
@@ -73,7 +72,8 @@ public class GoodsReceiptService {
     // =====================================================
     // AVAILABLE PURCHASE ORDERS
     //
-    // Archived Purchase Orders are excluded from forms.
+    // Used by the Goods Receipt form.
+    // Archived Purchase Orders are excluded.
     // =====================================================
 
     public List<PurchaseOrder> getAvailablePurchaseOrders() {
@@ -99,7 +99,8 @@ public class GoodsReceiptService {
     // =====================================================
     // ACTIVE SUPPLIERS
     //
-    // Archived Suppliers are excluded from forms.
+    // Used by the Goods Receipt form.
+    // Archived Suppliers are excluded.
     // =====================================================
 
     public List<Supplier> getActiveSuppliers() {
@@ -187,19 +188,28 @@ public class GoodsReceiptService {
         if (receipt.getStatus() == null ||
                 receipt.getStatus().isBlank()) {
 
-            receipt.setStatus("RECEIVED");
+            receipt.setStatus(
+                    "RECEIVED"
+            );
         }
 
 
-        return receiptRepository.save(receipt);
+        return receiptRepository.save(
+                receipt
+        );
     }
 
 
     // =====================================================
     // UPDATE
     //
-    // Purchase Order ID and Supplier ID are preserved
-    // because they identify the original purchasing record.
+    // Purchase Order and Supplier are intentionally
+    // preserved because they represent the original
+    // purchasing relationship of this receipt.
+    //
+    // Historical receipts remain editable even when the
+    // original Purchase Order or Supplier is later archived
+    // or removed from the Purchasing module.
     // =====================================================
 
     @Transactional
@@ -209,7 +219,7 @@ public class GoodsReceiptService {
         if (submittedReceipt.getReceiptId() == null) {
 
             throw new IllegalArgumentException(
-                    "Receipt ID is required for update."
+                    "Goods Receipt ID is required for update."
             );
         }
 
@@ -228,6 +238,25 @@ public class GoodsReceiptService {
         }
 
 
+        /*
+         * Preserve original Purchase Order and Supplier.
+         */
+        Long originalPoId =
+                existing.getPoId();
+
+        Long originalSupplierId =
+                existing.getSupplierId();
+
+
+        existing.setPoId(
+                originalPoId
+        );
+
+        existing.setSupplierId(
+                originalSupplierId
+        );
+
+
         existing.setReceivedDate(
                 submittedReceipt.getReceivedDate()
         );
@@ -242,26 +271,35 @@ public class GoodsReceiptService {
 
 
         /*
-         * An archived receipt must stay archived until
-         * the Restore action is used.
+         * Archived records stay archived until the user
+         * explicitly restores them from the list page.
          */
         if (!"ARCHIVED".equalsIgnoreCase(
                 existing.getStatus())) {
 
-            String newStatus =
+            String submittedStatus =
                     submittedReceipt.getStatus();
 
-            if (newStatus == null ||
-                    newStatus.isBlank()) {
 
-                newStatus = "RECEIVED";
+            if (submittedStatus == null ||
+                    submittedStatus.isBlank()) {
+
+                existing.setStatus(
+                        "RECEIVED"
+                );
+
+            } else {
+
+                existing.setStatus(
+                        submittedStatus
+                );
             }
-
-            existing.setStatus(newStatus);
         }
 
 
-        return receiptRepository.save(existing);
+        return receiptRepository.save(
+                existing
+        );
     }
 
 
@@ -275,14 +313,26 @@ public class GoodsReceiptService {
         GoodsReceipt receipt =
                 getById(id);
 
-        receipt.setStatus("ARCHIVED");
 
-        receiptRepository.save(receipt);
+        receipt.setStatus(
+                "ARCHIVED"
+        );
+
+
+        receiptRepository.save(
+                receipt
+        );
     }
 
 
     // =====================================================
     // RESTORE
+    //
+    // Historical purchasing references are preserved.
+    //
+    // Restore only changes the Goods Receipt status.
+    // The original Purchase Order or Supplier does not
+    // need to still exist in the Purchasing module.
     // =====================================================
 
     @Transactional
@@ -292,24 +342,22 @@ public class GoodsReceiptService {
                 getById(id);
 
 
-        /*
-         * Restoring is allowed only when the linked
-         * Purchase Order and Supplier are still valid.
-         */
-        validatePurchasingRelationship(
-                receipt.getPoId(),
-                receipt.getSupplierId()
+        receipt.setStatus(
+                "RECEIVED"
         );
 
 
-        receipt.setStatus("RECEIVED");
-
-        receiptRepository.save(receipt);
+        receiptRepository.save(
+                receipt
+        );
     }
 
 
     // =====================================================
-    // SAFE DELETE
+    // SAFE HARD DELETE
+    //
+    // A Goods Receipt cannot be permanently deleted when
+    // Stock Movement records already reference it.
     // =====================================================
 
     @Transactional
@@ -319,7 +367,7 @@ public class GoodsReceiptService {
                 getById(id);
 
 
-        boolean usedInStockMovement =
+        boolean usedByStockMovement =
                 movementRepository
                         .existsByReferenceTypeIgnoreCaseAndReferenceId(
                                 "GOODS_RECEIPT",
@@ -327,15 +375,18 @@ public class GoodsReceiptService {
                         );
 
 
-        if (usedInStockMovement) {
+        if (usedByStockMovement) {
 
             throw new IllegalArgumentException(
-                    "Cannot permanently delete this goods receipt because it is already used in inventory transactions. Please Archive it instead."
+                    "Cannot permanently delete this Goods Receipt because it is already referenced by Stock Movement history. Please Archive it instead."
             );
         }
 
 
-        receiptRepository.delete(receipt);
+        receiptRepository.delete(
+                receipt
+        );
+
 
         receiptRepository.flush();
     }
@@ -343,6 +394,17 @@ public class GoodsReceiptService {
 
     // =====================================================
     // PURCHASING RELATIONSHIP VALIDATION
+    //
+    // Used when creating a NEW Goods Receipt.
+    //
+    // Rules:
+    // 1. Purchase Order is required.
+    // 2. Supplier is required.
+    // 3. Purchase Order must exist.
+    // 4. Supplier must exist.
+    // 5. Purchase Order must not be archived.
+    // 6. Supplier must not be archived.
+    // 7. Purchase Order must belong to the selected Supplier.
     // =====================================================
 
     private void validatePurchasingRelationship(
@@ -389,7 +451,7 @@ public class GoodsReceiptService {
                 purchaseOrder.getStatus())) {
 
             throw new IllegalArgumentException(
-                    "Archived Purchase Orders cannot be used for a Goods Receipt."
+                    "Archived Purchase Orders cannot be used for a new Goods Receipt."
             );
         }
 
@@ -398,17 +460,18 @@ public class GoodsReceiptService {
                 supplier.getStatus())) {
 
             throw new IllegalArgumentException(
-                    "Archived Suppliers cannot be used for a Goods Receipt."
+                    "Archived Suppliers cannot be used for a new Goods Receipt."
             );
         }
 
 
         if (purchaseOrder.getSupplierId() == null ||
-                !purchaseOrder.getSupplierId()
+                !purchaseOrder
+                        .getSupplierId()
                         .equals(supplierId)) {
 
             throw new IllegalArgumentException(
-                    "The selected Supplier does not match the Supplier assigned to this Purchase Order."
+                    "The selected Supplier does not match the selected Purchase Order."
             );
         }
     }
