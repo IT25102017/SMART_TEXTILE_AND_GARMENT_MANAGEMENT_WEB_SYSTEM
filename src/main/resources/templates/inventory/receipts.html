@@ -1,92 +1,600 @@
 <!DOCTYPE html>
-<html lang="en" xmlns:th="http://www.thymeleaf.org">
+
+<html lang="en"
+      xmlns:th="http://www.thymeleaf.org">
 
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
 
-    <title>Goods Receipts - LankaTex</title>
+    <meta charset="UTF-8">
+
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1">
+
+    <title>Goods Receipts | LankaTex</title>
+
 
     <!-- Bootstrap CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
           rel="stylesheet">
 
+
     <!-- Common LankaTex Navigation CSS -->
-    <link rel="stylesheet" th:href="@{/css/common-navbar.css}">
+    <link rel="stylesheet"
+          th:href="@{/css/common-navbar.css}">
+
+
+    <!-- Inventory Main Theme -->
+    <link rel="stylesheet"
+          th:href="@{/css/inventory/inventory-ui.css}">
+
+
+    <!-- Goods Receipts Theme -->
+    <link rel="stylesheet"
+          th:href="@{/css/inventory/inventory-receipts.css}">
+
 </head>
 
-<body class="bg-light">
+
+<body class="inventory-page">
+
 
 <!-- Common LankaTex Navigation Bar -->
 <div th:replace="~{fragments/common-navbar :: navbar}"></div>
 
-<div class="container py-4">
 
-    <!-- Page Header -->
-    <div class="d-flex justify-content-between align-items-center mb-4">
+<main class="inventory-container receipts-workspace">
 
-        <h2>Goods Receipts</h2>
 
-        <div class="d-flex gap-2">
+    <!-- =====================================================
+         HERO SECTION
+         ===================================================== -->
 
-            <a class="btn btn-dark"
-               th:href="@{/inventory}">
-                Back to Dashboard
-            </a>
+    <section class="receipts-hero">
 
-            <a class="btn btn-primary"
-               th:href="@{/inventory/receipts/new}">
-                New Goods Receipt
-            </a>
+
+        <div class="receipts-hero-left">
+
+            <span class="receipts-eyebrow">
+                LankaTex Inventory
+            </span>
+
+
+            <h1>
+                Goods Receipts
+            </h1>
+
+
+            <p>
+                Record and manage goods received from suppliers
+                against valid Purchase Orders while maintaining
+                clear inventory receiving records.
+            </p>
 
         </div>
 
-    </div>
 
-    <!-- Goods Receipt List -->
-    <div class="card shadow-sm">
+        <div class="receipts-hero-badge">
 
-        <div class="card-header">
-            <strong>Goods Receipt List</strong>
+            <div class="receipts-hero-badge-line"></div>
+
+
+            <span>
+                Inventory Workspace
+            </span>
+
+
+            <strong>
+                Goods Receiving
+            </strong>
+
         </div>
 
-        <div class="card-body table-responsive">
 
-            <table class="table table-bordered table-striped align-middle">
+    </section>
 
-                <thead class="table-dark">
+
+
+    <!-- =====================================================
+         MAIN PANEL
+         ===================================================== -->
+
+    <section class="receipts-panel">
+
+
+        <div class="receipts-panel-header">
+
+
+            <div class="receipts-heading-group">
+
+
+                <div class="receipts-heading-icon">
+                    G
+                </div>
+
+
+                <div>
+
+                    <h2 class="receipts-panel-title">
+                        Goods Receipt List
+                    </h2>
+
+
+                    <p class="receipts-panel-subtitle">
+                        Track Purchase Orders, Suppliers and
+                        receiving information using readable references.
+                    </p>
+
+                </div>
+
+
+            </div>
+
+
+
+            <!-- Top Actions -->
+
+            <div class="receipts-top-actions">
+
+
+                <a class="receipts-btn receipts-btn-back"
+                   th:href="@{/inventory}">
+
+                    Back to Dashboard
+
+                </a>
+
+
+                <a class="receipts-btn receipts-btn-add"
+                   th:href="@{/inventory/receipts/new}">
+
+                    + New Goods Receipt
+
+                </a>
+
+
+            </div>
+
+
+        </div>
+
+
+
+        <!-- =================================================
+             MESSAGES
+             ================================================= -->
+
+        <div th:if="${message}"
+             class="alert alert-success receipts-alert"
+             th:text="${message}">
+        </div>
+
+
+        <div th:if="${error}"
+             class="alert alert-danger receipts-alert"
+             th:text="${error}">
+        </div>
+
+
+
+        <!-- =================================================
+             GOODS RECEIPT TABLE
+             ================================================= -->
+
+        <div class="receipts-table-wrapper">
+
+
+            <table class="receipts-table">
+
+
+                <thead>
+
                 <tr>
-                    <th>Receipt ID</th>
-                    <th>PO ID</th>
-                    <th>Supplier ID</th>
-                    <th>Date</th>
+
+                    <th>GRN Number</th>
+
+                    <th>Purchase Order</th>
+
+                    <th>Supplier</th>
+
+                    <th>Received Date</th>
+
+                    <th>Received By</th>
+
                     <th>Status</th>
+
                     <th>Remarks</th>
+
+                    <th>Actions</th>
+
                 </tr>
+
                 </thead>
+
+
 
                 <tbody>
 
-                <tr th:each="receipt : ${receipts}">
 
-                    <td th:text="${receipt.receiptId}"></td>
-                    <td th:text="${receipt.poId}"></td>
-                    <td th:text="${receipt.supplierId}"></td>
-                    <td th:text="${receipt.receivedDate}"></td>
-                    <td th:text="${receipt.status}"></td>
-                    <td th:text="${receipt.remarks}"></td>
+                <!-- Goods Receipt Records -->
+
+                <tr th:each="receipt : ${receipts}"
+                    th:with="purchaseOrder=${purchaseOrderMap.get(receipt.poId)},
+                             supplier=${supplierMap.get(receipt.supplierId)}"
+                    th:classappend="${receipt.status == 'ARCHIVED'}
+                    ? 'receipt-row-archived' : ''">
+
+
+                    <!-- =================================================
+                         GOODS RECEIPT NUMBER
+                         ================================================= -->
+
+                    <td class="receipt-id">
+
+                        <strong th:text="${receipt.receiptCode}">
+                            GRN-001
+                        </strong>
+
+                    </td>
+
+
+
+                    <!-- =================================================
+                         PURCHASE ORDER
+                         ================================================= -->
+
+                    <td class="receipt-po">
+
+
+                        <span th:if="${receipt.poId != null}"
+                              class="fw-semibold"
+                              th:text="${'PO-'
+                              + #numbers.formatInteger(
+                                  receipt.poId,
+                                  3
+                                )}">
+
+                            PO-001
+
+                        </span>
+
+
+                        <span th:if="${receipt.poId == null}">
+                            -
+                        </span>
+
+
+                    </td>
+
+
+
+                    <!-- =================================================
+                         SUPPLIER
+                         ================================================= -->
+
+                    <td class="receipt-supplier">
+
+
+                        <!-- Supplier exists in Purchasing module -->
+
+                        <div th:if="${supplier != null}">
+
+                            <span class="fw-semibold"
+                                  th:text="${'SUP-'
+                                  + #numbers.formatInteger(
+                                      supplier.supplierId,
+                                      3
+                                    )}">
+
+                                SUP-001
+
+                            </span>
+
+
+                            <br>
+
+
+                            <small class="text-muted"
+                                   th:text="${supplier.supplierName}">
+
+                                Supplier Name
+
+                            </small>
+
+                        </div>
+
+
+
+                        <!-- Supplier record cannot be found -->
+
+                        <div th:if="${supplier == null
+                                    and receipt.supplierId != null}">
+
+                            <span class="fw-semibold"
+                                  th:text="${'SUP-'
+                                  + #numbers.formatInteger(
+                                      receipt.supplierId,
+                                      3
+                                    )}">
+
+                                SUP-001
+
+                            </span>
+
+
+                            <br>
+
+
+                            <small class="text-danger">
+                                Supplier record unavailable
+                            </small>
+
+                        </div>
+
+
+
+                        <span th:if="${receipt.supplierId == null}">
+                            -
+                        </span>
+
+
+                    </td>
+
+
+
+                    <!-- =================================================
+                         RECEIVED DATE
+                         ================================================= -->
+
+                    <td th:text="${receipt.receivedDate}">
+                    </td>
+
+
+
+                    <!-- =================================================
+                         RECEIVED BY
+                         ================================================= -->
+
+                    <td>
+
+
+                        <span th:if="${receipt.receivedBy != null}"
+                              th:text="${'User ID '
+                              + receipt.receivedBy}">
+
+                            User ID 1
+
+                        </span>
+
+
+                        <span th:if="${receipt.receivedBy == null}">
+                            -
+                        </span>
+
+
+                    </td>
+
+
+
+                    <!-- =================================================
+                         STATUS
+                         ================================================= -->
+
+                    <td>
+
+
+                        <!-- Received -->
+
+                        <span th:if="${receipt.status == 'RECEIVED'}"
+                              class="receipt-status
+                                     receipt-status-received">
+
+                            RECEIVED
+
+                        </span>
+
+
+                        <!-- Pending -->
+
+                        <span th:if="${receipt.status == 'PENDING'}"
+                              class="receipt-status
+                                     receipt-status-pending">
+
+                            PENDING
+
+                        </span>
+
+
+                        <!-- Rejected -->
+
+                        <span th:if="${receipt.status == 'REJECTED'}"
+                              class="receipt-status
+                                     receipt-status-rejected">
+
+                            REJECTED
+
+                        </span>
+
+
+                        <!-- Archived -->
+
+                        <span th:if="${receipt.status == 'ARCHIVED'}"
+                              class="receipt-status
+                                     receipt-status-archived">
+
+                            ARCHIVED
+
+                        </span>
+
+
+                        <!-- Fallback Status -->
+
+                        <span th:if="${receipt.status != 'RECEIVED'
+                                     and receipt.status != 'PENDING'
+                                     and receipt.status != 'REJECTED'
+                                     and receipt.status != 'ARCHIVED'}"
+                              class="receipt-status"
+                              th:text="${receipt.status != null
+                              ? receipt.status
+                              : 'UNKNOWN'}">
+
+                            UNKNOWN
+
+                        </span>
+
+
+                    </td>
+
+
+
+                    <!-- =================================================
+                         REMARKS
+                         ================================================= -->
+
+                    <td class="receipt-remarks"
+                        th:text="${receipt.remarks != null
+                        and !#strings.isEmpty(receipt.remarks)
+                        ? receipt.remarks
+                        : '-'}">
+                    </td>
+
+
+
+                    <!-- =================================================
+                         ACTIONS
+                         ================================================= -->
+
+                    <td>
+
+
+                        <div class="receipt-actions">
+
+
+                            <!-- Edit -->
+
+                            <a class="receipt-action-button
+                                      receipt-action-edit"
+                               th:href="@{/inventory/receipts/edit/{id}
+                               (id=${receipt.receiptId})}">
+
+                                Edit
+
+                            </a>
+
+
+
+                            <!-- Archive -->
+
+                            <form th:if="${receipt.status != 'ARCHIVED'}"
+                                  method="post"
+                                  th:action="@{/inventory/receipts/archive/{id}
+                                  (id=${receipt.receiptId})}">
+
+
+                                <button type="submit"
+                                        class="receipt-action-button
+                                               receipt-action-archive"
+                                        onclick="return confirm(
+                                        'Are you sure you want to archive this goods receipt?'
+                                        );">
+
+                                    Archive
+
+                                </button>
+
+
+                            </form>
+
+
+
+                            <!-- Restore -->
+
+                            <form th:if="${receipt.status == 'ARCHIVED'}"
+                                  method="post"
+                                  th:action="@{/inventory/receipts/restore/{id}
+                                  (id=${receipt.receiptId})}">
+
+
+                                <button type="submit"
+                                        class="receipt-action-button
+                                               receipt-action-restore"
+                                        onclick="return confirm(
+                                        'Restore this goods receipt?'
+                                        );">
+
+                                    Restore
+
+                                </button>
+
+
+                            </form>
+
+
+
+                            <!-- Delete -->
+
+                            <form method="post"
+                                  th:action="@{/inventory/receipts/delete/{id}
+                                  (id=${receipt.receiptId})}">
+
+
+                                <button type="submit"
+                                        class="receipt-action-button
+                                               receipt-action-delete"
+                                        onclick="return confirm(
+                                        'Permanently delete this goods receipt?'
+                                        );">
+
+                                    Delete
+
+                                </button>
+
+
+                            </form>
+
+
+                        </div>
+
+
+                    </td>
+
 
                 </tr>
 
+
+
+                <!-- =================================================
+                     EMPTY STATE
+                     ================================================= -->
+
+                <tr th:if="${#lists.isEmpty(receipts)}">
+
+
+                    <td colspan="8"
+                        class="receipts-empty">
+
+                        No goods receipts found.
+
+                    </td>
+
+
+                </tr>
+
+
                 </tbody>
+
 
             </table>
 
+
         </div>
 
-    </div>
 
-</div>
+    </section>
+
+
+</main>
+
 
 </body>
+
 </html>

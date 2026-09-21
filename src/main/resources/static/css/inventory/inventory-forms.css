@@ -1,0 +1,298 @@
+/* =========================================================
+   LANKATEX INVENTORY - SHARED FORM DESIGN
+   ========================================================= */
+
+.inventory-form-workspace {
+    padding-top: 42px;
+    padding-bottom: 60px;
+}
+
+
+/* =========================================================
+   FORM CARD
+   ========================================================= */
+
+.inventory-form-card {
+    max-width: 900px;
+    margin: 0 auto;
+
+    background: rgba(255, 255, 255, 0.94);
+
+    border: 1px solid rgba(15, 118, 110, 0.15);
+
+    border-radius: 24px;
+
+    padding: 38px 42px;
+
+    box-shadow:
+            0 20px 50px rgba(15, 23, 42, 0.16);
+
+    backdrop-filter: blur(12px);
+}
+
+
+/* =========================================================
+   FORM HEADING
+   ========================================================= */
+
+.inventory-form-heading {
+    margin-bottom: 32px;
+}
+
+.inventory-form-eyebrow {
+    display: inline-block;
+
+    margin-bottom: 8px;
+
+    color: #0f766e;
+
+    font-size: 0.78rem;
+
+    font-weight: 800;
+
+    letter-spacing: 0.12em;
+
+    text-transform: uppercase;
+}
+
+.inventory-form-heading h1 {
+    margin: 0 0 10px;
+
+    color: #0f172a;
+
+    font-size: 2rem;
+
+    font-weight: 800;
+}
+
+.inventory-form-heading p {
+    max-width: 650px;
+
+    margin: 0;
+
+    color: #64748b;
+
+    line-height: 1.7;
+}
+
+
+/* =========================================================
+   FORM SECTIONS
+   ========================================================= */
+
+.inventory-form-section {
+    margin-bottom: 28px;
+
+    padding-bottom: 24px;
+
+    border-bottom: 1px solid #e2e8f0;
+}
+
+.inventory-form-section:last-of-type {
+    border-bottom: none;
+}
+
+.inventory-form-section-title {
+    margin-bottom: 18px;
+
+    color: #0f172a;
+
+    font-size: 1rem;
+
+    font-weight: 800;
+}
+
+
+/* =========================================================
+   LABELS
+   ========================================================= */
+
+.inventory-form-card .form-label {
+    margin-bottom: 7px;
+
+    color: #334155;
+
+    font-size: 0.9rem;
+
+    font-weight: 700;
+}
+
+
+/* =========================================================
+   INPUTS
+   ========================================================= */
+
+.inventory-form-card .form-control,
+.inventory-form-card .form-select {
+
+    min-height: 48px;
+
+    border: 1px solid #cbd5e1;
+
+    border-radius: 12px;
+
+    background-color: #ffffff;
+
+    color: #0f172a;
+
+    box-shadow: none;
+
+    transition:
+            border-color 0.2s ease,
+            box-shadow 0.2s ease;
+}
+
+
+.inventory-form-card .form-control:focus,
+.inventory-form-card .form-select:focus {
+
+    border-color: #0f766e;
+
+    box-shadow:
+            0 0 0 4px rgba(15, 118, 110, 0.10);
+}
+
+
+/* =========================================================
+   VALIDATION
+   ========================================================= */
+
+.inventory-field-error {
+    display: block;
+
+    margin-top: 6px;
+
+    color: #dc2626;
+
+    font-size: 0.82rem;
+
+    font-weight: 600;
+}
+
+.inventory-field-help {
+    display: block;
+
+    margin-top: 6px;
+
+    color: #64748b;
+
+    font-size: 0.82rem;
+}
+
+
+/* =========================================================
+   BUTTONS
+   ========================================================= */
+
+.inventory-form-actions {
+    display: flex;
+
+    flex-wrap: wrap;
+
+    gap: 12px;
+
+    margin-top: 32px;
+}
+
+.inventory-form-button {
+    display: inline-flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    min-height: 46px;
+
+    padding: 0 22px;
+
+    border: none;
+
+    border-radius: 12px;
+
+    text-decoration: none;
+
+    font-weight: 700;
+
+    transition:
+            transform 0.2s ease,
+            box-shadow 0.2s ease,
+            background-color 0.2s ease;
+}
+
+.inventory-form-button:hover {
+    transform: translateY(-1px);
+}
+
+
+/* Save Button */
+
+.inventory-form-button-primary {
+    background: #0f766e;
+
+    color: #ffffff;
+
+    box-shadow:
+            0 8px 20px rgba(15, 118, 110, 0.22);
+}
+
+.inventory-form-button-primary:hover {
+    background: #115e59;
+
+    color: #ffffff;
+}
+
+
+/* Cancel Button */
+
+.inventory-form-button-secondary {
+    background: #e2e8f0;
+
+    color: #334155;
+}
+
+.inventory-form-button-secondary:hover {
+    background: #cbd5e1;
+
+    color: #0f172a;
+}
+
+
+/* =========================================================
+   ALERT
+   ========================================================= */
+
+.inventory-form-alert {
+    margin-bottom: 24px;
+
+    border-radius: 12px;
+}
+
+
+/* =========================================================
+   RESPONSIVE
+   ========================================================= */
+
+@media (max-width: 768px) {
+
+    .inventory-form-workspace {
+        padding-top: 24px;
+    }
+
+    .inventory-form-card {
+        padding: 26px 20px;
+
+        border-radius: 18px;
+    }
+
+    .inventory-form-heading h1 {
+        font-size: 1.6rem;
+    }
+
+    .inventory-form-actions {
+        flex-direction: column;
+    }
+
+    .inventory-form-button {
+        width: 100%;
+    }
+}

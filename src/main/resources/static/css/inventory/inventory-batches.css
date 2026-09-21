@@ -1,0 +1,1045 @@
+/* =========================================================
+   LankaTex - Inventory Material Batches
+   ========================================================= */
+
+
+/* =========================================================
+   WORKSPACE
+   ========================================================= */
+
+.batches-workspace {
+    max-width: 1450px;
+}
+
+
+/* =========================================================
+   HERO SECTION
+   ========================================================= */
+
+.batches-hero {
+
+    min-height: 190px;
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: space-between;
+
+    gap: 30px;
+
+
+    padding: 32px 38px;
+
+    margin-bottom: 24px;
+
+
+    border-radius: 22px;
+
+
+    background:
+            linear-gradient(
+                    115deg,
+                    rgba(5, 57, 72, 0.74),
+                    rgba(15, 139, 141, 0.48)
+            );
+
+
+    border:
+            1px solid
+            rgba(
+                    255,
+                    255,
+                    255,
+                    0.38
+            );
+
+
+    box-shadow:
+            0 15px 35px
+            rgba(
+                    22,
+                    64,
+                    76,
+                    0.19
+            );
+
+
+    backdrop-filter: blur(8px);
+
+    -webkit-backdrop-filter: blur(8px);
+}
+
+
+.batches-hero-left {
+
+    max-width: 720px;
+}
+
+
+.batches-eyebrow {
+
+    display: inline-block;
+
+
+    margin-bottom: 10px;
+
+
+    color: #a8f1ed;
+
+
+    font-size: 0.78rem;
+
+    font-weight: 750;
+
+
+    letter-spacing: 2px;
+
+    text-transform: uppercase;
+}
+
+
+.batches-hero h1 {
+
+    margin: 0 0 10px;
+
+
+    color: #ffffff;
+
+
+    font-size:
+            clamp(
+                    2rem,
+                    4vw,
+                    2.8rem
+            );
+
+
+    font-weight: 780;
+}
+
+
+.batches-hero p {
+
+    margin: 0;
+
+
+    max-width: 650px;
+
+
+    color:
+            rgba(
+                    255,
+                    255,
+                    255,
+                    0.91
+            );
+
+
+    font-size: 0.98rem;
+
+    line-height: 1.7;
+}
+
+
+/* =========================================================
+   HERO BADGE
+   ========================================================= */
+
+.batches-hero-badge {
+
+    min-width: 230px;
+
+
+    padding: 21px 24px;
+
+
+    border-radius: 17px;
+
+
+    background:
+            rgba(
+                    255,
+                    255,
+                    255,
+                    0.16
+            );
+
+
+    border:
+            1px solid
+            rgba(
+                    255,
+                    255,
+                    255,
+                    0.34
+            );
+
+
+    color: #ffffff;
+
+
+    backdrop-filter: blur(12px);
+
+    -webkit-backdrop-filter: blur(12px);
+}
+
+
+.batches-hero-badge-line {
+
+    width: 40px;
+
+    height: 3px;
+
+
+    margin-bottom: 13px;
+
+
+    border-radius: 5px;
+
+
+    background: #7be5df;
+}
+
+
+.batches-hero-badge span {
+
+    display: block;
+
+
+    color:
+            rgba(
+                    255,
+                    255,
+                    255,
+                    0.74
+            );
+
+
+    font-size: 0.82rem;
+}
+
+
+.batches-hero-badge strong {
+
+    display: block;
+
+
+    margin-top: 4px;
+
+
+    font-size: 1.15rem;
+}
+
+
+/* =========================================================
+   MAIN PANEL
+   ========================================================= */
+
+.batches-panel {
+
+    padding: 25px;
+
+
+    border-radius: 22px;
+
+
+    background:
+            rgba(
+                    249,
+                    253,
+                    253,
+                    0.92
+            );
+
+
+    border:
+            1px solid
+            rgba(
+                    255,
+                    255,
+                    255,
+                    0.82
+            );
+
+
+    box-shadow:
+            0 18px 40px
+            rgba(
+                    24,
+                    64,
+                    76,
+                    0.17
+            );
+
+
+    backdrop-filter: blur(15px);
+
+    -webkit-backdrop-filter: blur(15px);
+}
+
+
+/* =========================================================
+   PANEL HEADER
+   ========================================================= */
+
+.batches-panel-header {
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: space-between;
+
+
+    gap: 20px;
+
+
+    margin-bottom: 20px;
+}
+
+
+.batches-heading-group {
+
+    display: flex;
+
+    align-items: center;
+
+
+    gap: 14px;
+}
+
+
+.batches-heading-icon {
+
+    width: 48px;
+
+    height: 48px;
+
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+
+    flex-shrink: 0;
+
+
+    border-radius: 14px;
+
+
+    background:
+            linear-gradient(
+                    145deg,
+                    #075069,
+                    #0d999b
+            );
+
+
+    color: #ffffff;
+
+
+    font-size: 1.15rem;
+
+    font-weight: 800;
+
+
+    box-shadow:
+            0 7px 16px
+            rgba(
+                    10,
+                    108,
+                    118,
+                    0.20
+            );
+}
+
+
+.batches-panel-title {
+
+    margin: 0;
+
+
+    color: #0a3045;
+
+
+    font-size: 1.45rem;
+
+    font-weight: 780;
+}
+
+
+.batches-panel-subtitle {
+
+    margin: 3px 0 0;
+
+
+    color: #768995;
+
+
+    font-size: 0.87rem;
+}
+
+
+/* =========================================================
+   TOP ACTION BUTTONS
+   ========================================================= */
+
+.batches-top-actions {
+
+    display: flex;
+
+
+    gap: 9px;
+
+
+    flex-wrap: wrap;
+}
+
+
+.batches-btn {
+
+    display: inline-flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+
+    min-height: 40px;
+
+
+    padding: 9px 16px;
+
+
+    border-radius: 10px;
+
+
+    text-decoration: none;
+
+
+    font-size: 0.88rem;
+
+    font-weight: 700;
+
+
+    transition:
+            transform 0.18s ease,
+            box-shadow 0.18s ease;
+}
+
+
+.batches-btn:hover {
+
+    transform: translateY(-2px);
+}
+
+
+.batches-btn-back {
+
+    color: #214153;
+
+
+    background: #edf3f5;
+
+
+    border:
+            1px solid
+            #d8e4e8;
+}
+
+
+.batches-btn-back:hover {
+
+    color: #17384a;
+
+
+    box-shadow:
+            0 6px 14px
+            rgba(
+                    30,
+                    72,
+                    87,
+                    0.10
+            );
+}
+
+
+.batches-btn-add {
+
+    color: #ffffff;
+
+
+    background:
+            linear-gradient(
+                    135deg,
+                    #08758a,
+                    #0c9b9c
+            );
+
+
+    border: none;
+
+
+    box-shadow:
+            0 7px 16px
+            rgba(
+                    10,
+                    122,
+                    132,
+                    0.20
+            );
+}
+
+
+.batches-btn-add:hover {
+
+    color: #ffffff;
+
+
+    box-shadow:
+            0 10px 20px
+            rgba(
+                    10,
+                    122,
+                    132,
+                    0.27
+            );
+}
+
+
+/* =========================================================
+   ALERTS
+   ========================================================= */
+
+.batches-alert {
+
+    border: none;
+
+
+    border-radius: 12px;
+
+
+    box-shadow:
+            0 6px 15px
+            rgba(
+                    20,
+                    63,
+                    75,
+                    0.08
+            );
+}
+
+
+/* =========================================================
+   TABLE WRAPPER
+   ========================================================= */
+
+.batches-table-wrapper {
+
+    overflow-x: auto;
+
+
+    border-radius: 15px;
+
+
+    border:
+            1px solid
+            #dce7ea;
+
+
+    background:
+            rgba(
+                    255,
+                    255,
+                    255,
+                    0.92
+            );
+}
+
+
+/* =========================================================
+   TABLE
+   ========================================================= */
+
+.batches-table {
+
+    width: 100%;
+
+
+    margin: 0;
+
+
+    border-collapse: separate;
+
+    border-spacing: 0;
+
+
+    font-size: 0.88rem;
+}
+
+
+.batches-table thead th {
+
+    padding: 15px 13px;
+
+
+    background:
+            linear-gradient(
+                    180deg,
+                    #0b3c52,
+                    #0a3347
+            );
+
+
+    color: #ffffff;
+
+
+    border: none;
+
+
+    font-size: 0.77rem;
+
+    font-weight: 700;
+
+
+    letter-spacing: 0.3px;
+
+
+    white-space: nowrap;
+}
+
+
+.batches-table tbody td {
+
+    padding: 14px 13px;
+
+
+    vertical-align: middle;
+
+
+    color: #294757;
+
+
+    border-bottom:
+            1px solid
+            #e7eef0;
+
+
+    background:
+            rgba(
+                    255,
+                    255,
+                    255,
+                    0.88
+            );
+}
+
+
+.batches-table tbody tr:last-child td {
+
+    border-bottom: none;
+}
+
+
+.batches-table tbody tr:hover td {
+
+    background: #f4fbfb;
+}
+
+
+/* Archived row */
+
+.batch-row-archived td {
+
+    opacity: 0.74;
+
+
+    background:
+            #f4f5f6 !important;
+}
+
+
+/* =========================================================
+   IMPORTANT TABLE VALUES
+   ========================================================= */
+
+.batch-number {
+
+    color: #087b84;
+
+
+    font-weight: 750;
+}
+
+
+.batch-material {
+
+    color: #0b3045;
+
+
+    font-weight: 700;
+}
+
+
+.batch-quantity {
+
+    color: #157347;
+
+
+    font-weight: 750;
+}
+
+
+/* =========================================================
+   BATCH STATUS
+   ========================================================= */
+
+.batch-status {
+
+    display: inline-flex;
+
+    align-items: center;
+
+
+    padding: 5px 10px;
+
+
+    border-radius: 999px;
+
+
+    font-size: 0.72rem;
+
+    font-weight: 750;
+
+
+    letter-spacing: 0.3px;
+}
+
+
+/* Active */
+
+.batch-status-active {
+
+    color: #157347;
+
+
+    background: #dff5e8;
+
+
+    border:
+            1px solid
+            #bee8cf;
+}
+
+
+/* Archived */
+
+.batch-status-archived {
+
+    color: #5f6970;
+
+
+    background: #e8ebed;
+
+
+    border:
+            1px solid
+            #d5dade;
+}
+
+
+/* Other */
+
+.batch-status-other {
+
+    color: #0d6170;
+
+
+    background: #daf1f4;
+
+
+    border:
+            1px solid
+            #b9e4e9;
+}
+
+
+/* =========================================================
+   BATCH ACTIONS
+   ========================================================= */
+
+.batch-actions {
+
+    display: flex;
+
+
+    align-items: center;
+
+
+    gap: 6px;
+
+
+    flex-wrap: wrap;
+}
+
+
+.batch-actions form {
+
+    margin: 0;
+}
+
+
+/* =========================================================
+   ACTION BUTTON BASE
+   ========================================================= */
+
+.batch-action-button {
+
+    display: inline-flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+
+    min-height: 32px;
+
+
+    padding: 6px 10px;
+
+
+    border: none;
+
+    border-radius: 8px;
+
+
+    text-decoration: none;
+
+
+    font-size: 0.75rem;
+
+    font-weight: 700;
+
+
+    cursor: pointer;
+
+
+    transition:
+            transform 0.16s ease,
+            box-shadow 0.16s ease;
+}
+
+
+.batch-action-button:hover {
+
+    transform: translateY(-1px);
+}
+
+
+/* =========================================================
+   EDIT BUTTON
+   ========================================================= */
+
+.batch-action-edit {
+
+    color: #725400;
+
+
+    background: #fff0b8;
+}
+
+
+.batch-action-edit:hover {
+
+    color: #634800;
+
+
+    box-shadow:
+            0 4px 10px
+            rgba(
+                    158,
+                    119,
+                    0,
+                    0.14
+            );
+}
+
+
+/* =========================================================
+   ARCHIVE BUTTON
+   ========================================================= */
+
+.batch-action-archive {
+
+    color: #4b5962;
+
+
+    background: #e4eaed;
+}
+
+
+.batch-action-archive:hover {
+
+    box-shadow:
+            0 4px 10px
+            rgba(
+                    62,
+                    78,
+                    87,
+                    0.12
+            );
+}
+
+
+/* =========================================================
+   RESTORE BUTTON
+   ========================================================= */
+
+.batch-action-restore {
+
+    color: #146c43;
+
+
+    background: #d8f1e4;
+}
+
+
+.batch-action-restore:hover {
+
+    box-shadow:
+            0 4px 10px
+            rgba(
+                    29,
+                    133,
+                    82,
+                    0.14
+            );
+}
+
+
+/* =========================================================
+   DELETE BUTTON
+   ========================================================= */
+
+.batch-action-delete {
+
+    color: #a52b37;
+
+
+    background: #fde2e5;
+}
+
+
+.batch-action-delete:hover {
+
+    box-shadow:
+            0 4px 10px
+            rgba(
+                    190,
+                    53,
+                    66,
+                    0.14
+            );
+}
+
+
+/* =========================================================
+   EMPTY STATE
+   ========================================================= */
+
+.batches-empty {
+
+    padding:
+            36px
+            20px !important;
+
+
+    text-align: center;
+
+
+    color:
+            #7c8d96 !important;
+}
+
+
+/* =========================================================
+   RESPONSIVE DESIGN
+   ========================================================= */
+
+@media (max-width: 900px) {
+
+    .batches-hero {
+
+        flex-direction: column;
+
+
+        align-items: flex-start;
+    }
+
+
+    .batches-hero-badge {
+
+        width: 100%;
+    }
+
+
+    .batches-panel-header {
+
+        flex-direction: column;
+
+
+        align-items: flex-start;
+    }
+
+
+    .batches-top-actions {
+
+        width: 100%;
+    }
+
+}
+
+
+@media (max-width: 576px) {
+
+    .batches-hero {
+
+        padding:
+                25px
+                21px;
+
+
+        border-radius: 18px;
+    }
+
+
+    .batches-panel {
+
+        padding: 17px;
+
+
+        border-radius: 18px;
+    }
+
+
+    .batches-top-actions {
+
+        flex-direction: column;
+    }
+
+
+    .batches-btn {
+
+        width: 100%;
+    }
+
+
+    .batch-actions {
+
+        min-width: 200px;
+    }
+
+}
