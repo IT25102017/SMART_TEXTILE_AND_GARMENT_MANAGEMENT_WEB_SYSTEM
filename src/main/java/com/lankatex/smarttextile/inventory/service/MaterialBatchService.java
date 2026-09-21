@@ -6,12 +6,20 @@ import com.lankatex.smarttextile.inventory.entity.StockMovement;
 import com.lankatex.smarttextile.inventory.repository.MaterialBatchRepository;
 import com.lankatex.smarttextile.inventory.repository.StockAdjustmentRepository;
 import com.lankatex.smarttextile.inventory.repository.StockMovementRepository;
+
+import com.lankatex.smarttextile.purchasing.entity.Supplier;
+import com.lankatex.smarttextile.purchasing.repository.SupplierRepository;
+
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 
 @Service
 public class MaterialBatchService {
@@ -22,15 +30,19 @@ public class MaterialBatchService {
 
     private final StockAdjustmentRepository adjustmentRepository;
 
+    private final SupplierRepository supplierRepository;
+
 
     public MaterialBatchService(
             MaterialBatchRepository batchRepository,
             StockMovementRepository movementRepository,
-            StockAdjustmentRepository adjustmentRepository) {
+            StockAdjustmentRepository adjustmentRepository,
+            SupplierRepository supplierRepository) {
 
         this.batchRepository = batchRepository;
         this.movementRepository = movementRepository;
         this.adjustmentRepository = adjustmentRepository;
+        this.supplierRepository = supplierRepository;
     }
 
 
@@ -62,12 +74,65 @@ public class MaterialBatchService {
 
 
     // =====================================================
+    // ACTIVE SUPPLIERS
+    //
+    // Used by Material Batch forms.
+    // Archived suppliers are excluded.
+    // =====================================================
+
+    public List<Supplier> getActiveSuppliers() {
+
+        return supplierRepository
+                .findAll(
+                        Sort.by(
+                                Sort.Direction.ASC,
+                                "supplierName"
+                        )
+                )
+                .stream()
+                .filter(supplier ->
+                        supplier.getStatus() == null ||
+                                !"ARCHIVED".equalsIgnoreCase(
+                                        supplier.getStatus()
+                                )
+                )
+                .toList();
+    }
+
+
+    // =====================================================
+    // SUPPLIER LOOKUP MAP
+    //
+    // Used by the batch list page to display
+    // supplier names instead of raw numeric IDs.
+    // =====================================================
+
+    public Map<Long, Supplier> getSupplierMap() {
+
+        return supplierRepository
+                .findAll()
+                .stream()
+                .collect(
+                        Collectors.toMap(
+                                Supplier::getSupplierId,
+                                Function.identity()
+                        )
+                );
+    }
+
+
+    // =====================================================
     // CREATE
     // =====================================================
 
     @Transactional
     public MaterialBatch createBatch(
             MaterialBatch batch) {
+
+        validateSupplier(
+                batch.getSupplierId()
+        );
+
 
         if (batch.getAvailableQty() == null ||
                 batch.getAvailableQty()
@@ -161,6 +226,11 @@ public class MaterialBatchService {
                 );
 
 
+        validateSupplier(
+                submittedBatch.getSupplierId()
+        );
+
+
         existing.setSupplierId(
                 submittedBatch.getSupplierId()
         );
@@ -219,6 +289,16 @@ public class MaterialBatchService {
 
         MaterialBatch batch =
                 getById(id);
+
+
+        /*
+         * If the batch has a Supplier relationship,
+         * the Supplier must still be valid before
+         * restoring the batch.
+         */
+        validateSupplier(
+                batch.getSupplierId()
+        );
 
 
         batch.setStatus(
@@ -315,5 +395,42 @@ public class MaterialBatchService {
         );
 
         batchRepository.flush();
+    }
+
+
+    // =====================================================
+    // SUPPLIER RELATIONSHIP VALIDATION
+    // =====================================================
+
+    private void validateSupplier(
+            Long supplierId) {
+
+        /*
+         * Supplier is currently optional in the existing
+         * database structure, so old records without a
+         * supplier remain valid.
+         */
+        if (supplierId == null) {
+            return;
+        }
+
+
+        Supplier supplier =
+                supplierRepository
+                        .findById(supplierId)
+                        .orElseThrow(() ->
+                                new IllegalArgumentException(
+                                        "Selected Supplier does not exist."
+                                )
+                        );
+
+
+        if ("ARCHIVED".equalsIgnoreCase(
+                supplier.getStatus())) {
+
+            throw new IllegalArgumentException(
+                    "Archived Suppliers cannot be used for a Material Batch."
+            );
+        }
     }
 }

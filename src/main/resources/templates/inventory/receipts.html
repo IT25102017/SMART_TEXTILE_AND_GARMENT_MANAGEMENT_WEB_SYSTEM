@@ -66,7 +66,7 @@
 
             <p>
                 Record and manage goods received from suppliers
-                against purchasing references while maintaining
+                against valid Purchase Orders while maintaining
                 clear inventory receiving records.
             </p>
 
@@ -120,7 +120,8 @@
 
 
                     <p class="receipts-panel-subtitle">
-                        View and manage goods receiving records.
+                        Track Purchase Orders, Suppliers and
+                        receiving information using readable references.
                     </p>
 
                 </div>
@@ -189,11 +190,11 @@
 
                 <tr>
 
-                    <th>Receipt ID</th>
+                    <th>GRN Number</th>
 
-                    <th>PO ID</th>
+                    <th>Purchase Order</th>
 
-                    <th>Supplier ID</th>
+                    <th>Supplier</th>
 
                     <th>Received Date</th>
 
@@ -217,42 +218,159 @@
                 <!-- Goods Receipt Records -->
 
                 <tr th:each="receipt : ${receipts}"
+                    th:with="purchaseOrder=${purchaseOrderMap.get(receipt.poId)},
+                             supplier=${supplierMap.get(receipt.supplierId)}"
                     th:classappend="${receipt.status == 'ARCHIVED'}
                     ? 'receipt-row-archived' : ''">
 
 
-                    <!-- Receipt ID -->
+                    <!-- =================================================
+                         GOODS RECEIPT NUMBER
+                         ================================================= -->
 
-                    <td class="receipt-id"
-                        th:text="${receipt.receiptId}">
+                    <td class="receipt-id">
+
+                        <strong th:text="${receipt.receiptCode}">
+                            GRN-001
+                        </strong>
+
                     </td>
 
 
-                    <!-- Purchase Order ID -->
 
-                    <td class="receipt-po"
-                        th:text="${receipt.poId}">
+                    <!-- =================================================
+                         PURCHASE ORDER
+                         ================================================= -->
+
+                    <td class="receipt-po">
+
+
+                        <span th:if="${receipt.poId != null}"
+                              class="fw-semibold"
+                              th:text="${'PO-'
+                              + #numbers.formatInteger(
+                                  receipt.poId,
+                                  3
+                                )}">
+
+                            PO-001
+
+                        </span>
+
+
+                        <span th:if="${receipt.poId == null}">
+                            -
+                        </span>
+
+
                     </td>
 
 
-                    <!-- Supplier ID -->
 
-                    <td class="receipt-supplier"
-                        th:text="${receipt.supplierId}">
+                    <!-- =================================================
+                         SUPPLIER
+                         ================================================= -->
+
+                    <td class="receipt-supplier">
+
+
+                        <!-- Supplier exists in Purchasing module -->
+
+                        <div th:if="${supplier != null}">
+
+                            <span class="fw-semibold"
+                                  th:text="${'SUP-'
+                                  + #numbers.formatInteger(
+                                      supplier.supplierId,
+                                      3
+                                    )}">
+
+                                SUP-001
+
+                            </span>
+
+
+                            <br>
+
+
+                            <small class="text-muted"
+                                   th:text="${supplier.supplierName}">
+
+                                Supplier Name
+
+                            </small>
+
+                        </div>
+
+
+
+                        <!-- Supplier record cannot be found -->
+
+                        <div th:if="${supplier == null
+                                    and receipt.supplierId != null}">
+
+                            <span class="fw-semibold"
+                                  th:text="${'SUP-'
+                                  + #numbers.formatInteger(
+                                      receipt.supplierId,
+                                      3
+                                    )}">
+
+                                SUP-001
+
+                            </span>
+
+
+                            <br>
+
+
+                            <small class="text-danger">
+                                Supplier record unavailable
+                            </small>
+
+                        </div>
+
+
+
+                        <span th:if="${receipt.supplierId == null}">
+                            -
+                        </span>
+
+
                     </td>
 
 
-                    <!-- Received Date -->
+
+                    <!-- =================================================
+                         RECEIVED DATE
+                         ================================================= -->
 
                     <td th:text="${receipt.receivedDate}">
                     </td>
 
 
-                    <!-- Received By -->
 
-                    <td th:text="${receipt.receivedBy != null
-                        ? receipt.receivedBy
-                        : '-'}">
+                    <!-- =================================================
+                         RECEIVED BY
+                         ================================================= -->
+
+                    <td>
+
+
+                        <span th:if="${receipt.receivedBy != null}"
+                              th:text="${'User ID '
+                              + receipt.receivedBy}">
+
+                            User ID 1
+
+                        </span>
+
+
+                        <span th:if="${receipt.receivedBy == null}">
+                            -
+                        </span>
+
+
                     </td>
 
 
@@ -308,11 +426,29 @@
                         </span>
 
 
+                        <!-- Fallback Status -->
+
+                        <span th:if="${receipt.status != 'RECEIVED'
+                                     and receipt.status != 'PENDING'
+                                     and receipt.status != 'REJECTED'
+                                     and receipt.status != 'ARCHIVED'}"
+                              class="receipt-status"
+                              th:text="${receipt.status != null
+                              ? receipt.status
+                              : 'UNKNOWN'}">
+
+                            UNKNOWN
+
+                        </span>
+
+
                     </td>
 
 
 
-                    <!-- Remarks -->
+                    <!-- =================================================
+                         REMARKS
+                         ================================================= -->
 
                     <td class="receipt-remarks"
                         th:text="${receipt.remarks != null

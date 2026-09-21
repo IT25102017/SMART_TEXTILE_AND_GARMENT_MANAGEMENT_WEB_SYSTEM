@@ -2,12 +2,16 @@ package com.lankatex.smarttextile.inventory.controller;
 
 import com.lankatex.smarttextile.inventory.entity.GoodsReceipt;
 import com.lankatex.smarttextile.inventory.service.GoodsReceiptService;
+
 import jakarta.validation.Valid;
+
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+
+import java.time.LocalDate;
 
 @Controller
 @RequestMapping("/inventory/receipts")
@@ -35,6 +39,20 @@ public class GoodsReceiptController {
                 receiptService.getAll()
         );
 
+        /*
+         * Lookup maps are used to display readable
+         * Purchasing information instead of raw IDs.
+         */
+        model.addAttribute(
+                "purchaseOrderMap",
+                receiptService.getPurchaseOrderMap()
+        );
+
+        model.addAttribute(
+                "supplierMap",
+                receiptService.getSupplierMap()
+        );
+
         return "inventory/receipts";
     }
 
@@ -46,15 +64,24 @@ public class GoodsReceiptController {
     @GetMapping("/new")
     public String newForm(Model model) {
 
-        model.addAttribute(
-                "receipt",
-                new GoodsReceipt()
+        GoodsReceipt receipt =
+                new GoodsReceipt();
+
+        receipt.setReceivedDate(
+                LocalDate.now()
         );
 
-        model.addAttribute(
-                "isEdit",
+        receipt.setStatus(
+                "RECEIVED"
+        );
+
+
+        prepareForm(
+                model,
+                receipt,
                 false
         );
+
 
         return "inventory/receipt-form";
     }
@@ -69,15 +96,12 @@ public class GoodsReceiptController {
             @PathVariable Long id,
             Model model) {
 
-        model.addAttribute(
-                "receipt",
-                receiptService.getById(id)
-        );
-
-        model.addAttribute(
-                "isEdit",
+        prepareForm(
+                model,
+                receiptService.getById(id),
                 true
         );
+
 
         return "inventory/receipt-form";
     }
@@ -102,8 +126,9 @@ public class GoodsReceiptController {
 
         if (result.hasErrors()) {
 
-            model.addAttribute(
-                    "isEdit",
+            prepareForm(
+                    model,
+                    receipt,
                     editing
             );
 
@@ -115,7 +140,9 @@ public class GoodsReceiptController {
 
             if (editing) {
 
-                receiptService.update(receipt);
+                receiptService.update(
+                        receipt
+                );
 
                 redirectAttributes
                         .addFlashAttribute(
@@ -125,7 +152,9 @@ public class GoodsReceiptController {
 
             } else {
 
-                receiptService.create(receipt);
+                receiptService.create(
+                        receipt
+                );
 
                 redirectAttributes
                         .addFlashAttribute(
@@ -141,8 +170,9 @@ public class GoodsReceiptController {
                     e.getMessage()
             );
 
-            model.addAttribute(
-                    "isEdit",
+            prepareForm(
+                    model,
+                    receipt,
                     editing
             );
 
@@ -244,5 +274,39 @@ public class GoodsReceiptController {
 
 
         return "redirect:/inventory/receipts";
+    }
+
+
+    // =====================================================
+    // FORM DATA
+    //
+    // Supplies Purchase Orders and Suppliers to the
+    // Goods Receipt form dropdowns.
+    // =====================================================
+
+    private void prepareForm(
+            Model model,
+            GoodsReceipt receipt,
+            boolean isEdit) {
+
+        model.addAttribute(
+                "receipt",
+                receipt
+        );
+
+        model.addAttribute(
+                "purchaseOrders",
+                receiptService.getAvailablePurchaseOrders()
+        );
+
+        model.addAttribute(
+                "suppliers",
+                receiptService.getActiveSuppliers()
+        );
+
+        model.addAttribute(
+                "isEdit",
+                isEdit
+        );
     }
 }

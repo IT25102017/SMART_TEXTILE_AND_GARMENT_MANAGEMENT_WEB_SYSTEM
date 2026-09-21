@@ -41,4 +41,19 @@ public class GoodsReceipt {
 
     @Column(name = "remarks", length = 500)
     private String remarks;
+
+    /*
+     * User-friendly Goods Receipt Number.
+     * This value is generated from the database receipt ID
+     * and is not stored as a separate database column.
+     */
+    @Transient
+    public String getReceiptCode() {
+
+        if (receiptId == null) {
+            return "GRN-NEW";
+        }
+
+        return String.format("GRN-%03d", receiptId);
+    }
 }

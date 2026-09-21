@@ -3,10 +3,20 @@ package com.lankatex.smarttextile.inventory.service;
 import com.lankatex.smarttextile.inventory.entity.GoodsReceipt;
 import com.lankatex.smarttextile.inventory.repository.GoodsReceiptRepository;
 import com.lankatex.smarttextile.inventory.repository.StockMovementRepository;
+
+import com.lankatex.smarttextile.purchasing.entity.PurchaseOrder;
+import com.lankatex.smarttextile.purchasing.entity.Supplier;
+import com.lankatex.smarttextile.purchasing.repository.PurchaseOrderRepository;
+import com.lankatex.smarttextile.purchasing.repository.SupplierRepository;
+
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Map;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 
 @Service
 public class GoodsReceiptService {
@@ -15,18 +25,26 @@ public class GoodsReceiptService {
 
     private final StockMovementRepository movementRepository;
 
+    private final PurchaseOrderRepository purchaseOrderRepository;
+
+    private final SupplierRepository supplierRepository;
+
 
     public GoodsReceiptService(
             GoodsReceiptRepository receiptRepository,
-            StockMovementRepository movementRepository) {
+            StockMovementRepository movementRepository,
+            PurchaseOrderRepository purchaseOrderRepository,
+            SupplierRepository supplierRepository) {
 
         this.receiptRepository = receiptRepository;
         this.movementRepository = movementRepository;
+        this.purchaseOrderRepository = purchaseOrderRepository;
+        this.supplierRepository = supplierRepository;
     }
 
 
     // =====================================================
-    // READ ALL
+    // READ ALL GOODS RECEIPTS
     // =====================================================
 
     public List<GoodsReceipt> getAll() {
@@ -37,7 +55,7 @@ public class GoodsReceiptService {
 
 
     // =====================================================
-    // READ ONE
+    // READ ONE GOODS RECEIPT
     // =====================================================
 
     public GoodsReceipt getById(Long id) {
@@ -53,6 +71,98 @@ public class GoodsReceiptService {
 
 
     // =====================================================
+    // AVAILABLE PURCHASE ORDERS
+    //
+    // Archived Purchase Orders are excluded from forms.
+    // =====================================================
+
+    public List<PurchaseOrder> getAvailablePurchaseOrders() {
+
+        return purchaseOrderRepository
+                .findAll(
+                        Sort.by(
+                                Sort.Direction.DESC,
+                                "poId"
+                        )
+                )
+                .stream()
+                .filter(order ->
+                        order.getStatus() == null ||
+                                !"ARCHIVED".equalsIgnoreCase(
+                                        order.getStatus()
+                                )
+                )
+                .toList();
+    }
+
+
+    // =====================================================
+    // ACTIVE SUPPLIERS
+    //
+    // Archived Suppliers are excluded from forms.
+    // =====================================================
+
+    public List<Supplier> getActiveSuppliers() {
+
+        return supplierRepository
+                .findAll(
+                        Sort.by(
+                                Sort.Direction.ASC,
+                                "supplierName"
+                        )
+                )
+                .stream()
+                .filter(supplier ->
+                        supplier.getStatus() == null ||
+                                !"ARCHIVED".equalsIgnoreCase(
+                                        supplier.getStatus()
+                                )
+                )
+                .toList();
+    }
+
+
+    // =====================================================
+    // PURCHASE ORDER LOOKUP MAP
+    //
+    // Used by the Goods Receipt list page.
+    // =====================================================
+
+    public Map<Long, PurchaseOrder> getPurchaseOrderMap() {
+
+        return purchaseOrderRepository
+                .findAll()
+                .stream()
+                .collect(
+                        Collectors.toMap(
+                                PurchaseOrder::getPoId,
+                                Function.identity()
+                        )
+                );
+    }
+
+
+    // =====================================================
+    // SUPPLIER LOOKUP MAP
+    //
+    // Used by the Goods Receipt list page.
+    // =====================================================
+
+    public Map<Long, Supplier> getSupplierMap() {
+
+        return supplierRepository
+                .findAll()
+                .stream()
+                .collect(
+                        Collectors.toMap(
+                                Supplier::getSupplierId,
+                                Function.identity()
+                        )
+                );
+    }
+
+
+    // =====================================================
     // CREATE
     // =====================================================
 
@@ -60,11 +170,26 @@ public class GoodsReceiptService {
     public GoodsReceipt create(
             GoodsReceipt receipt) {
 
+        validatePurchasingRelationship(
+                receipt.getPoId(),
+                receipt.getSupplierId()
+        );
+
+
+        if (receipt.getReceivedDate() == null) {
+
+            throw new IllegalArgumentException(
+                    "Received date is required."
+            );
+        }
+
+
         if (receipt.getStatus() == null ||
                 receipt.getStatus().isBlank()) {
 
             receipt.setStatus("RECEIVED");
         }
+
 
         return receiptRepository.save(receipt);
     }
@@ -90,7 +215,17 @@ public class GoodsReceiptService {
 
 
         GoodsReceipt existing =
-                getById(submittedReceipt.getReceiptId());
+                getById(
+                        submittedReceipt.getReceiptId()
+                );
+
+
+        if (submittedReceipt.getReceivedDate() == null) {
+
+            throw new IllegalArgumentException(
+                    "Received date is required."
+            );
+        }
 
 
         existing.setReceivedDate(
@@ -156,6 +291,17 @@ public class GoodsReceiptService {
         GoodsReceipt receipt =
                 getById(id);
 
+
+        /*
+         * Restoring is allowed only when the linked
+         * Purchase Order and Supplier are still valid.
+         */
+        validatePurchasingRelationship(
+                receipt.getPoId(),
+                receipt.getSupplierId()
+        );
+
+
         receipt.setStatus("RECEIVED");
 
         receiptRepository.save(receipt);
@@ -173,11 +319,6 @@ public class GoodsReceiptService {
                 getById(id);
 
 
-        /*
-         * Future-proof safety check:
-         * if this receipt is already referenced by a
-         * stock transaction, permanent deletion is blocked.
-         */
         boolean usedInStockMovement =
                 movementRepository
                         .existsByReferenceTypeIgnoreCaseAndReferenceId(
@@ -197,5 +338,78 @@ public class GoodsReceiptService {
         receiptRepository.delete(receipt);
 
         receiptRepository.flush();
+    }
+
+
+    // =====================================================
+    // PURCHASING RELATIONSHIP VALIDATION
+    // =====================================================
+
+    private void validatePurchasingRelationship(
+            Long poId,
+            Long supplierId) {
+
+        if (poId == null) {
+
+            throw new IllegalArgumentException(
+                    "Purchase Order is required."
+            );
+        }
+
+
+        if (supplierId == null) {
+
+            throw new IllegalArgumentException(
+                    "Supplier is required."
+            );
+        }
+
+
+        PurchaseOrder purchaseOrder =
+                purchaseOrderRepository
+                        .findById(poId)
+                        .orElseThrow(() ->
+                                new IllegalArgumentException(
+                                        "Selected Purchase Order does not exist."
+                                )
+                        );
+
+
+        Supplier supplier =
+                supplierRepository
+                        .findById(supplierId)
+                        .orElseThrow(() ->
+                                new IllegalArgumentException(
+                                        "Selected Supplier does not exist."
+                                )
+                        );
+
+
+        if ("ARCHIVED".equalsIgnoreCase(
+                purchaseOrder.getStatus())) {
+
+            throw new IllegalArgumentException(
+                    "Archived Purchase Orders cannot be used for a Goods Receipt."
+            );
+        }
+
+
+        if ("ARCHIVED".equalsIgnoreCase(
+                supplier.getStatus())) {
+
+            throw new IllegalArgumentException(
+                    "Archived Suppliers cannot be used for a Goods Receipt."
+            );
+        }
+
+
+        if (purchaseOrder.getSupplierId() == null ||
+                !purchaseOrder.getSupplierId()
+                        .equals(supplierId)) {
+
+            throw new IllegalArgumentException(
+                    "The selected Supplier does not match the Supplier assigned to this Purchase Order."
+            );
+        }
     }
 }

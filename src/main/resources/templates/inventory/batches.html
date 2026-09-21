@@ -66,7 +66,7 @@
 
             <p>
                 Track received textile material batches,
-                supplier references, unit costs, available
+                connected suppliers, unit costs, available
                 quantities and warehouse locations from one
                 inventory workspace.
             </p>
@@ -102,7 +102,9 @@
     <section class="batches-panel">
 
 
-        <!-- Panel Header -->
+        <!-- =================================================
+             PANEL HEADER
+             ================================================= -->
 
         <div class="batches-panel-header">
 
@@ -123,8 +125,8 @@
 
 
                     <p class="batches-panel-subtitle">
-                        Review and manage received material
-                        batches currently recorded in inventory.
+                        Review material, supplier, stock and
+                        warehouse information for every batch.
                     </p>
 
                 </div>
@@ -141,13 +143,17 @@
 
                 <a class="batches-btn batches-btn-back"
                    th:href="@{/inventory}">
+
                     Back to Dashboard
+
                 </a>
 
 
                 <a class="batches-btn batches-btn-add"
                    th:href="@{/inventory/batches/new}">
+
                     + Receive Material Batch
+
                 </a>
 
 
@@ -198,7 +204,7 @@
 
                     <th>Material</th>
 
-                    <th>Supplier ID</th>
+                    <th>Supplier</th>
 
                     <th>Received Date</th>
 
@@ -226,48 +232,168 @@
                      ================================================= -->
 
                 <tr th:each="batch : ${batches}"
+                    th:with="supplier=${batch.supplierId != null
+                    ? supplierMap.get(batch.supplierId)
+                    : null}"
                     th:classappend="${batch.status == 'ARCHIVED'}
-                    ? 'batch-row-archived' : ''">
+                    ? 'batch-row-archived'
+                    : ''">
 
 
-                    <!-- Batch Number -->
+                    <!-- =================================================
+                         BATCH NUMBER
+                         ================================================= -->
 
-                    <td class="batch-number"
-                        th:text="${batch.batchNo}">
+                    <td class="batch-number">
+
+                        <strong th:text="${batch.batchNo}">
+                            B001
+                        </strong>
+
                     </td>
 
 
 
-                    <!-- Material -->
+                    <!-- =================================================
+                         MATERIAL
+                         ================================================= -->
 
-                    <td class="batch-material"
-                        th:text="${batch.material.materialName}">
+                    <td class="batch-material">
+
+
+                        <strong th:text="${batch.material.materialCode}">
+                            MAT-001
+                        </strong>
+
+
+                        <br>
+
+
+                        <small class="text-muted"
+                               th:text="${batch.material.materialName}">
+                            Material Name
+                        </small>
+
+
                     </td>
 
 
 
-                    <!-- Supplier -->
+                    <!-- =================================================
+                         SUPPLIER
+                         ================================================= -->
 
-                    <td th:text="${batch.supplierId}">
+                    <td>
+
+
+                        <!-- Valid Supplier -->
+
+                        <div th:if="${supplier != null}">
+
+
+                            <strong th:text="${'SUP-'
+                            + #numbers.formatInteger(
+                                supplier.supplierId,
+                                3
+                              )}">
+
+                                SUP-001
+
+                            </strong>
+
+
+                            <br>
+
+
+                            <small class="text-muted"
+                                   th:text="${supplier.supplierName}">
+
+                                Supplier Name
+
+                            </small>
+
+
+                        </div>
+
+
+
+                        <!-- Supplier ID exists but record unavailable -->
+
+                        <div th:if="${supplier == null
+                                    and batch.supplierId != null}">
+
+
+                            <strong th:text="${'SUP-'
+                            + #numbers.formatInteger(
+                                batch.supplierId,
+                                3
+                              )}">
+
+                                SUP-001
+
+                            </strong>
+
+
+                            <br>
+
+
+                            <small class="text-danger">
+                                Supplier record unavailable
+                            </small>
+
+
+                        </div>
+
+
+
+                        <!-- No Supplier -->
+
+                        <span th:if="${batch.supplierId == null}"
+                              class="text-muted">
+
+                            -
+
+                        </span>
+
+
                     </td>
 
 
 
-                    <!-- Received Date -->
+                    <!-- =================================================
+                         RECEIVED DATE
+                         ================================================= -->
 
                     <td th:text="${batch.receivedDate}">
                     </td>
 
 
 
-                    <!-- Unit Cost -->
+                    <!-- =================================================
+                         UNIT COST
+                         ================================================= -->
 
-                    <td th:text="${batch.unitCost}">
+                    <td>
+
+
+                        <span th:if="${batch.unitCost != null}"
+                              th:text="${batch.unitCost}">
+                            0.00
+                        </span>
+
+
+                        <span th:if="${batch.unitCost == null}">
+                            -
+                        </span>
+
+
                     </td>
 
 
 
-                    <!-- Available Quantity -->
+                    <!-- =================================================
+                         AVAILABLE QUANTITY
+                         ================================================= -->
 
                     <td class="batch-quantity"
                         th:text="${batch.availableQty}">
@@ -275,9 +401,14 @@
 
 
 
-                    <!-- Location -->
+                    <!-- =================================================
+                         LOCATION
+                         ================================================= -->
 
-                    <td th:text="${batch.location}">
+                    <td th:text="${batch.location != null
+                    and !#strings.isEmpty(batch.location)
+                    ? batch.location
+                    : '-'}">
                     </td>
 
 
@@ -319,7 +450,11 @@
                                       and batch.status != 'ARCHIVED'}"
                               class="batch-status
                                      batch-status-other"
-                              th:text="${batch.status}">
+                              th:text="${batch.status != null
+                              ? batch.status
+                              : 'UNKNOWN'}">
+
+                            UNKNOWN
 
                         </span>
 
@@ -338,9 +473,7 @@
                         <div class="batch-actions">
 
 
-                            <!-- =============================
-                                 EDIT
-                                 ============================= -->
+                            <!-- Edit -->
 
                             <a class="batch-action-button
                                       batch-action-edit"
@@ -353,9 +486,7 @@
 
 
 
-                            <!-- =============================
-                                 ARCHIVE
-                                 ============================= -->
+                            <!-- Archive -->
 
                             <form th:if="${batch.status == 'ACTIVE'}"
                                   method="post"
@@ -379,9 +510,7 @@
 
 
 
-                            <!-- =============================
-                                 RESTORE
-                                 ============================= -->
+                            <!-- Restore -->
 
                             <form th:if="${batch.status == 'ARCHIVED'}"
                                   method="post"
@@ -405,9 +534,7 @@
 
 
 
-                            <!-- =============================
-                                 DELETE
-                                 ============================= -->
+                            <!-- Delete -->
 
                             <form method="post"
                                   th:action="@{/inventory/batches/delete/{id}

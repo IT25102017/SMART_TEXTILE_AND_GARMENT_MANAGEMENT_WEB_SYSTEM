@@ -3,12 +3,16 @@ package com.lankatex.smarttextile.inventory.controller;
 import com.lankatex.smarttextile.inventory.entity.MaterialBatch;
 import com.lankatex.smarttextile.inventory.service.MaterialBatchService;
 import com.lankatex.smarttextile.inventory.service.MaterialService;
+
 import jakarta.validation.Valid;
+
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+
+import java.time.LocalDate;
 
 @Controller
 @RequestMapping("/inventory/batches")
@@ -40,6 +44,18 @@ public class MaterialBatchController {
                 batchService.getAll()
         );
 
+
+        /*
+         * Supplier lookup information is used by the
+         * batch list page to display readable supplier
+         * information instead of raw numeric IDs.
+         */
+        model.addAttribute(
+                "supplierMap",
+                batchService.getSupplierMap()
+        );
+
+
         return "inventory/batches";
     }
 
@@ -51,21 +67,21 @@ public class MaterialBatchController {
     @GetMapping("/new")
     public String newForm(Model model) {
 
-        model.addAttribute(
-                "batch",
-                new MaterialBatch()
+        MaterialBatch batch =
+                new MaterialBatch();
+
+
+        batch.setReceivedDate(
+                LocalDate.now()
         );
 
-        model.addAttribute(
-                "materials",
-                materialService
-                        .getActiveMaterials(null)
-        );
 
-        model.addAttribute(
-                "isEdit",
+        prepareForm(
+                model,
+                batch,
                 false
         );
+
 
         return "inventory/batch-form";
     }
@@ -80,21 +96,12 @@ public class MaterialBatchController {
             @PathVariable Long id,
             Model model) {
 
-        model.addAttribute(
-                "batch",
-                batchService.getById(id)
-        );
-
-        model.addAttribute(
-                "materials",
-                materialService
-                        .getActiveMaterials(null)
-        );
-
-        model.addAttribute(
-                "isEdit",
+        prepareForm(
+                model,
+                batchService.getById(id),
                 true
         );
+
 
         return "inventory/batch-form";
     }
@@ -110,7 +117,8 @@ public class MaterialBatchController {
             @ModelAttribute("batch")
             MaterialBatch batch,
             BindingResult result,
-            @RequestParam Long materialId,
+            @RequestParam(required = false)
+            Long materialId,
             Model model,
             RedirectAttributes redirectAttributes) {
 
@@ -119,25 +127,18 @@ public class MaterialBatchController {
 
 
         /*
-         * Set material so validation and the form
-         * have the correct Material object.
+         * Material selection is required for a batch.
          */
-        batch.setMaterial(
-                materialService
-                        .getById(materialId)
-        );
-
-
-        if (result.hasErrors()) {
+        if (materialId == null) {
 
             model.addAttribute(
-                    "materials",
-                    materialService
-                            .getActiveMaterials(null)
+                    "error",
+                    "Material is required."
             );
 
-            model.addAttribute(
-                    "isEdit",
+            prepareForm(
+                    model,
+                    batch,
                     editing
             );
 
@@ -146,6 +147,30 @@ public class MaterialBatchController {
 
 
         try {
+
+            /*
+             * Set the selected Material object.
+             *
+             * During update, the service preserves the
+             * original material to protect stock history.
+             */
+            batch.setMaterial(
+                    materialService
+                            .getById(materialId)
+            );
+
+
+            if (result.hasErrors()) {
+
+                prepareForm(
+                        model,
+                        batch,
+                        editing
+                );
+
+                return "inventory/batch-form";
+            }
+
 
             if (editing) {
 
@@ -180,16 +205,13 @@ public class MaterialBatchController {
                     e.getMessage()
             );
 
-            model.addAttribute(
-                    "materials",
-                    materialService
-                            .getActiveMaterials(null)
-            );
 
-            model.addAttribute(
-                    "isEdit",
+            prepareForm(
+                    model,
+                    batch,
                     editing
             );
+
 
             return "inventory/batch-form";
         }
@@ -295,5 +317,44 @@ public class MaterialBatchController {
 
 
         return "redirect:/inventory/batches";
+    }
+
+
+    // =====================================================
+    // FORM DATA
+    //
+    // Supplies Materials and active Suppliers to the
+    // Material Batch create/edit form.
+    // =====================================================
+
+    private void prepareForm(
+            Model model,
+            MaterialBatch batch,
+            boolean isEdit) {
+
+        model.addAttribute(
+                "batch",
+                batch
+        );
+
+
+        model.addAttribute(
+                "materials",
+                materialService
+                        .getActiveMaterials(null)
+        );
+
+
+        model.addAttribute(
+                "suppliers",
+                batchService
+                        .getActiveSuppliers()
+        );
+
+
+        model.addAttribute(
+                "isEdit",
+                isEdit
+        );
     }
 }

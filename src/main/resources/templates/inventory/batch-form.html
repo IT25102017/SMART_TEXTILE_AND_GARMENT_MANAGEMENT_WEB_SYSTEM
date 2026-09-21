@@ -54,10 +54,6 @@
 <main class="inventory-container inventory-form-workspace">
 
 
-    <!-- =====================================================
-         MATERIAL BATCH FORM CARD
-         ===================================================== -->
-
     <section class="inventory-form-card">
 
 
@@ -67,7 +63,6 @@
 
         <div class="inventory-form-heading">
 
-
             <span class="inventory-form-eyebrow">
                 LankaTex Inventory
             </span>
@@ -76,15 +71,16 @@
             <h1 th:text="${isEdit}
                         ? 'Edit Material Batch'
                         : 'Receive Material Batch'">
+
                 Material Batch
+
             </h1>
 
 
             <p th:text="${isEdit}
                        ? 'Update the editable information for this material batch while preserving its stock history.'
-                       : 'Record a newly received textile material batch and its receiving information.'">
+                       : 'Record a newly received textile material batch and connect it with a valid supplier.'">
             </p>
-
 
         </div>
 
@@ -102,7 +98,7 @@
 
 
         <!-- =================================================
-             MATERIAL BATCH FORM
+             FORM
              ================================================= -->
 
         <form method="post"
@@ -118,19 +114,21 @@
 
 
             <!-- =================================================
-                 MATERIAL INFORMATION
+                 MATERIAL & SUPPLIER INFORMATION
                  ================================================= -->
 
             <div class="inventory-form-section">
 
 
                 <h2 class="inventory-form-section-title">
-                    Material Information
+                    Material &amp; Supplier Information
                 </h2>
 
 
 
-                <!-- Material -->
+                <!-- =================================================
+                     MATERIAL
+                     ================================================= -->
 
                 <div class="mb-3">
 
@@ -148,19 +146,23 @@
 
                         <option value=""
                                 disabled
-                                selected>
+                                th:selected="${batch.material == null}">
                             Select Material
                         </option>
 
 
                         <option th:each="material : ${materials}"
                                 th:value="${material.materialId}"
+                                th:selected="${batch.material != null
+                                and batch.material.materialId
+                                == material.materialId}"
                                 th:text="${material.materialCode
                                 + ' - '
                                 + material.materialName}">
                         </option>
 
                     </select>
+
 
 
                     <!-- Edit Mode -->
@@ -184,7 +186,8 @@
                            class="inventory-field-help">
 
                         Material cannot be changed after the batch
-                        has been received.
+                        has been received because stock transactions
+                        already depend on it.
 
                     </small>
 
@@ -192,23 +195,49 @@
 
 
 
-                <!-- Supplier ID -->
+                <!-- =================================================
+                     SUPPLIER
+                     ================================================= -->
 
                 <div class="mb-3">
 
                     <label class="form-label">
-                        Supplier ID
+                        Supplier
                     </label>
 
 
-                    <input type="number"
-                           class="form-control"
-                           th:field="*{supplierId}"
-                           placeholder="Example: 1">
+                    <select class="form-select"
+                            th:field="*{supplierId}">
+
+
+                        <option value="">
+                            No Supplier / Select Supplier
+                        </option>
+
+
+                        <option th:each="supplier : ${suppliers}"
+                                th:value="${supplier.supplierId}"
+                                th:text="${'SUP-'
+                                + #numbers.formatInteger(
+                                    supplier.supplierId,
+                                    3
+                                  )
+                                + ' - '
+                                + supplier.supplierName}">
+
+                            SUP-001 - Supplier Name
+
+                        </option>
+
+
+                    </select>
 
 
                     <small class="inventory-field-help">
-                        Enter the supplier reference related to this batch.
+
+                        Only active Suppliers from the Purchasing
+                        module are available for selection.
+
                     </small>
 
                 </div>
@@ -243,8 +272,16 @@
                     <input type="text"
                            class="form-control"
                            th:field="*{batchNo}"
-                           placeholder="Example: BATCH-001"
+                           placeholder="Example: B001"
                            required>
+
+
+                    <small class="inventory-field-help">
+
+                        Use a clear batch reference such as B001,
+                        B002 or BATCH-001.
+
+                    </small>
 
                 </div>
 
@@ -344,8 +381,8 @@
                     <small th:if="${isEdit}"
                            class="inventory-field-help">
 
-                        Quantity cannot be edited because stock transactions
-                        already depend on this value.
+                        Quantity cannot be edited because stock
+                        transactions already depend on this value.
 
                     </small>
 
@@ -353,13 +390,56 @@
                     <small th:if="${!isEdit}"
                            class="inventory-field-help">
 
-                        This quantity will be used as the initial available
-                        quantity for the material batch.
+                        Saving a new batch automatically creates
+                        its initial STOCK_IN transaction.
 
                     </small>
 
                 </div>
 
+
+            </div>
+
+
+
+            <!-- =================================================
+                 CURRENT RECORD INFORMATION
+                 ================================================= -->
+
+            <div th:if="${isEdit}"
+                 class="inventory-form-section">
+
+
+                <h2 class="inventory-form-section-title">
+                    Current Record
+                </h2>
+
+
+                <div class="alert alert-light border mb-0">
+
+                    <strong>
+                        Batch:
+                    </strong>
+
+                    <span th:text="${batch.batchNo}">
+                        B001
+                    </span>
+
+
+                    <span class="mx-2">
+                        |
+                    </span>
+
+
+                    <strong>
+                        Status:
+                    </strong>
+
+                    <span th:text="${batch.status}">
+                        ACTIVE
+                    </span>
+
+                </div>
 
             </div>
 
