@@ -1,0 +1,393 @@
+<!DOCTYPE html>
+<html lang="en"
+      xmlns:th="http://www.thymeleaf.org">
+
+<head>
+
+  <meta charset="UTF-8">
+
+  <meta name="viewport"
+        content="width=device-width, initial-scale=1">
+
+  <title>
+    Employee Management - LankaTex
+  </title>
+
+  <!-- Bootstrap CSS -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
+        rel="stylesheet">
+
+  <!-- Common LankaTex Navigation CSS -->
+  <link rel="stylesheet"
+        th:href="@{/css/common-navbar.css}">
+
+</head>
+
+
+<body class="bg-light">
+
+
+<!-- Common LankaTex Navigation Bar -->
+<div th:replace="~{fragments/common-navbar :: navbar}"></div>
+
+
+<div class="container py-4">
+
+
+  <!-- Page Header -->
+  <div class="d-flex justify-content-between align-items-center mb-4">
+
+    <h2>
+      Employee Management
+    </h2>
+
+    <a class="btn btn-dark"
+       th:href="@{/hr}">
+      Back to Dashboard
+    </a>
+
+  </div>
+
+
+  <!-- HR Module Navigation -->
+  <div class="mb-3">
+
+    <a class="btn btn-primary btn-sm me-2 mb-2"
+       th:href="@{/hr/employees}">
+      Employee
+    </a>
+
+    <a class="btn btn-outline-primary btn-sm me-2 mb-2"
+       th:href="@{/hr/shifts}">
+      Shift
+    </a>
+
+    <a class="btn btn-outline-primary btn-sm me-2 mb-2"
+       th:href="@{/hr/attendance}">
+      Attendance Record
+    </a>
+
+    <a class="btn btn-outline-primary btn-sm me-2 mb-2"
+       th:href="@{/hr/leaves}">
+      Leave Request
+    </a>
+
+  </div>
+
+
+  <!-- Success Message -->
+  <div th:if="${message}"
+       class="alert alert-success"
+       th:text="${message}">
+  </div>
+
+
+  <!-- Error Message -->
+  <div th:if="${error}"
+       class="alert alert-danger"
+       th:text="${error}">
+  </div>
+
+
+  <!-- Employee Form -->
+  <div class="card shadow-sm mb-4">
+
+    <div class="card-header">
+
+      <strong>
+        Add / Edit Employee
+      </strong>
+
+    </div>
+
+
+    <div class="card-body">
+
+      <form th:action="@{/hr/employees/save}"
+            th:object="${employee}"
+            method="post">
+
+
+        <input type="hidden"
+               th:field="*{employeeId}">
+
+
+        <div class="row">
+
+
+          <!-- Employee Code -->
+          <div class="col-md-6 mb-3">
+
+            <label class="form-label">
+              Employee Code
+            </label>
+
+            <input class="form-control"
+                   type="text"
+                   th:field="*{employeeCode}"
+                   required>
+
+          </div>
+
+
+          <!-- Full Name -->
+          <div class="col-md-6 mb-3">
+
+            <label class="form-label">
+              Full Name
+            </label>
+
+            <input class="form-control"
+                   type="text"
+                   th:field="*{fullName}"
+                   required>
+
+          </div>
+
+
+          <!-- NIC Number -->
+          <div class="col-md-6 mb-3">
+
+            <label class="form-label">
+              NIC Number
+            </label>
+
+            <input class="form-control"
+                   type="text"
+                   th:field="*{nicNo}"
+                   required>
+
+          </div>
+
+
+          <!-- Department ID -->
+          <div class="col-md-6 mb-3">
+
+            <label class="form-label">
+              Department ID
+            </label>
+
+            <input class="form-control"
+                   type="number"
+                   th:field="*{departmentId}">
+
+          </div>
+
+
+          <!-- Designation -->
+          <div class="col-md-6 mb-3">
+
+            <label class="form-label">
+              Designation
+            </label>
+
+            <input class="form-control"
+                   type="text"
+                   th:field="*{designation}"
+                   required>
+
+          </div>
+
+
+          <!-- Employment Type -->
+          <div class="col-md-6 mb-3">
+
+            <label class="form-label">
+              Employment Type
+            </label>
+
+            <input class="form-control"
+                   type="text"
+                   th:field="*{employmentType}"
+                   required>
+
+          </div>
+
+
+          <!-- Status -->
+          <div class="col-md-6 mb-3">
+
+            <label class="form-label">
+              Status
+            </label>
+
+            <input class="form-control"
+                   type="text"
+                   th:field="*{status}">
+
+          </div>
+
+
+        </div>
+
+
+        <button class="btn btn-success"
+                type="submit">
+          Save
+        </button>
+
+
+        <a class="btn btn-secondary"
+           th:href="@{/hr/employees}">
+          Clear
+        </a>
+
+
+      </form>
+
+    </div>
+
+  </div>
+
+
+  <!-- Employee List -->
+  <div class="card shadow-sm">
+
+    <div class="card-header">
+
+      <strong>
+        Employee List
+      </strong>
+
+    </div>
+
+
+    <div class="card-body table-responsive">
+
+      <table class="table table-striped table-bordered align-middle">
+
+
+        <thead class="table-dark">
+
+        <tr>
+
+          <th>ID</th>
+          <th>Employee Code</th>
+          <th>Full Name</th>
+          <th>NIC Number</th>
+          <th>Department ID</th>
+          <th>Designation</th>
+          <th>Employment Type</th>
+          <th>Status</th>
+          <th>Actions</th>
+
+        </tr>
+
+        </thead>
+
+
+        <tbody>
+
+
+        <tr th:each="row : ${employeesList}">
+
+
+          <td th:text="${row.employeeId}">
+          </td>
+
+
+          <td th:text="${row.employeeCode}">
+          </td>
+
+
+          <td th:text="${row.fullName}">
+          </td>
+
+
+          <td th:text="${row.nicNo}">
+          </td>
+
+
+          <td th:text="${row.departmentId}">
+          </td>
+
+
+          <td th:text="${row.designation}">
+          </td>
+
+
+          <td th:text="${row.employmentType}">
+          </td>
+
+
+          <!-- Status -->
+          <td>
+
+                        <span th:if="${row.status == 'Active'}"
+                              class="badge bg-success">
+                            Active
+                        </span>
+
+            <span th:if="${row.status == 'Archived'}"
+                  class="badge bg-secondary">
+                            Archived
+                        </span>
+
+            <span th:if="${row.status != 'Active'
+                                      and row.status != 'Archived'}"
+                  class="badge bg-info text-dark"
+                  th:text="${row.status}">
+                        </span>
+
+          </td>
+
+
+          <!-- Actions -->
+          <td class="text-nowrap">
+
+
+            <!-- Edit -->
+            <a class="btn btn-warning btn-sm"
+               th:href="@{/hr/employees(editId=${row.employeeId})}">
+              Edit
+            </a>
+
+
+            <!-- Archive - only Active -->
+            <a th:if="${row.status != 'Archived'}"
+               class="btn btn-secondary btn-sm"
+               th:href="@{/hr/employees/archive/{id}(id=${row.employeeId})}"
+               onclick="return confirm('Archive this employee record?');">
+              Archive
+            </a>
+
+
+            <!-- Restore - only Archived -->
+            <a th:if="${row.status == 'Archived'}"
+               class="btn btn-success btn-sm"
+               th:href="@{/hr/employees/restore/{id}(id=${row.employeeId})}"
+               onclick="return confirm('Restore this employee back to Active status?');">
+              Restore
+            </a>
+
+
+            <!-- Permanent Delete -->
+            <a class="btn btn-danger btn-sm"
+               th:href="@{/hr/employees/delete/{id}(id=${row.employeeId})}"
+               onclick="return confirm('WARNING: This will permanently delete the employee. Are you sure?');">
+              Delete
+            </a>
+
+
+          </td>
+
+
+        </tr>
+
+
+        </tbody>
+
+
+      </table>
+
+    </div>
+
+  </div>
+
+
+</div>
+
+
+</body>
+
+</html>
