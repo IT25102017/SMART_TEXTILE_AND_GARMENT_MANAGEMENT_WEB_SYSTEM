@@ -9,7 +9,6 @@ import com.lankatex.smarttextile.quality.repository.DefectRecordRepository;
 import com.lankatex.smarttextile.quality.repository.QualityHoldRepository;
 import com.lankatex.smarttextile.quality.repository.QualityInspectionRepository;
 import com.lankatex.smarttextile.quality.repository.WastageRecordRepository;
-
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -54,7 +53,7 @@ public class QualityService {
 
 
     // =========================================================
-    // QUALITY INSPECTION CRUD
+    // QUALITY INSPECTION
     // =========================================================
 
     public List<QualityInspection> getAllQualityInspections() {
@@ -67,6 +66,7 @@ public class QualityService {
         );
     }
 
+
     public QualityInspection getQualityInspection(Long id) {
 
         return qualityInspectionRepository.findById(id)
@@ -76,7 +76,7 @@ public class QualityService {
                         ));
     }
 
-    // CREATE / UPDATE
+
     public QualityInspection saveQualityInspection(
             QualityInspection qualityInspection) {
 
@@ -113,7 +113,8 @@ public class QualityService {
         );
     }
 
-    // SOFT DELETE / ARCHIVE
+
+    // Archive Quality Inspection
     public void archiveQualityInspection(Long id) {
 
         QualityInspection qualityInspection =
@@ -126,7 +127,22 @@ public class QualityService {
         );
     }
 
-    // HARD DELETE
+
+    // Restore Quality Inspection
+    public void restoreQualityInspection(Long id) {
+
+        QualityInspection qualityInspection =
+                getQualityInspection(id);
+
+        qualityInspection.setStatus("Pending");
+
+        qualityInspectionRepository.save(
+                qualityInspection
+        );
+    }
+
+
+    // Permanently Delete Quality Inspection
     public void deleteQualityInspection(Long id) {
 
         if (!qualityInspectionRepository.existsById(id)) {
@@ -143,7 +159,7 @@ public class QualityService {
 
 
     // =========================================================
-    // DEFECT RECORD CRUD
+    // DEFECT RECORD
     // =========================================================
 
     public List<DefectRecord> getAllDefectRecords() {
@@ -156,6 +172,7 @@ public class QualityService {
         );
     }
 
+
     public DefectRecord getDefectRecord(Long id) {
 
         return defectRecordRepository.findById(id)
@@ -165,7 +182,7 @@ public class QualityService {
                         ));
     }
 
-    // CREATE / UPDATE
+
     public DefectRecord saveDefectRecord(
             DefectRecord defectRecord) {
 
@@ -205,7 +222,8 @@ public class QualityService {
         );
     }
 
-    // HARD DELETE
+
+    // Permanently Delete Defect Record
     public void deleteDefectRecord(Long id) {
 
         if (!defectRecordRepository.existsById(id)) {
@@ -222,7 +240,7 @@ public class QualityService {
 
 
     // =========================================================
-    // WASTAGE RECORD CRUD
+    // WASTAGE RECORD
     // =========================================================
 
     public List<WastageRecord> getAllWastageRecords() {
@@ -235,6 +253,7 @@ public class QualityService {
         );
     }
 
+
     public WastageRecord getWastageRecord(Long id) {
 
         return wastageRecordRepository.findById(id)
@@ -244,7 +263,7 @@ public class QualityService {
                         ));
     }
 
-    // CREATE / UPDATE
+
     public WastageRecord saveWastageRecord(
             WastageRecord wastageRecord) {
 
@@ -282,7 +301,8 @@ public class QualityService {
         );
     }
 
-    // SOFT DELETE
+
+    // Archive Wastage Record
     public void archiveWastageRecord(Long id) {
 
         WastageRecord wastageRecord =
@@ -295,7 +315,22 @@ public class QualityService {
         );
     }
 
-    // HARD DELETE
+
+    // Restore Wastage Record
+    public void restoreWastageRecord(Long id) {
+
+        WastageRecord wastageRecord =
+                getWastageRecord(id);
+
+        wastageRecord.setApprovalStatus("Pending");
+
+        wastageRecordRepository.save(
+                wastageRecord
+        );
+    }
+
+
+    // Permanently Delete Wastage Record
     public void deleteWastageRecord(Long id) {
 
         if (!wastageRecordRepository.existsById(id)) {
@@ -312,7 +347,7 @@ public class QualityService {
 
 
     // =========================================================
-    // QUALITY HOLD CRUD
+    // QUALITY HOLD
     // =========================================================
 
     public List<QualityHold> getAllQualityHolds() {
@@ -325,6 +360,7 @@ public class QualityService {
         );
     }
 
+
     public QualityHold getQualityHold(Long id) {
 
         return qualityHoldRepository.findById(id)
@@ -334,7 +370,7 @@ public class QualityService {
                         ));
     }
 
-    // CREATE / UPDATE
+
     public QualityHold saveQualityHold(
             QualityHold qualityHold) {
 
@@ -364,7 +400,8 @@ public class QualityService {
         );
     }
 
-    // SOFT DELETE
+
+    // Archive Quality Hold
     public void archiveQualityHold(Long id) {
 
         QualityHold qualityHold =
@@ -377,7 +414,22 @@ public class QualityService {
         );
     }
 
-    // HARD DELETE
+
+    // Restore Quality Hold
+    public void restoreQualityHold(Long id) {
+
+        QualityHold qualityHold =
+                getQualityHold(id);
+
+        qualityHold.setStatus("Pending");
+
+        qualityHoldRepository.save(
+                qualityHold
+        );
+    }
+
+
+    // Permanently Delete Quality Hold
     public void deleteQualityHold(Long id) {
 
         if (!qualityHoldRepository.existsById(id)) {

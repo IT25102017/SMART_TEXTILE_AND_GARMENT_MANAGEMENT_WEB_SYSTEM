@@ -32,4 +32,20 @@ public class MaterialCategory {
 
     @Column(name = "status", nullable = false)
     private String status = "ACTIVE";
+
+
+    // User-friendly category code for display purposes.
+    // This value is not stored as a separate database column.
+    @Transient
+    public String getCategoryCode() {
+
+        if (categoryId == null) {
+            return "CAT-NEW";
+        }
+
+        return String.format(
+                "CAT-%03d",
+                categoryId
+        );
+    }
 }

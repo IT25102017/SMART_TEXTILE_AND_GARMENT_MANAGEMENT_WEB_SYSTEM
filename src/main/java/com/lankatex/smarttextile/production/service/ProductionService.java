@@ -9,7 +9,6 @@ import com.lankatex.smarttextile.production.repository.MaterialIssueNoteReposito
 import com.lankatex.smarttextile.production.repository.MaterialRequestRepository;
 import com.lankatex.smarttextile.production.repository.ProductionPlanRepository;
 import com.lankatex.smarttextile.production.repository.ProductionProgressRepository;
-
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -38,9 +37,9 @@ public class ProductionService {
     }
 
 
-    // =========================
+    // =========================================================
     // DASHBOARD
-    // =========================
+    // =========================================================
 
     public ProductionDashboardStats getDashboardStats() {
 
@@ -53,16 +52,20 @@ public class ProductionService {
     }
 
 
-    // =========================
-    // PRODUCTION PLAN CRUD
-    // =========================
+    // =========================================================
+    // PRODUCTION PLAN
+    // =========================================================
 
     public List<ProductionPlan> getAllProductionPlans() {
 
         return productionPlanRepository.findAll(
-                Sort.by(Sort.Direction.DESC, "planId")
+                Sort.by(
+                        Sort.Direction.DESC,
+                        "planId"
+                )
         );
     }
+
 
     public ProductionPlan getProductionPlan(Long id) {
 
@@ -72,6 +75,7 @@ public class ProductionService {
                                 "Production Plan not found: " + id
                         ));
     }
+
 
     public ProductionPlan saveProductionPlan(
             ProductionPlan productionPlan) {
@@ -89,10 +93,13 @@ public class ProductionService {
             productionPlan.setStatus("Pending");
         }
 
-        return productionPlanRepository.save(productionPlan);
+        return productionPlanRepository.save(
+                productionPlan
+        );
     }
 
-    // Soft Delete
+
+    // Archive Production Plan
     public void archiveProductionPlan(Long id) {
 
         ProductionPlan productionPlan =
@@ -100,10 +107,27 @@ public class ProductionService {
 
         productionPlan.setStatus("Archived");
 
-        productionPlanRepository.save(productionPlan);
+        productionPlanRepository.save(
+                productionPlan
+        );
     }
 
-    // Hard Delete
+
+    // Restore Production Plan
+    public void restoreProductionPlan(Long id) {
+
+        ProductionPlan productionPlan =
+                getProductionPlan(id);
+
+        productionPlan.setStatus("Pending");
+
+        productionPlanRepository.save(
+                productionPlan
+        );
+    }
+
+
+    // Permanently Delete Production Plan
     public void deleteProductionPlan(Long id) {
 
         if (!productionPlanRepository.existsById(id)) {
@@ -115,14 +139,13 @@ public class ProductionService {
 
         productionPlanRepository.deleteById(id);
 
-        // Execute DELETE immediately
         productionPlanRepository.flush();
     }
 
 
-    // =========================
-    // MATERIAL REQUEST CRUD
-    // =========================
+    // =========================================================
+    // MATERIAL REQUEST
+    // =========================================================
 
     public List<MaterialRequest> getAllMaterialRequests() {
 
@@ -134,6 +157,7 @@ public class ProductionService {
         );
     }
 
+
     public MaterialRequest getMaterialRequest(Long id) {
 
         return materialRequestRepository.findById(id)
@@ -142,6 +166,7 @@ public class ProductionService {
                                 "Material Request not found: " + id
                         ));
     }
+
 
     public MaterialRequest saveMaterialRequest(
             MaterialRequest materialRequest) {
@@ -159,10 +184,13 @@ public class ProductionService {
             materialRequest.setStatus("Pending");
         }
 
-        return materialRequestRepository.save(materialRequest);
+        return materialRequestRepository.save(
+                materialRequest
+        );
     }
 
-    // Soft Delete
+
+    // Archive Material Request
     public void archiveMaterialRequest(Long id) {
 
         MaterialRequest materialRequest =
@@ -170,10 +198,27 @@ public class ProductionService {
 
         materialRequest.setStatus("Archived");
 
-        materialRequestRepository.save(materialRequest);
+        materialRequestRepository.save(
+                materialRequest
+        );
     }
 
-    // Hard Delete
+
+    // Restore Material Request
+    public void restoreMaterialRequest(Long id) {
+
+        MaterialRequest materialRequest =
+                getMaterialRequest(id);
+
+        materialRequest.setStatus("Pending");
+
+        materialRequestRepository.save(
+                materialRequest
+        );
+    }
+
+
+    // Permanently Delete Material Request
     public void deleteMaterialRequest(Long id) {
 
         if (!materialRequestRepository.existsById(id)) {
@@ -189,16 +234,20 @@ public class ProductionService {
     }
 
 
-    // =========================
-    // MATERIAL ISSUE NOTE CRUD
-    // =========================
+    // =========================================================
+    // MATERIAL ISSUE NOTE
+    // =========================================================
 
     public List<MaterialIssueNote> getAllMaterialIssueNotes() {
 
         return materialIssueNoteRepository.findAll(
-                Sort.by(Sort.Direction.DESC, "issueId")
+                Sort.by(
+                        Sort.Direction.DESC,
+                        "issueId"
+                )
         );
     }
+
 
     public MaterialIssueNote getMaterialIssueNote(Long id) {
 
@@ -208,6 +257,7 @@ public class ProductionService {
                                 "Material Issue Note not found: " + id
                         ));
     }
+
 
     public MaterialIssueNote saveMaterialIssueNote(
             MaterialIssueNote materialIssueNote) {
@@ -224,6 +274,7 @@ public class ProductionService {
         );
     }
 
+
     public void deleteMaterialIssueNote(Long id) {
 
         if (!materialIssueNoteRepository.existsById(id)) {
@@ -239,12 +290,11 @@ public class ProductionService {
     }
 
 
-    // =========================
-    // PRODUCTION PROGRESS CRUD
-    // =========================
+    // =========================================================
+    // PRODUCTION PROGRESS
+    // =========================================================
 
-    public List<ProductionProgress>
-    getAllProductionProgresss() {
+    public List<ProductionProgress> getAllProductionProgresss() {
 
         return productionProgressRepository.findAll(
                 Sort.by(
@@ -254,6 +304,7 @@ public class ProductionService {
         );
     }
 
+
     public ProductionProgress getProductionProgress(Long id) {
 
         return productionProgressRepository.findById(id)
@@ -262,6 +313,7 @@ public class ProductionService {
                                 "Production Progress not found: " + id
                         ));
     }
+
 
     public ProductionProgress saveProductionProgress(
             ProductionProgress productionProgress) {
@@ -277,6 +329,7 @@ public class ProductionService {
                 productionProgress
         );
     }
+
 
     public void deleteProductionProgress(Long id) {
 

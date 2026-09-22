@@ -1,0 +1,823 @@
+/* =========================================================
+   LankaTex - Inventory Management UI
+   Light Glass Theme
+   ========================================================= */
+
+:root {
+    --inventory-navy: #073047;
+    --inventory-navy-soft: #11465c;
+
+    --inventory-teal: #0f8b8d;
+    --inventory-teal-light: #38b9b6;
+
+    --inventory-white: #ffffff;
+
+    --inventory-text: #123047;
+    --inventory-muted: #6f8290;
+}
+
+
+/* =========================================================
+   PAGE BACKGROUND
+   ========================================================= */
+
+body.inventory-page {
+    min-height: 100vh;
+    margin: 0;
+
+    position: relative;
+
+    color: var(--inventory-text);
+
+    background: #eef6f6;
+}
+
+
+/* Background image */
+
+body.inventory-page::before {
+    content: "";
+
+    position: fixed;
+
+    inset: -8px;
+
+    background-image: url('/images/inventory-ui.jpg');
+
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+
+    /*
+       Keep the image clearly visible.
+       Only a small blur is used.
+    */
+
+    filter:
+            blur(2px)
+            brightness(0.88)
+            saturate(0.92);
+
+    transform: scale(1.025);
+
+    z-index: -2;
+}
+
+
+/* Light teal overlay */
+
+body.inventory-page::after {
+    content: "";
+
+    position: fixed;
+
+    inset: 0;
+
+    background:
+            linear-gradient(
+                    135deg,
+                    rgba(235, 248, 248, 0.36),
+                    rgba(7, 63, 78, 0.22)
+            );
+
+    z-index: -1;
+}
+
+
+/* =========================================================
+   MAIN CONTAINER
+   ========================================================= */
+
+.inventory-container {
+
+    max-width: 1250px;
+
+    margin: 0 auto;
+
+    padding: 34px 24px 55px;
+}
+
+
+/* =========================================================
+   HERO SECTION
+   ========================================================= */
+
+.inventory-hero {
+
+    min-height: 225px;
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: space-between;
+
+    gap: 30px;
+
+    padding: 38px 42px;
+
+    margin-bottom: 27px;
+
+    border-radius: 24px;
+
+
+    /*
+       Softer glass effect similar to the home page.
+    */
+
+    background:
+            linear-gradient(
+                    120deg,
+                    rgba(5, 55, 72, 0.72),
+                    rgba(15, 139, 141, 0.54)
+            );
+
+
+    border:
+            1px solid rgba(255, 255, 255, 0.40);
+
+
+    box-shadow:
+            0 15px 36px
+            rgba(24, 62, 74, 0.20);
+
+
+    backdrop-filter:
+            blur(8px);
+
+    -webkit-backdrop-filter:
+            blur(8px);
+}
+
+
+.inventory-hero-content {
+
+    max-width: 660px;
+}
+
+
+.inventory-eyebrow {
+
+    display: inline-block;
+
+    margin-bottom: 12px;
+
+
+    color: #a7f2ee;
+
+
+    font-size: 0.82rem;
+
+    font-weight: 700;
+
+
+    letter-spacing: 2px;
+
+    text-transform: uppercase;
+}
+
+
+.inventory-title {
+
+    margin: 0 0 13px;
+
+
+    color: #ffffff;
+
+
+    font-size:
+            clamp(
+                    2rem,
+                    4vw,
+                    3rem
+            );
+
+
+    font-weight: 750;
+
+    line-height: 1.1;
+
+
+    text-shadow:
+            0 2px 10px
+            rgba(0, 0, 0, 0.12);
+}
+
+
+.inventory-subtitle {
+
+    margin: 0;
+
+
+    max-width: 600px;
+
+
+    color:
+            rgba(
+                    255,
+                    255,
+                    255,
+                    0.92
+            );
+
+
+    font-size: 1rem;
+
+    line-height: 1.7;
+}
+
+
+/* =========================================================
+   HERO QUOTE
+   ========================================================= */
+
+.inventory-quote {
+
+    min-width: 255px;
+
+    max-width: 315px;
+
+
+    padding: 25px;
+
+
+    border-radius: 18px;
+
+
+    background:
+            rgba(
+                    255,
+                    255,
+                    255,
+                    0.17
+            );
+
+
+    border:
+            1px solid
+            rgba(
+                    255,
+                    255,
+                    255,
+                    0.38
+            );
+
+
+    color: #ffffff;
+
+
+    box-shadow:
+            0 8px 22px
+            rgba(
+                    0,
+                    0,
+                    0,
+                    0.08
+            );
+
+
+    backdrop-filter:
+            blur(14px);
+
+    -webkit-backdrop-filter:
+            blur(14px);
+}
+
+
+.inventory-quote-line {
+
+    width: 42px;
+
+    height: 3px;
+
+
+    margin-bottom: 15px;
+
+
+    border-radius: 5px;
+
+
+    background: #82ebe5;
+}
+
+
+.inventory-quote p {
+
+    margin: 0;
+
+
+    font-size: 1.04rem;
+
+    line-height: 1.65;
+}
+
+
+/* =========================================================
+   MAIN GLASS CONTENT PANEL
+   ========================================================= */
+
+.inventory-panel {
+
+    padding: 28px;
+
+
+    border-radius: 22px;
+
+
+    /*
+       More transparent than the old version.
+       Background image remains slightly visible.
+    */
+
+    background:
+            rgba(
+                    250,
+                    253,
+                    253,
+                    0.88
+            );
+
+
+    border:
+            1px solid
+            rgba(
+                    255,
+                    255,
+                    255,
+                    0.80
+            );
+
+
+    box-shadow:
+            0 16px 38px
+            rgba(
+                    24,
+                    66,
+                    78,
+                    0.18
+            );
+
+
+    backdrop-filter:
+            blur(14px);
+
+    -webkit-backdrop-filter:
+            blur(14px);
+}
+
+
+/* =========================================================
+   SECTION TITLES
+   ========================================================= */
+
+.inventory-section-heading {
+
+    margin-bottom: 5px;
+
+
+    font-size: 1.35rem;
+
+    font-weight: 750;
+
+
+    color: var(--inventory-navy);
+}
+
+
+.inventory-section-text {
+
+    margin-bottom: 22px;
+
+
+    color: var(--inventory-muted);
+
+
+    font-size: 0.93rem;
+}
+
+
+/* =========================================================
+   SUMMARY CARDS
+   ========================================================= */
+
+.inventory-stat-card {
+
+    height: 100%;
+
+
+    padding: 24px;
+
+
+    position: relative;
+
+    overflow: hidden;
+
+
+    border:
+            1px solid
+            rgba(
+                    15,
+                    139,
+                    141,
+                    0.10
+            );
+
+
+    border-radius: 18px;
+
+
+    background:
+            rgba(
+                    255,
+                    255,
+                    255,
+                    0.88
+            );
+
+
+    box-shadow:
+            0 8px 22px
+            rgba(
+                    25,
+                    62,
+                    77,
+                    0.09
+            );
+
+
+    backdrop-filter:
+            blur(8px);
+
+
+    transition:
+            transform 0.25s ease,
+            box-shadow 0.25s ease;
+}
+
+
+.inventory-stat-card:hover {
+
+    transform:
+            translateY(-5px);
+
+
+    box-shadow:
+            0 14px 30px
+            rgba(
+                    15,
+                    108,
+                    115,
+                    0.17
+            );
+}
+
+
+.inventory-stat-card::before {
+
+    content: "";
+
+
+    position: absolute;
+
+    left: 0;
+
+    top: 0;
+
+
+    width: 5px;
+
+    height: 100%;
+
+
+    background:
+            linear-gradient(
+                    to bottom,
+                    var(--inventory-teal),
+                    var(--inventory-teal-light)
+            );
+}
+
+
+.inventory-stat-label {
+
+    margin-bottom: 9px;
+
+
+    color: #667d88;
+
+
+    font-size: 0.82rem;
+
+    font-weight: 700;
+
+
+    letter-spacing: 0.7px;
+
+    text-transform: uppercase;
+}
+
+
+.inventory-stat-number {
+
+    margin: 0;
+
+
+    color: var(--inventory-navy);
+
+
+    font-size: 2.2rem;
+
+    font-weight: 800;
+}
+
+
+.inventory-stat-note {
+
+    margin-top: 5px;
+
+    margin-bottom: 0;
+
+
+    color: #8999a2;
+
+
+    font-size: 0.82rem;
+}
+
+
+/* =========================================================
+   INVENTORY OPERATIONS
+   ========================================================= */
+
+.inventory-actions {
+
+    margin-top: 30px;
+}
+
+
+.inventory-action-grid {
+
+    display: grid;
+
+
+    grid-template-columns:
+            repeat(
+                    auto-fit,
+                    minmax(
+                            205px,
+                            1fr
+                    )
+            );
+
+
+    gap: 14px;
+}
+
+
+/* =========================================================
+   OPERATION CARDS
+   ========================================================= */
+
+.inventory-action-card {
+
+    display: flex;
+
+    align-items: center;
+
+
+    min-height: 84px;
+
+
+    padding: 18px 20px;
+
+
+    text-decoration: none;
+
+
+    border-radius: 16px;
+
+
+    background:
+            rgba(
+                    255,
+                    255,
+                    255,
+                    0.85
+            );
+
+
+    border:
+            1px solid
+            rgba(
+                    15,
+                    139,
+                    141,
+                    0.12
+            );
+
+
+    box-shadow:
+            0 7px 17px
+            rgba(
+                    23,
+                    62,
+                    74,
+                    0.08
+            );
+
+
+    backdrop-filter:
+            blur(8px);
+
+
+    transition:
+            transform 0.20s ease,
+            border-color 0.20s ease,
+            box-shadow 0.20s ease,
+            background 0.20s ease;
+}
+
+
+.inventory-action-card:hover {
+
+    transform:
+            translateY(-4px);
+
+
+    background:
+            rgba(
+                    255,
+                    255,
+                    255,
+                    0.98
+            );
+
+
+    border-color:
+            rgba(
+                    15,
+                    139,
+                    141,
+                    0.45
+            );
+
+
+    box-shadow:
+            0 11px 24px
+            rgba(
+                    15,
+                    108,
+                    115,
+                    0.16
+            );
+}
+
+
+/* =========================================================
+   ACTION ICON
+   ========================================================= */
+
+.inventory-action-icon {
+
+    width: 44px;
+
+    height: 44px;
+
+
+    flex-shrink: 0;
+
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+
+    margin-right: 13px;
+
+
+    border-radius: 12px;
+
+
+    background:
+            linear-gradient(
+                    145deg,
+                    #07506b,
+                    #0c9799
+            );
+
+
+    color: #ffffff;
+
+
+    font-size: 1.15rem;
+
+    font-weight: bold;
+
+
+    box-shadow:
+            0 5px 14px
+            rgba(
+                    10,
+                    109,
+                    119,
+                    0.20
+            );
+}
+
+
+.inventory-action-title {
+
+    display: block;
+
+
+    color: var(--inventory-navy);
+
+
+    font-size: 0.96rem;
+
+    font-weight: 700;
+}
+
+
+.inventory-action-description {
+
+    display: block;
+
+
+    margin-top: 3px;
+
+
+    color: #7b8e98;
+
+
+    font-size: 0.78rem;
+}
+
+
+/* =========================================================
+   RESPONSIVE
+   ========================================================= */
+
+@media (max-width: 900px) {
+
+    .inventory-hero {
+
+        flex-direction: column;
+
+        align-items: flex-start;
+
+
+        padding: 30px;
+    }
+
+
+    .inventory-quote {
+
+        width: 100%;
+
+        max-width: none;
+    }
+}
+
+
+@media (max-width: 576px) {
+
+    .inventory-container {
+
+        padding:
+                22px
+                14px
+                40px;
+    }
+
+
+    .inventory-hero {
+
+        min-height: auto;
+
+
+        padding:
+                25px
+                21px;
+
+
+        border-radius: 18px;
+    }
+
+
+    .inventory-panel {
+
+        padding: 19px;
+
+
+        border-radius: 18px;
+    }
+
+
+    .inventory-title {
+
+        font-size: 2rem;
+    }
+}

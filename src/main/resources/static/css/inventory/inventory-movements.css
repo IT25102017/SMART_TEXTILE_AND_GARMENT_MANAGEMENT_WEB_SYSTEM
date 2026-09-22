@@ -1,0 +1,532 @@
+/* =========================================================
+   LankaTex - Inventory Stock Movements
+   ========================================================= */
+
+.movements-workspace {
+    max-width: 1450px;
+}
+
+
+/* =========================================================
+   HERO SECTION
+   ========================================================= */
+
+.movements-hero {
+    min-height: 190px;
+
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+
+    gap: 30px;
+
+    padding: 32px 38px;
+    margin-bottom: 24px;
+
+    border-radius: 22px;
+
+    background:
+            linear-gradient(
+                    115deg,
+                    rgba(5, 57, 72, 0.74),
+                    rgba(15, 139, 141, 0.48)
+            );
+
+    border: 1px solid rgba(255, 255, 255, 0.38);
+
+    box-shadow:
+            0 15px 35px rgba(22, 64, 76, 0.19);
+
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+}
+
+.movements-hero-left {
+    max-width: 720px;
+}
+
+.movements-eyebrow {
+    display: inline-block;
+
+    margin-bottom: 10px;
+
+    color: #a8f1ed;
+
+    font-size: 0.78rem;
+    font-weight: 750;
+
+    letter-spacing: 2px;
+    text-transform: uppercase;
+}
+
+.movements-hero h1 {
+    margin: 0 0 10px;
+
+    color: #ffffff;
+
+    font-size: clamp(2rem, 4vw, 2.8rem);
+    font-weight: 780;
+}
+
+.movements-hero p {
+    margin: 0;
+
+    max-width: 650px;
+
+    color: rgba(255, 255, 255, 0.91);
+
+    font-size: 0.98rem;
+    line-height: 1.7;
+}
+
+
+/* =========================================================
+   HERO BADGE
+   ========================================================= */
+
+.movements-hero-badge {
+    min-width: 230px;
+
+    padding: 21px 24px;
+
+    border-radius: 17px;
+
+    background: rgba(255, 255, 255, 0.16);
+
+    border: 1px solid rgba(255, 255, 255, 0.34);
+
+    color: #ffffff;
+
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+}
+
+.movements-hero-badge-line {
+    width: 40px;
+    height: 3px;
+
+    margin-bottom: 13px;
+
+    border-radius: 5px;
+
+    background: #7be5df;
+}
+
+.movements-hero-badge span {
+    display: block;
+
+    color: rgba(255, 255, 255, 0.74);
+
+    font-size: 0.82rem;
+}
+
+.movements-hero-badge strong {
+    display: block;
+
+    margin-top: 4px;
+
+    font-size: 1.15rem;
+}
+
+
+/* =========================================================
+   MAIN PANEL
+   ========================================================= */
+
+.movements-panel {
+    padding: 25px;
+
+    border-radius: 22px;
+
+    background: rgba(249, 253, 253, 0.92);
+
+    border: 1px solid rgba(255, 255, 255, 0.82);
+
+    box-shadow:
+            0 18px 40px rgba(24, 64, 76, 0.17);
+
+    backdrop-filter: blur(15px);
+    -webkit-backdrop-filter: blur(15px);
+}
+
+
+/* =========================================================
+   PANEL HEADER
+   ========================================================= */
+
+.movements-panel-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+
+    gap: 20px;
+
+    margin-bottom: 20px;
+}
+
+.movements-heading-group {
+    display: flex;
+    align-items: center;
+
+    gap: 14px;
+}
+
+.movements-heading-icon {
+    width: 48px;
+    height: 48px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    flex-shrink: 0;
+
+    border-radius: 14px;
+
+    background:
+            linear-gradient(
+                    145deg,
+                    #075069,
+                    #0d999b
+            );
+
+    color: #ffffff;
+
+    font-size: 1.15rem;
+    font-weight: 800;
+
+    box-shadow:
+            0 7px 16px rgba(10, 108, 118, 0.20);
+}
+
+.movements-panel-title {
+    margin: 0;
+
+    color: #0a3045;
+
+    font-size: 1.45rem;
+    font-weight: 780;
+}
+
+.movements-panel-subtitle {
+    margin: 3px 0 0;
+
+    color: #768995;
+
+    font-size: 0.87rem;
+}
+
+
+/* =========================================================
+   TOP ACTION BUTTONS
+   ========================================================= */
+
+.movements-top-actions {
+    display: flex;
+
+    gap: 9px;
+
+    flex-wrap: wrap;
+}
+
+.movements-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+
+    min-height: 40px;
+
+    padding: 9px 16px;
+
+    border-radius: 10px;
+
+    text-decoration: none;
+
+    font-size: 0.88rem;
+    font-weight: 700;
+
+    transition:
+            transform 0.18s ease,
+            box-shadow 0.18s ease;
+}
+
+.movements-btn:hover {
+    transform: translateY(-2px);
+}
+
+.movements-btn-back {
+    color: #214153;
+
+    background: #edf3f5;
+
+    border: 1px solid #d8e4e8;
+}
+
+.movements-btn-back:hover {
+    color: #17384a;
+
+    box-shadow:
+            0 6px 14px rgba(30, 72, 87, 0.10);
+}
+
+.movements-btn-add {
+    color: #ffffff;
+
+    background:
+            linear-gradient(
+                    135deg,
+                    #08758a,
+                    #0c9b9c
+            );
+
+    border: none;
+
+    box-shadow:
+            0 7px 16px rgba(10, 122, 132, 0.20);
+}
+
+.movements-btn-add:hover {
+    color: #ffffff;
+
+    box-shadow:
+            0 10px 20px rgba(10, 122, 132, 0.27);
+}
+
+
+/* =========================================================
+   ALERTS
+   ========================================================= */
+
+.movements-alert {
+    border: none;
+
+    border-radius: 12px;
+
+    box-shadow:
+            0 6px 15px rgba(20, 63, 75, 0.08);
+}
+
+
+/* =========================================================
+   TABLE WRAPPER
+   ========================================================= */
+
+.movements-table-wrapper {
+    overflow-x: auto;
+
+    border-radius: 15px;
+
+    border: 1px solid #dce7ea;
+
+    background: rgba(255, 255, 255, 0.92);
+}
+
+
+/* =========================================================
+   TABLE
+   ========================================================= */
+
+.movements-table {
+    width: 100%;
+
+    margin: 0;
+
+    border-collapse: separate;
+    border-spacing: 0;
+
+    font-size: 0.88rem;
+}
+
+.movements-table thead th {
+    padding: 15px 13px;
+
+    background:
+            linear-gradient(
+                    180deg,
+                    #0b3c52,
+                    #0a3347
+            );
+
+    color: #ffffff;
+
+    border: none;
+
+    font-size: 0.77rem;
+    font-weight: 700;
+
+    letter-spacing: 0.3px;
+
+    white-space: nowrap;
+}
+
+.movements-table tbody td {
+    padding: 14px 13px;
+
+    vertical-align: middle;
+
+    color: #294757;
+
+    border-bottom: 1px solid #e7eef0;
+
+    background: rgba(255, 255, 255, 0.88);
+}
+
+.movements-table tbody tr:last-child td {
+    border-bottom: none;
+}
+
+.movements-table tbody tr:hover td {
+    background: #f4fbfb;
+}
+
+
+/* =========================================================
+   IMPORTANT VALUES
+   ========================================================= */
+
+.movement-date {
+    color: #516a77;
+}
+
+.movement-material {
+    color: #0b3045;
+
+    font-weight: 700;
+}
+
+.movement-batch {
+    color: #087b84;
+
+    font-weight: 700;
+}
+
+.movement-quantity {
+    color: #0a526a;
+
+    font-weight: 750;
+}
+
+.movement-reference {
+    color: #667c88;
+}
+
+
+/* =========================================================
+   MOVEMENT TYPE BADGES
+   ========================================================= */
+
+.movement-type {
+    display: inline-flex;
+    align-items: center;
+
+    padding: 5px 10px;
+
+    border-radius: 999px;
+
+    font-size: 0.72rem;
+    font-weight: 750;
+
+    letter-spacing: 0.3px;
+}
+
+.movement-stock-in {
+    color: #157347;
+
+    background: #dff5e8;
+
+    border: 1px solid #bee8cf;
+}
+
+.movement-stock-out {
+    color: #946200;
+
+    background: #fff1c7;
+
+    border: 1px solid #f1d98a;
+}
+
+.movement-return {
+    color: #0d6170;
+
+    background: #daf1f4;
+
+    border: 1px solid #b9e4e9;
+}
+
+.movement-wastage {
+    color: #a52b37;
+
+    background: #fde2e5;
+
+    border: 1px solid #f3bdc4;
+}
+
+.movement-other {
+    color: #53616a;
+
+    background: #e9edef;
+
+    border: 1px solid #d7dee2;
+}
+
+
+/* =========================================================
+   EMPTY STATE
+   ========================================================= */
+
+.movements-empty {
+    padding: 36px 20px !important;
+
+    text-align: center;
+
+    color: #7c8d96 !important;
+}
+
+
+/* =========================================================
+   RESPONSIVE DESIGN
+   ========================================================= */
+
+@media (max-width: 900px) {
+
+    .movements-hero {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    .movements-hero-badge {
+        width: 100%;
+    }
+
+    .movements-panel-header {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    .movements-top-actions {
+        width: 100%;
+    }
+}
+
+@media (max-width: 576px) {
+
+    .movements-hero {
+        padding: 25px 21px;
+
+        border-radius: 18px;
+    }
+
+    .movements-panel {
+        padding: 17px;
+
+        border-radius: 18px;
+    }
+
+    .movements-top-actions {
+        flex-direction: column;
+    }
+
+    .movements-btn {
+        width: 100%;
+    }
+}
