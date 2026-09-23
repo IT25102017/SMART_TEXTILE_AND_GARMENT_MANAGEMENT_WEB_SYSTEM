@@ -1,202 +1,234 @@
 package com.lankatex.smarttextile.customer.controller;
 
-import com.lankatex.smarttextile.customer.service.CustomerService;
-import jakarta.validation.Valid;
-import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
-import org.springframework.validation.BindingResult;
-import org.springframework.web.bind.annotation.*;
-import org.springframework.web.servlet.mvc.support.RedirectAttributes;
-import java.util.List;
 import com.lankatex.smarttextile.customer.entity.Customer;
-import com.lankatex.smarttextile.customer.entity.Quotation;
 import com.lankatex.smarttextile.customer.entity.CustomerOrder;
 import com.lankatex.smarttextile.customer.entity.Delivery;
+import com.lankatex.smarttextile.customer.entity.Quotation;
+import com.lankatex.smarttextile.customer.service.CustomerService;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+import java.time.LocalDate;
 
 @Controller
 @RequestMapping("/customer")
 public class CustomerController {
     private final CustomerService service;
-
     public CustomerController(CustomerService service) {
         this.service = service;
     }
-
     @GetMapping
     public String dashboard(Model model) {
         model.addAttribute("stats", service.getDashboardStats());
+        model.addAttribute("delayedOrders", service.getDelayedOrders());
+        model.addAttribute("customerMap", service.getCustomerMap());
         return "customer/dashboard";
     }
 
+    /// CUSTOMERS
+
     @GetMapping("/customers")
     public String customers(@RequestParam(required = false) Long editId, Model model) {
-        if (!model.containsAttribute("customer")) {
-            model.addAttribute("customer", editId == null ? new Customer() : service.getCustomer(editId));
-        }
+        Customer customer = editId == null ? new Customer() : service.getCustomer(editId);
+        if (customer.getStatus() == null) customer.setStatus("ACTIVE");
+        model.addAttribute("customer", customer);
         model.addAttribute("customersList", service.getAllCustomers());
         return "customer/customers";
     }
-
-    @GetMapping({"/customers/data", "/customers/json"})
-    @ResponseBody
-    public List<Customer> getCustomersJson() {
-        return service.getAllCustomers();
-    }
-
     @PostMapping("/customers/save")
-    public String saveCustomer(@Valid @ModelAttribute Customer customer, BindingResult result, RedirectAttributes redirectAttributes) {
-        if (result.hasErrors()) {
-            redirectAttributes.addFlashAttribute("error", result.getAllErrors().get(0).getDefaultMessage());
-            redirectAttributes.addFlashAttribute("customer", customer);
-            return "redirect:/customer/customers";
-        }
+    public String saveCustomer(@ModelAttribute Customer customer, RedirectAttributes ra) {
         try {
             service.saveCustomer(customer);
-            redirectAttributes.addFlashAttribute("message", "Customer saved successfully.");
+            ra.addFlashAttribute("message", "Customer saved successfully.");
         } catch (IllegalArgumentException ex) {
-            redirectAttributes.addFlashAttribute("error", ex.getMessage());
-            redirectAttributes.addFlashAttribute("customer", customer);
+            ra.addFlashAttribute("error", ex.getMessage());
         }
+        return "redirect:/customer/customers";
+    }
+    @PostMapping("/customers/archive/{id}")
+    public String archiveCustomer(@PathVariable Long id, RedirectAttributes ra) {
+        service.archiveCustomer(id);
+        ra.addFlashAttribute("message", "Customer archived.");
         return "redirect:/customer/customers";
     }
 
-    @GetMapping("/customers/delete/{id}")
-    public String deleteCustomer(@PathVariable Long id, RedirectAttributes redirectAttributes) {
-        try {
-            service.deleteCustomer(id);
-            redirectAttributes.addFlashAttribute("message", "Customer deleted successfully.");
-        } catch (Exception ex) {
-            redirectAttributes.addFlashAttribute("error", "Cannot delete customer because related orders or quotations exist. Please remove them first.");
-        }
+    @PostMapping("/customers/restore/{id}")
+    public String restoreCustomer(@PathVariable Long id, RedirectAttributes ra) {
+        service.restoreCustomer(id);
+        ra.addFlashAttribute("message", "Customer restored.");
         return "redirect:/customer/customers";
     }
+
+    /// QUOTATIONS
 
     @GetMapping("/quotations")
     public String quotations(@RequestParam(required = false) Long editId, Model model) {
-        if (!model.containsAttribute("quotation")) {
-            model.addAttribute("quotation", editId == null ? new Quotation() : service.getQuotation(editId));
+        Quotation quotation = editId == null ? new Quotation() : service.getQuotation(editId);
+        if (editId == null) {
+            quotation.setQuotationDate(LocalDate.now());
+            quotation.setStatus("PENDING");
         }
+        model.addAttribute("quotation", quotation);
         model.addAttribute("quotationsList", service.getAllQuotations());
+        model.addAttribute("customers", service.getActiveCustomers());
+        model.addAttribute("customerMap", service.getCustomerMap());
         return "customer/quotations";
     }
 
-    @GetMapping({"/quotations/data", "/quotations/json"})
-    @ResponseBody
-    public List<Quotation> getQuotationsJson() {
-        return service.getAllQuotations();
-    }
-
     @PostMapping("/quotations/save")
-    public String saveQuotation(@Valid @ModelAttribute Quotation quotation, BindingResult result, RedirectAttributes redirectAttributes) {
-        if (result.hasErrors()) {
-            redirectAttributes.addFlashAttribute("error", result.getAllErrors().get(0).getDefaultMessage());
-            redirectAttributes.addFlashAttribute("quotation", quotation);
-            return "redirect:/customer/quotations";
-        }
+    public String saveQuotation(@ModelAttribute Quotation quotation, RedirectAttributes ra) {
         try {
             service.saveQuotation(quotation);
-            redirectAttributes.addFlashAttribute("message", "Quotation saved successfully.");
+            ra.addFlashAttribute("message", "Quotation saved successfully.");
         } catch (IllegalArgumentException ex) {
-            redirectAttributes.addFlashAttribute("error", ex.getMessage());
-            redirectAttributes.addFlashAttribute("quotation", quotation);
+            ra.addFlashAttribute("error", ex.getMessage());
         }
         return "redirect:/customer/quotations";
     }
 
-    @GetMapping({"/quotations/delete/{id}", "/quotations/archive/{id}"})
-    public String deleteQuotation(@PathVariable Long id, RedirectAttributes redirectAttributes) {
-        try {
-            service.deleteQuotation(id);
-            redirectAttributes.addFlashAttribute("message", "Quotation deleted successfully.");
-        } catch (Exception ex) {
-            redirectAttributes.addFlashAttribute("error", "Cannot delete quotation because it is linked to an existing customer order. Please remove the order first.");
-        }
+    @PostMapping("/quotations/approve/{id}")
+    public String approveQuotation(@PathVariable Long id,
+                                   @RequestParam(required = false) Long approvedBy,
+                                   RedirectAttributes ra) {
+        service.approveQuotation(id, approvedBy);
+        ra.addFlashAttribute("message", "Quotation approved.");
         return "redirect:/customer/quotations";
     }
 
+    @PostMapping("/quotations/reject/{id}")
+    public String rejectQuotation(@PathVariable Long id,
+                                  @RequestParam(required = false) Long approvedBy,
+                                  RedirectAttributes ra) {
+        service.rejectQuotation(id, approvedBy);
+        ra.addFlashAttribute("message", "Quotation rejected.");
+        return "redirect:/customer/quotations";
+    }
+
+    @PostMapping("/quotations/archive/{id}")
+    public String archiveQuotation(@PathVariable Long id, RedirectAttributes ra) {
+        service.archiveQuotation(id);
+        ra.addFlashAttribute("message", "Quotation archived.");
+        return "redirect:/customer/quotations";
+    }
+    @PostMapping("/quotations/restore/{id}")
+    public String restoreQuotation(@PathVariable Long id, RedirectAttributes ra) {
+        service.restoreQuotation(id);
+        ra.addFlashAttribute("message", "Quotation restored to PENDING.");
+        return "redirect:/customer/quotations";
+    }
+
+    ///CUSTOMER ORDERS
     @GetMapping("/orders")
-    public String orders(@RequestParam(required = false) Long editId, Model model) {
-        if (!model.containsAttribute("customerOrder")) {
-            model.addAttribute("customerOrder", editId == null ? new CustomerOrder() : service.getCustomerOrder(editId));
+    public String orders(@RequestParam(required = false) Long editId,
+                         @RequestParam(required = false) Long quotationId,
+                         Model model) {
+        CustomerOrder order;
+        if (editId != null) {
+            order = service.getCustomerOrder(editId);
+        } else if (quotationId != null) {
+            order = service.buildOrderFromQuotation(quotationId);
+        } else {
+            order = new CustomerOrder();
+            order.setOrderDate(LocalDate.now());
+            order.setPriority("NORMAL");
+            order.setStatus("PENDING");
         }
+        model.addAttribute("customerOrder", order);
         model.addAttribute("ordersList", service.getAllCustomerOrders());
+        model.addAttribute("customers", service.getActiveCustomers());
+        model.addAttribute("approvedQuotations", service.getApprovedQuotations());
+        model.addAttribute("customerMap", service.getCustomerMap());
+        model.addAttribute("quotationMap", service.getQuotationMap());
+        model.addAttribute("remainingQtyMap", service.getRemainingQuantityMap());
         return "customer/orders";
     }
-
-    @GetMapping({"/orders/data", "/orders/json"})
-    @ResponseBody
-    public List<CustomerOrder> getOrdersJson() {
-        return service.getAllCustomerOrders();
-    }
-
     @PostMapping("/orders/save")
-    public String saveCustomerOrder(@Valid @ModelAttribute CustomerOrder customerOrder, BindingResult result, RedirectAttributes redirectAttributes) {
-        if (result.hasErrors()) {
-            redirectAttributes.addFlashAttribute("error", result.getAllErrors().get(0).getDefaultMessage());
-            redirectAttributes.addFlashAttribute("customerOrder", customerOrder);
-            return "redirect:/customer/orders";
-        }
+    public String saveOrder(@ModelAttribute CustomerOrder order, RedirectAttributes ra) {
         try {
-            service.saveCustomerOrder(customerOrder);
-            redirectAttributes.addFlashAttribute("message", "Customer Order saved successfully.");
+            service.saveCustomerOrder(order);
+            ra.addFlashAttribute("message", "Customer Order saved successfully.");
         } catch (IllegalArgumentException ex) {
-            redirectAttributes.addFlashAttribute("error", ex.getMessage());
-            redirectAttributes.addFlashAttribute("customerOrder", customerOrder);
+            ra.addFlashAttribute("error", ex.getMessage());
         }
         return "redirect:/customer/orders";
     }
-
-    @GetMapping({"/orders/delete/{id}", "/orders/archive/{id}"})
-    public String deleteCustomerOrder(@PathVariable Long id, RedirectAttributes redirectAttributes) {
+    @PostMapping("/orders/approve/{id}")
+    public String approveOrder(@PathVariable Long id, @RequestParam Long approvedBy, RedirectAttributes ra) {
         try {
-            service.deleteCustomerOrder(id);
-            redirectAttributes.addFlashAttribute("message", "Customer Order deleted successfully.");
-        } catch (Exception ex) {
-            redirectAttributes.addFlashAttribute("error", "Cannot delete customer order because it is linked to an existing delivery. Please remove the delivery first.");
+            service.approveOrder(id, approvedBy);
+            ra.addFlashAttribute("message", "Customer Order approved.");
+        } catch (IllegalArgumentException ex) {
+            ra.addFlashAttribute("error", ex.getMessage());
         }
         return "redirect:/customer/orders";
     }
 
-    @GetMapping("/deliverys")
-    public String deliverys(@RequestParam(required = false) Long editId, Model model) {
-        if (!model.containsAttribute("delivery")) {
-            model.addAttribute("delivery", editId == null ? new Delivery() : service.getDelivery(editId));
+    @PostMapping("/orders/reject/{id}")
+    public String rejectOrder(@PathVariable Long id,
+                              @RequestParam(required = false) Long approvedBy,
+                              RedirectAttributes ra) {
+        service.rejectOrder(id, approvedBy);
+        ra.addFlashAttribute("message", "Customer Order cancelled/rejected.");
+        return "redirect:/customer/orders";
+    }
+    @PostMapping("/orders/status/{id}")
+    public String updateOrderStatus(@PathVariable Long id,
+                                    @RequestParam String status,
+                                    RedirectAttributes ra) {
+        try {
+            service.updateOrderStatus(id, status);
+            ra.addFlashAttribute("message", "Order status updated.");
+        } catch (IllegalArgumentException ex) {
+            ra.addFlashAttribute("error", ex.getMessage());
         }
-        model.addAttribute("deliverysList", service.getAllDeliverys());
-        return "customer/deliverys";
+        return "redirect:/customer/orders";
     }
 
-    @GetMapping({"/deliverys/data", "/deliverys/json", "/deliveries/data", "/deliveries/json"})
-    @ResponseBody
-    public List<Delivery> getDeliveriesJson() {
-        return service.getAllDeliverys();
+    /// DELIVERIES
+
+    @GetMapping("/deliveries")
+    public String deliveries(Model model) {
+        Delivery delivery = new Delivery();
+        delivery.setDeliveryDate(LocalDate.now());
+        model.addAttribute("delivery", delivery);
+        model.addAttribute("deliveriesList", service.getAllDeliveries());
+        model.addAttribute("deliverableOrders", service.getDeliverableOrders());
+        model.addAttribute("orderMap", service.getOrderMap());
+        model.addAttribute("customerMap", service.getCustomerMap());
+        model.addAttribute("remainingQtyMap", service.getRemainingQuantityMap());
+        return "customer/deliveries";
     }
 
-    @PostMapping("/deliverys/save")
-    public String saveDelivery(@Valid @ModelAttribute Delivery delivery, BindingResult result, RedirectAttributes redirectAttributes) {
-        if (result.hasErrors()) {
-            redirectAttributes.addFlashAttribute("error", result.getAllErrors().get(0).getDefaultMessage());
-            redirectAttributes.addFlashAttribute("delivery", delivery);
-            return "redirect:/customer/deliverys";
-        }
+    @PostMapping("/deliveries/save")
+    public String saveDelivery(@ModelAttribute Delivery delivery, RedirectAttributes ra) {
         try {
             service.saveDelivery(delivery);
-            redirectAttributes.addFlashAttribute("message", "Delivery saved successfully.");
+            ra.addFlashAttribute("message", "Delivery recorded successfully.");
         } catch (IllegalArgumentException ex) {
-            redirectAttributes.addFlashAttribute("error", ex.getMessage());
-            redirectAttributes.addFlashAttribute("delivery", delivery);
+            ra.addFlashAttribute("error", ex.getMessage());
         }
-        return "redirect:/customer/deliverys";
+        return "redirect:/customer/deliveries";
     }
 
-    @GetMapping({"/deliverys/delete/{id}", "/deliverys/archive/{id}"})
-    public String deleteDelivery(@PathVariable Long id, RedirectAttributes redirectAttributes) {
-        try {
-            service.deleteDelivery(id);
-            redirectAttributes.addFlashAttribute("message", "Delivery deleted successfully.");
-        } catch (Exception ex) {
-            redirectAttributes.addFlashAttribute("error", "Cannot delete delivery: " + ex.getMessage());
-        }
-        return "redirect:/customer/deliverys";
+    @PostMapping("/deliveries/archive/{id}")
+    public String archiveDelivery(@PathVariable Long id, RedirectAttributes ra) {
+        service.archiveDelivery(id);
+        ra.addFlashAttribute("message", "Delivery archived.");
+        return "redirect:/customer/deliveries";
     }
+
+    @PostMapping("/deliveries/restore/{id}")
+    public String restoreDelivery(@PathVariable Long id, RedirectAttributes ra) {
+        try {
+            service.restoreDelivery(id);
+            ra.addFlashAttribute("message", "Delivery restored.");
+        } catch (IllegalArgumentException ex) {
+            ra.addFlashAttribute("error", ex.getMessage());
+        }
+        return "redirect:/customer/deliveries";
+    }
+
+
+
 }
