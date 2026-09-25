@@ -1,359 +1,75 @@
 <!DOCTYPE html>
-<html lang="en"
-      xmlns:th="http://www.thymeleaf.org">
-
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
-
-    <meta charset="UTF-8">
-
-    <meta name="viewport"
-          content="width=device-width, initial-scale=1">
-
-    <title>
-        Material Issue Note - LankaTex
-    </title>
-
-    <!-- Bootstrap CSS -->
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
-          rel="stylesheet">
-
-    <!-- Common LankaTex Navigation CSS -->
-    <link rel="stylesheet"
-          th:href="@{/css/common-navbar.css}">
-
+    <meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Material Issues | LankaTex</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" th:href="@{/css/common-navbar.css}">
+    <link rel="stylesheet" th:href="@{/css/production/production-ui.css}">
 </head>
-
-
-<body class="bg-light">
-
-
-<!-- Common LankaTex Navigation Bar -->
+<body class="production-page">
 <div th:replace="~{fragments/common-navbar :: navbar}"></div>
-
-
-<div class="container py-4">
-
-
-    <!-- Page Header -->
-    <div class="d-flex justify-content-between align-items-center mb-4">
-
-        <h2>
-            Material Issue Note Management
-        </h2>
-
-        <a class="btn btn-dark"
-           th:href="@{/production}">
-            Back to Dashboard
-        </a>
-
-    </div>
-
-
-    <!-- Production Module Navigation -->
-    <div class="mb-3">
-
-        <a class="btn btn-outline-primary btn-sm me-2 mb-2"
-           th:href="@{/production/plans}">
-            Production Plan
-        </a>
-
-        <a class="btn btn-outline-primary btn-sm me-2 mb-2"
-           th:href="@{/production/requests}">
-            Material Request
-        </a>
-
-        <a class="btn btn-primary btn-sm me-2 mb-2"
-           th:href="@{/production/issues}">
-            Material Issue Note
-        </a>
-
-        <a class="btn btn-outline-primary btn-sm me-2 mb-2"
-           th:href="@{/production/progress}">
-            Production Progress
-        </a>
-
-    </div>
-
-
-    <!-- Success Message -->
-    <div th:if="${message}"
-         class="alert alert-success"
-         th:text="${message}">
-    </div>
-
-
-    <!-- Error Message -->
-    <div th:if="${error}"
-         class="alert alert-danger"
-         th:text="${error}">
-    </div>
-
-
-    <!-- Material Issue Note Form -->
-    <div class="card shadow-sm mb-4">
-
-        <div class="card-header">
-
-            <strong>
-                Add / Edit Material Issue Note
-            </strong>
-
-        </div>
-
-
-        <div class="card-body">
-
-            <form th:action="@{/production/issues/save}"
-                  th:object="${materialIssueNote}"
-                  method="post">
-
-
-                <input type="hidden"
-                       th:field="*{issueId}">
-
-
-                <div class="row">
-
-
-                    <!-- Material Request ID -->
-                    <div class="col-md-6 mb-3">
-
-                        <label class="form-label">
-                            Material Request ID
-                        </label>
-
-                        <input class="form-control"
-                               type="number"
-                               th:field="*{materialRequestId}"
-                               required>
-
-                    </div>
-
-
-                    <!-- Production Plan ID -->
-                    <div class="col-md-6 mb-3">
-
-                        <label class="form-label">
-                            Production Plan ID
-                        </label>
-
-                        <input class="form-control"
-                               type="number"
-                               th:field="*{planId}"
-                               required>
-
-                    </div>
-
-
-                    <!-- Material ID -->
-                    <div class="col-md-6 mb-3">
-
-                        <label class="form-label">
-                            Material ID
-                        </label>
-
-                        <input class="form-control"
-                               type="number"
-                               th:field="*{materialId}"
-                               required>
-
-                    </div>
-
-
-                    <!-- Batch ID -->
-                    <div class="col-md-6 mb-3">
-
-                        <label class="form-label">
-                            Batch ID
-                        </label>
-
-                        <input class="form-control"
-                               type="number"
-                               th:field="*{batchId}"
-                               required>
-
-                    </div>
-
-
-                    <!-- Issued Quantity -->
-                    <div class="col-md-6 mb-3">
-
-                        <label class="form-label">
-                            Issued Quantity
-                        </label>
-
-                        <input class="form-control"
-                               type="number"
-                               step="0.01"
-                               th:field="*{issuedQty}"
-                               required>
-
-                    </div>
-
-
-                    <!-- Issue Date -->
-                    <div class="col-md-6 mb-3">
-
-                        <label class="form-label">
-                            Issue Date
-                        </label>
-
-                        <input class="form-control"
-                               type="date"
-                               th:field="*{issueDate}"
-                               required>
-
-                    </div>
-
-
-                    <!-- Issued By -->
-                    <div class="col-md-6 mb-3">
-
-                        <label class="form-label">
-                            Issued By User ID
-                        </label>
-
-                        <input class="form-control"
-                               type="number"
-                               th:field="*{issuedBy}">
-
-                    </div>
-
-
-                </div>
-
-
-                <button class="btn btn-success"
-                        type="submit">
-                    Save
-                </button>
-
-
-                <a class="btn btn-secondary"
-                   th:href="@{/production/issues}">
-                    Clear
-                </a>
-
-
-            </form>
-
-        </div>
-
-    </div>
-
-
-    <!-- Material Issue Note List -->
-    <div class="card shadow-sm">
-
-        <div class="card-header">
-
-            <strong>
-                Material Issue Note List
-            </strong>
-
-        </div>
-
-
-        <div class="card-body table-responsive">
-
-            <table class="table table-striped table-bordered align-middle">
-
-
-                <thead class="table-dark">
-
-                <tr>
-
-                    <th>ID</th>
-                    <th>Material Request ID</th>
-                    <th>Production Plan ID</th>
-                    <th>Material ID</th>
-                    <th>Batch ID</th>
-                    <th>Issued Quantity</th>
-                    <th>Issue Date</th>
-                    <th>Issued By User ID</th>
-                    <th>Actions</th>
-
-                </tr>
-
-                </thead>
-
-
-                <tbody>
-
-
-                <tr th:each="row : ${issuesList}">
-
-
-                    <td th:text="${row.issueId}">
-                    </td>
-
-
-                    <td th:text="${row.materialRequestId}">
-                    </td>
-
-
-                    <td th:text="${row.planId}">
-                    </td>
-
-
-                    <td th:text="${row.materialId}">
-                    </td>
-
-
-                    <td th:text="${row.batchId}">
-                    </td>
-
-
-                    <td th:text="${row.issuedQty}">
-                    </td>
-
-
-                    <td th:text="${row.issueDate}">
-                    </td>
-
-
-                    <td th:text="${row.issuedBy}">
-                    </td>
-
-
-                    <!-- Actions -->
-                    <td class="text-nowrap">
-
-
-                        <!-- Edit -->
-                        <a class="btn btn-warning btn-sm"
-                           th:href="@{/production/issues(editId=${row.issueId})}">
-                            Edit
-                        </a>
-
-
-                        <!-- Delete -->
-                        <a class="btn btn-danger btn-sm"
-                           th:href="@{/production/issues/delete/{id}(id=${row.issueId})}"
-                           onclick="return confirm('Permanently delete this Material Issue Note?');">
-                            Delete
-                        </a>
-
-
-                    </td>
-
-
-                </tr>
-
-
-                </tbody>
-
-
-            </table>
-
-        </div>
-
-    </div>
-
-
-</div>
-
-
+<main class="production-container">
+    <section class="production-hero"><span class="production-eyebrow">LankaTex Production</span><h1>Material Issue Notes</h1><p>Issue inventory material against approved requests. Saving an issue automatically reduces batch stock and creates a STOCK_OUT movement.</p></section>
+    <nav class="production-nav"><a th:href="@{/production}">Dashboard</a><a th:href="@{/production/plans}">Plans</a><a th:href="@{/production/requests}">Requests</a><a th:href="@{/production/progress}">Progress</a></nav>
+    <div th:if="${message}" class="alert alert-success" th:text="${message}"></div><div th:if="${error}" class="alert alert-danger" th:text="${error}"></div>
+
+    <section class="production-panel">
+        <h2>New Material Issue</h2>
+        <form th:action="@{/production/issues/save}" th:object="${materialIssueNote}" method="post">
+            <div class="production-form-grid">
+                <div><label class="form-label">Approved Material Request</label><select id="requestId" class="form-select" th:field="*{materialRequestId}" required><option value="">Select Request</option><option th:each="request : ${requests}" th:value="${request.materialRequestId}" th:attr="data-plan-id=${request.planId}" th:text="${request.requestCode + ' | Plan PP-' + #numbers.formatInteger(request.planId,3)}"></option></select></div>
+                <div><label class="form-label">Production Plan</label><select id="planId" class="form-select" th:field="*{planId}" required><option value="">Select Plan</option><option th:each="plan : ${plans}" th:value="${plan.planId}" th:text="${plan.planCode + ' - ' + plan.productionLine}"></option></select></div>
+                <div><label class="form-label">Material</label><select id="materialId" class="form-select" th:field="*{materialId}" required><option value="">Select Material</option><option th:each="material : ${materials}" th:value="${material.materialId}" th:text="${material.materialCode + ' - ' + material.materialName}"></option></select></div>
+                <div><label class="form-label">Available Batch</label><select id="batchId" class="form-select" th:field="*{batchId}" required><option value="">Select Batch</option><option th:each="batch : ${batches}" th:value="${batch.batchId}" th:attr="data-material-id=${batch.material.materialId}" th:text="${batch.batchNo + ' | ' + batch.material.materialCode + ' | Available: ' + batch.availableQty}"></option></select></div>
+                <div><label class="form-label">Issued Quantity</label><input class="form-control" type="number" min="0.01" step="0.01" th:field="*{issuedQty}" required></div>
+                <div><label class="form-label">Issue Date</label><input class="form-control" type="date" th:field="*{issueDate}" required></div>
+                <div><label class="form-label">Issued By User ID</label><input class="form-control" type="number" min="1" th:field="*{issuedBy}"></div>
+            </div>
+            <div class="mt-3"><button class="production-button production-button-primary" type="submit">Issue Material &amp; Update Stock</button></div>
+        </form>
+    </section>
+
+    <section class="production-panel">
+        <h2>Material Issue History</h2>
+        <div class="production-table-wrap"><table class="production-table">
+            <thead><tr><th>Issue</th><th>Request</th><th>Plan</th><th>Material</th><th>Batch</th><th>Qty</th><th>Date</th><th>Issued By</th><th>Actions</th></tr></thead>
+            <tbody>
+            <tr th:each="row : ${issuesList}" th:with="request=${requestMap.get(row.materialRequestId)}, plan=${planMap.get(row.planId)}, material=${materialMap.get(row.materialId)}, batch=${batchMap.get(row.batchId)}">
+                <td><strong th:text="${row.issueCode}">MIN-001</strong></td><td th:text="${request != null ? request.requestCode : 'Request unavailable'}"></td><td th:text="${plan != null ? plan.planCode : 'Plan unavailable'}"></td>
+                <td th:text="${material != null ? material.materialCode + ' - ' + material.materialName : 'Material unavailable'}"></td><td th:text="${batch != null ? batch.batchNo : 'Batch unavailable'}"></td><td th:text="${row.issuedQty}"></td><td th:text="${row.issueDate}"></td><td th:text="${row.issuedBy != null ? 'User ID ' + row.issuedBy : '-'}"></td><td><span class="production-lock">Locked Inventory Audit Record</span></td>
+            </tr>
+            <tr th:if="${#lists.isEmpty(issuesList)}"><td colspan="9">No Material Issue Notes found.</td></tr>
+            </tbody>
+        </table></div>
+    </section>
+</main>
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const requestSelect = document.getElementById('requestId');
+        const planSelect = document.getElementById('planId');
+        const materialSelect = document.getElementById('materialId');
+        const batchSelect = document.getElementById('batchId');
+
+        if (requestSelect && planSelect) {
+            requestSelect.addEventListener('change', function () {
+                const option = requestSelect.options[requestSelect.selectedIndex];
+                if (option && option.dataset.planId) planSelect.value = option.dataset.planId;
+            });
+        }
+
+        if (materialSelect && batchSelect) {
+            function filterBatches() {
+                const materialId = materialSelect.value;
+                Array.from(batchSelect.options).forEach(function (option, index) {
+                    if (index === 0) return;
+                    option.hidden = materialId && option.dataset.materialId !== materialId;
+                });
+                batchSelect.value = '';
+            }
+            materialSelect.addEventListener('change', filterBatches);
+        }
+    });
+</script>
 </body>
-
 </html>
