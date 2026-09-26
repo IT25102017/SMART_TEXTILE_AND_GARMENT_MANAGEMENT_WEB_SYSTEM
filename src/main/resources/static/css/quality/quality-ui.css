@@ -1,0 +1,262 @@
+/* LankaTex Quality Control Module UI */
+body.quality-page {
+    min-height: 100vh;
+    margin: 0;
+    color: #18364a;
+    background:
+            linear-gradient(rgba(237, 246, 247, 0.76), rgba(237, 246, 247, 0.82)),
+            url("../../images/quality-ui.jpg") center center / cover fixed no-repeat;
+}
+
+.quality-shell {
+    max-width: 1420px;
+    margin: 0 auto;
+    padding: 34px 22px 60px;
+}
+
+.quality-hero {
+    margin-bottom: 24px;
+    padding: 36px 40px;
+    color: #fff;
+    border-radius: 24px;
+    background: linear-gradient(120deg, rgba(66, 50, 112, .96), rgba(21, 132, 141, .86));
+    box-shadow: 0 18px 45px rgba(24, 54, 74, .18);
+}
+
+.quality-eyebrow {
+    color: #c8ffff;
+    font-size: .78rem;
+    font-weight: 800;
+    letter-spacing: .16em;
+    text-transform: uppercase;
+}
+
+.quality-hero h1 {
+    margin: 7px 0 8px;
+    font-weight: 800;
+    font-size: clamp(2rem, 4vw, 3rem);
+}
+
+.quality-hero p {
+    max-width: 900px;
+    margin: 0;
+    line-height: 1.65;
+    color: rgba(255, 255, 255, .94);
+}
+
+.quality-panel {
+    margin-bottom: 22px;
+    padding: 24px;
+    border-radius: 22px;
+    background: rgba(255, 255, 255, .95);
+    box-shadow: 0 16px 40px rgba(31, 64, 83, .13);
+    backdrop-filter: blur(8px);
+}
+
+.quality-toolbar {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 18px;
+}
+
+.quality-nav {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+}
+
+.quality-nav a {
+    padding: 9px 13px;
+    border-radius: 12px;
+    color: #2f5470;
+    background: #edf3f7;
+    font-weight: 700;
+    text-decoration: none;
+}
+
+.quality-nav a:hover {
+    color: #17364a;
+    background: #dceaf0;
+}
+
+.quality-btn {
+    display: inline-block;
+    padding: 8px 12px;
+    border: 0;
+    border-radius: 11px;
+    font-weight: 700;
+    text-decoration: none;
+    cursor: pointer;
+}
+
+.btn-main { background: #276b78; color: #fff; }
+.btn-edit { background: #fff0bf; color: #705311; }
+.btn-success-soft { background: #dff5e6; color: #21683a; }
+.btn-danger-soft { background: #fde4e4; color: #9b3030; }
+.btn-info-soft { background: #e1f1f6; color: #235b71; }
+.btn-muted { background: #e8eef2; color: #405566; }
+
+.stat-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+    gap: 14px;
+}
+
+.stat-card {
+    padding: 18px;
+    border: 1px solid #e2ecef;
+    border-radius: 16px;
+    background: rgba(255, 255, 255, .96);
+}
+
+.stat-card span {
+    display: block;
+    margin-bottom: 6px;
+    color: #667e8e;
+    font-size: .88rem;
+}
+
+.stat-card strong {
+    color: #2c6472;
+    font-size: 1.55rem;
+    font-weight: 800;
+}
+
+.quality-table-wrapper {
+    width: 100%;
+    overflow-x: auto;
+    border-radius: 14px;
+}
+
+.quality-table {
+    width: 100%;
+    border-collapse: separate;
+    border-spacing: 0;
+    border-radius: 14px;
+    overflow: hidden;
+}
+
+.quality-table th {
+    padding: 12px 11px;
+    color: #fff;
+    background: #183157;
+    font-size: .82rem;
+    font-weight: 800;
+    white-space: nowrap;
+}
+
+.quality-table td {
+    padding: 11px;
+    color: #314d60;
+    background: #fff;
+    border-bottom: 1px solid #e8eef2;
+    vertical-align: middle;
+}
+
+.quality-table tbody tr:hover td { background: #f8fbfc; }
+
+.code-pill {
+    color: #2a6978;
+    font-weight: 800;
+    white-space: nowrap;
+}
+
+.status-pill {
+    display: inline-block;
+    padding: 5px 9px;
+    border-radius: 999px;
+    font-size: .74rem;
+    font-weight: 800;
+    white-space: nowrap;
+    background: #edf2f4;
+    color: #425766;
+}
+
+.status-passed,
+.status-approved,
+.status-released,
+.status-active,
+.status-reinspected { background: #ddf5e5; color: #1f6d3a; }
+
+.status-pending,
+.status-rework-required { background: #fff0c9; color: #795a00; }
+
+.status-failed,
+.status-rejected,
+.status-on-hold { background: #fde2e2; color: #9b3030; }
+
+.status-archived { background: #e8ecef; color: #65727c; }
+
+.quality-form-section {
+    margin-bottom: 16px;
+    padding: 18px;
+    border: 1px solid #e2ecef;
+    border-radius: 16px;
+    background: rgba(255, 255, 255, .9);
+}
+
+.quality-form-section h2 {
+    margin: 0 0 16px;
+    color: #183f57;
+    font-size: 1.2rem;
+    font-weight: 800;
+}
+
+.quality-page .form-label {
+    color: #294d60;
+    font-weight: 700;
+}
+
+.quality-page .form-control,
+.quality-page .form-select {
+    min-height: 44px;
+    border: 1px solid #d1e0e4;
+    border-radius: 11px;
+    box-shadow: none;
+}
+
+.quality-page .form-control:focus,
+.quality-page .form-select:focus {
+    border-color: #398896;
+    box-shadow: 0 0 0 0.2rem rgba(57, 136, 150, .12);
+}
+
+.quality-actions {
+    display: flex;
+    gap: 7px;
+    flex-wrap: wrap;
+    align-items: center;
+}
+
+.quality-actions form { margin: 0; }
+
+.quality-empty {
+    padding: 28px !important;
+    color: #718491 !important;
+    text-align: center;
+    font-style: italic;
+}
+
+.quality-row-archived td {
+    opacity: .67;
+    background: #f5f7f8;
+}
+
+.quality-help {
+    display: block;
+    margin-top: 6px;
+    color: #748996;
+    font-size: .82rem;
+}
+
+@media (max-width: 768px) {
+    .quality-shell { padding: 20px 12px 40px; }
+    .quality-hero { padding: 26px 22px; border-radius: 18px; }
+    .quality-panel { padding: 17px; border-radius: 18px; }
+    .quality-toolbar { align-items: flex-start; flex-direction: column; }
+    .stat-grid { grid-template-columns: 1fr; }
+    .quality-table { min-width: 900px; }
+}
