@@ -1,77 +1,386 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
+
+<html lang="en"
+      xmlns:th="http://www.thymeleaf.org">
+
 <head>
+
     <meta charset="UTF-8">
-    <title>Stock Adjustment</title>
+
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1">
+
+    <title th:text="${isEdit}
+                    ? 'Edit Stock Adjustment | LankaTex'
+                    : 'New Stock Adjustment | LankaTex'">
+        Stock Adjustment | LankaTex
+    </title>
+
+
+    <!-- Bootstrap CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
           rel="stylesheet">
+
+
+    <!-- Common LankaTex Navigation CSS -->
+    <link rel="stylesheet"
+          th:href="@{/css/common-navbar.css}">
+
+
+    <!-- Inventory Main Theme -->
+    <link rel="stylesheet"
+          th:href="@{/css/inventory/inventory-ui.css}">
+
+
+    <!-- Stock Adjustment Theme -->
+    <link rel="stylesheet"
+          th:href="@{/css/inventory/inventory-adjustments.css}">
+
+
+    <!-- Shared Inventory Form Theme -->
+    <link rel="stylesheet"
+          th:href="@{/css/inventory/inventory-forms.css}">
+
 </head>
 
-<body>
 
-<div class="container py-4">
+<body class="inventory-page">
 
-    <h2>Stock Adjustment</h2>
 
-    <div th:if="${error}"
-         class="alert alert-danger"
-         th:text="${error}">
-    </div>
+<!-- Common LankaTex Navigation Bar -->
+<div th:replace="~{fragments/common-navbar :: navbar}"></div>
 
-    <form method="post"
-          th:action="@{/inventory/adjustments/save}"
-          th:object="${adjustment}">
 
-        <div class="mb-3">
+<main class="inventory-container inventory-form-workspace">
 
-            <label>Batch</label>
 
-            <select class="form-select"
-                    name="batchId">
+    <!-- =====================================================
+         STOCK ADJUSTMENT FORM CARD
+         ===================================================== -->
 
-                <option th:each="batch : ${batches}"
-                        th:value="${batch.batchId}"
-                        th:text="${batch.batchNo
-                        + ' - '
-                        + batch.material.materialName
-                        + ' ('
-                        + batch.availableQty
-                        + ')'}">
-                </option>
+    <section class="inventory-form-card">
 
-            </select>
 
-        </div>
+        <!-- =================================================
+             FORM HEADING
+             ================================================= -->
 
-        <div class="mb-3">
+        <div class="inventory-form-heading">
 
-            <label>New Quantity</label>
 
-            <input type="number"
-                   step="0.01"
-                   min="0"
-                   class="form-control"
-                   th:field="*{adjustedQty}">
+            <span class="inventory-form-eyebrow">
+                LankaTex Inventory
+            </span>
 
-        </div>
 
-        <div class="mb-3">
+            <h1 th:text="${isEdit}
+                        ? 'Edit Pending Stock Adjustment'
+                        : 'New Stock Adjustment'">
 
-            <label>Reason</label>
+                New Stock Adjustment
 
-            <textarea class="form-control"
-                      th:field="*{reason}">
-            </textarea>
+            </h1>
+
+
+            <p th:if="${!isEdit}">
+                Select a material batch and enter the corrected
+                stock quantity. The adjustment will remain pending
+                until it is approved.
+            </p>
+
+
+            <p th:if="${isEdit}">
+                Update the corrected quantity or reason before
+                this stock adjustment is approved.
+            </p>
+
 
         </div>
 
-        <button class="btn btn-success">
-            Submit Adjustment
-        </button>
 
-    </form>
 
-</div>
+        <!-- =================================================
+             ERROR MESSAGE
+             ================================================= -->
+
+        <div th:if="${error}"
+             class="alert alert-danger inventory-form-alert"
+             th:text="${error}">
+        </div>
+
+
+
+        <!-- =================================================
+             STOCK ADJUSTMENT FORM
+             ================================================= -->
+
+        <form method="post"
+              th:action="@{/inventory/adjustments/save}"
+              th:object="${adjustment}">
+
+
+            <!-- Adjustment ID -->
+
+            <input type="hidden"
+                   th:field="*{adjustmentId}">
+
+
+
+            <!-- =================================================
+                 MATERIAL BATCH INFORMATION
+                 ================================================= -->
+
+            <div class="inventory-form-section">
+
+
+                <h2 class="inventory-form-section-title">
+                    Material Batch Information
+                </h2>
+
+
+
+                <!-- =================================================
+                     MATERIAL BATCH - CREATE MODE
+                     ================================================= -->
+
+                <div class="mb-3"
+                     th:if="${!isEdit}">
+
+
+                    <label class="form-label">
+                        Material Batch
+                    </label>
+
+
+                    <select class="form-select"
+                            name="batchId"
+                            required>
+
+
+                        <option value=""
+                                selected
+                                disabled>
+
+                            Select Material Batch
+
+                        </option>
+
+
+                        <option th:each="batch : ${batches}"
+                                th:value="${batch.batchId}"
+                                th:text="${batch.batchNo
+                                + ' - '
+                                + batch.material.materialName
+                                + ' | Current Qty: '
+                                + batch.availableQty}">
+                        </option>
+
+
+                    </select>
+
+
+                    <small class="inventory-field-help">
+
+                        Select the material batch whose stock quantity
+                        requires correction.
+
+                    </small>
+
+
+                </div>
+
+
+
+                <!-- =================================================
+                     MATERIAL BATCH - EDIT MODE
+                     ================================================= -->
+
+                <div class="mb-3"
+                     th:if="${isEdit}">
+
+
+                    <label class="form-label">
+                        Material Batch
+                    </label>
+
+
+                    <input type="text"
+                           class="form-control"
+                           th:value="${adjustment.batch.batchNo
+                           + ' - '
+                           + adjustment.batch.material.materialName
+                           + ' | Original Qty: '
+                           + adjustment.previousQty}"
+                           readonly>
+
+
+                    <input type="hidden"
+                           name="batchId"
+                           th:value="${adjustment.batch.batchId}">
+
+
+                    <small class="inventory-field-help">
+
+                        Material batch cannot be changed after
+                        the adjustment request is created.
+
+                    </small>
+
+
+                </div>
+
+
+            </div>
+
+
+
+            <!-- =================================================
+                 ADJUSTMENT DETAILS
+                 ================================================= -->
+
+            <div class="inventory-form-section">
+
+
+                <h2 class="inventory-form-section-title">
+                    Adjustment Details
+                </h2>
+
+
+
+                <!-- Corrected Quantity -->
+
+                <div class="mb-3">
+
+
+                    <label class="form-label">
+                        Corrected Quantity
+                    </label>
+
+
+                    <input type="number"
+                           step="0.01"
+                           min="0"
+                           class="form-control"
+                           th:field="*{adjustedQty}"
+                           placeholder="Example: 230"
+                           required>
+
+
+                    <small class="inventory-field-help">
+
+                        This quantity will become the batch quantity
+                        only after the adjustment is approved.
+
+                    </small>
+
+
+                </div>
+
+
+
+                <!-- Reason -->
+
+                <div class="mb-3">
+
+
+                    <label class="form-label">
+                        Reason for Adjustment
+                    </label>
+
+
+                    <textarea class="form-control"
+                              rows="5"
+                              th:field="*{reason}"
+                              placeholder="Example: Physical stock count found 230 units instead of 250"
+                              required>
+                    </textarea>
+
+
+                    <small class="inventory-field-help">
+
+                        Explain clearly why the recorded stock quantity
+                        needs to be corrected.
+
+                    </small>
+
+
+                </div>
+
+
+            </div>
+
+
+
+            <!-- =================================================
+                 AUDIT INFORMATION
+                 ================================================= -->
+
+            <div class="inventory-form-section">
+
+
+                <h2 class="inventory-form-section-title">
+                    Approval Information
+                </h2>
+
+
+                <div class="alert alert-info mb-0">
+
+                    This adjustment will be saved as
+                    <strong>PENDING</strong>.
+
+                    The stock quantity will change only after
+                    the adjustment is approved.
+
+                    Once approved, the adjustment becomes a locked
+                    audit record and cannot be edited or deleted.
+
+                </div>
+
+
+            </div>
+
+
+
+            <!-- =================================================
+                 FORM ACTIONS
+                 ================================================= -->
+
+            <div class="inventory-form-actions">
+
+
+                <button type="submit"
+                        class="inventory-form-button
+                               inventory-form-button-primary"
+                        th:text="${isEdit}
+                                 ? 'Update Adjustment'
+                                 : 'Submit Adjustment'">
+
+                    Submit Adjustment
+
+                </button>
+
+
+                <a class="inventory-form-button
+                          inventory-form-button-secondary"
+                   th:href="@{/inventory/adjustments}">
+
+                    Cancel
+
+                </a>
+
+
+            </div>
+
+
+        </form>
+
+
+    </section>
+
+
+</main>
+
 
 </body>
+
 </html>

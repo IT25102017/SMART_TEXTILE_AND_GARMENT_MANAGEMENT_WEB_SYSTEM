@@ -1,337 +1,136 @@
 <!DOCTYPE html>
-<html lang="en"
-      xmlns:th="http://www.thymeleaf.org">
-
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
-
     <meta charset="UTF-8">
-
-    <meta name="viewport"
-          content="width=device-width, initial-scale=1">
-
-    <title>
-        Defect Record Management - LankaTex
-    </title>
-
-    <!-- Bootstrap CSS -->
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
-          rel="stylesheet">
-
-    <!-- Common LankaTex Navigation CSS -->
-    <link rel="stylesheet"
-          th:href="@{/css/common-navbar.css}">
-
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Defect Records | LankaTex</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" th:href="@{/css/common-navbar.css}">
+    <link rel="stylesheet" th:href="@{/css/quality/quality-ui.css}">
 </head>
-
-
-<body class="bg-light">
-
-
-<!-- Common LankaTex Navigation Bar -->
+<body class="quality-page">
 <div th:replace="~{fragments/common-navbar :: navbar}"></div>
 
+<main class="quality-shell">
+    <section class="quality-hero">
+        <span class="quality-eyebrow">LankaTex Quality Assurance</span>
+        <h1>Defect Records</h1>
+        <p>Record defect type, severity, quantity, description and the responsible production stage.</p>
+    </section>
 
-<div class="container py-4">
-
-
-    <!-- Page Header -->
-    <div class="d-flex justify-content-between align-items-center mb-4">
-
-        <h2>
-            Defect Record Management
-        </h2>
-
-        <a class="btn btn-dark"
-           th:href="@{/quality}">
-            Back to Dashboard
-        </a>
-
-    </div>
-
-
-    <!-- Quality Module Navigation -->
-    <div class="mb-3">
-
-        <a class="btn btn-outline-primary btn-sm me-2 mb-2"
-           th:href="@{/quality/inspections}">
-            Quality Inspection
-        </a>
-
-        <a class="btn btn-primary btn-sm me-2 mb-2"
-           th:href="@{/quality/defects}">
-            Defect Record
-        </a>
-
-        <a class="btn btn-outline-primary btn-sm me-2 mb-2"
-           th:href="@{/quality/wastage}">
-            Wastage Record
-        </a>
-
-        <a class="btn btn-outline-primary btn-sm me-2 mb-2"
-           th:href="@{/quality/holds}">
-            Quality Hold
-        </a>
-
-    </div>
-
-
-    <!-- Success Message -->
-    <div th:if="${message}"
-         class="alert alert-success"
-         th:text="${message}">
-    </div>
-
-
-    <!-- Error Message -->
-    <div th:if="${error}"
-         class="alert alert-danger"
-         th:text="${error}">
-    </div>
-
-
-    <!-- Defect Record Form -->
-    <div class="card shadow-sm mb-4">
-
-        <div class="card-header">
-
-            <strong>
-                Add / Edit Defect Record
-            </strong>
-
+    <section class="quality-panel">
+        <div class="quality-toolbar">
+            <div class="quality-nav">
+                <a th:href="@{/quality}">Dashboard</a>
+                <a th:href="@{/quality/inspections}">Inspections</a>
+                <a th:href="@{/quality/rework}">Rework</a>
+                <a th:href="@{/quality/wastage}">Wastage</a>
+                <a th:href="@{/quality/holds}">Holds</a>
+            </div>
         </div>
 
+        <div th:if="${message}" class="alert alert-success" th:text="${message}"></div>
+        <div th:if="${error}" class="alert alert-danger" th:text="${error}"></div>
 
-        <div class="card-body">
-
-            <form th:action="@{/quality/defects/save}"
-                  th:object="${defectRecord}"
-                  method="post">
-
-
-                <input type="hidden"
-                       th:field="*{defectId}">
-
-
+        <div class="quality-form-section">
+            <h2 th:text="${defectRecord.defectId == null ? 'New Defect Record' : 'Edit Defect Record'}">Defect Record</h2>
+            <form th:action="@{/quality/defects/save}" th:object="${defectRecord}" method="post">
+                <input type="hidden" th:field="*{defectId}">
+                <input type="hidden" th:field="*{status}">
                 <div class="row">
-
-
-                    <!-- Inspection ID -->
                     <div class="col-md-6 mb-3">
-
-                        <label class="form-label">
-                            Inspection ID
-                        </label>
-
-                        <input class="form-control"
-                               type="number"
-                               th:field="*{inspectionId}"
-                               required>
-
+                        <label class="form-label">Inspection</label>
+                        <select class="form-select" th:field="*{inspectionId}" required>
+                            <option value="">Select Inspection</option>
+                            <option th:each="inspection: ${inspections}" th:if="${inspection.status != 'ARCHIVED'}" th:value="${inspection.inspectionId}" th:text="${inspection.inspectionCode + ' | PP-' + #numbers.formatInteger(inspection.planId, 3) + ' | ' + inspection.stageName}"></option>
+                        </select>
                     </div>
-
-
-                    <!-- Defect Type -->
                     <div class="col-md-6 mb-3">
-
-                        <label class="form-label">
-                            Defect Type
-                        </label>
-
-                        <input class="form-control"
-                               type="text"
-                               th:field="*{defectType}"
-                               required>
-
+                        <label class="form-label">Defect Type</label>
+                        <select class="form-select" th:field="*{defectType}" required>
+                            <option value="">Select Defect</option>
+                            <option value="FABRIC_DEFECT">Fabric Defect</option>
+                            <option value="STITCHING_DEFECT">Stitching Defect</option>
+                            <option value="SIZE_MEASUREMENT">Size / Measurement</option>
+                            <option value="COLOUR_SHADE">Colour / Shade</option>
+                            <option value="FINISHING_DEFECT">Finishing Defect</option>
+                            <option value="PACKAGING_DEFECT">Packaging Defect</option>
+                            <option value="OTHER">Other</option>
+                        </select>
                     </div>
-
-
-                    <!-- Severity -->
-                    <div class="col-md-6 mb-3">
-
-                        <label class="form-label">
-                            Severity
-                        </label>
-
-                        <input class="form-control"
-                               type="text"
-                               th:field="*{severity}"
-                               required>
-
+                    <div class="col-md-4 mb-3">
+                        <label class="form-label">Severity</label>
+                        <select class="form-select" th:field="*{severity}" required>
+                            <option value="">Select Severity</option>
+                            <option value="LOW">LOW</option>
+                            <option value="MEDIUM">MEDIUM</option>
+                            <option value="HIGH">HIGH</option>
+                            <option value="CRITICAL">CRITICAL</option>
+                        </select>
                     </div>
-
-
-                    <!-- Quantity -->
-                    <div class="col-md-6 mb-3">
-
-                        <label class="form-label">
-                            Quantity
-                        </label>
-
-                        <input class="form-control"
-                               type="number"
-                               th:field="*{quantity}"
-                               required>
-
+                    <div class="col-md-4 mb-3">
+                        <label class="form-label">Quantity</label>
+                        <input class="form-control" type="number" min="1" th:field="*{quantity}" required>
                     </div>
-
-
-                    <!-- Responsible Department ID -->
-                    <div class="col-md-6 mb-3">
-
-                        <label class="form-label">
-                            Responsible Department ID
-                        </label>
-
-                        <input class="form-control"
-                               type="number"
-                               th:field="*{responsibleDepartmentId}">
-
+                    <div class="col-md-4 mb-3">
+                        <label class="form-label">Responsible Stage</label>
+                        <select class="form-select" th:field="*{responsibleStage}">
+                            <option value="">Select Stage</option>
+                            <option value="CUTTING">CUTTING</option>
+                            <option value="SEWING">SEWING</option>
+                            <option value="FINISHING">FINISHING</option>
+                            <option value="PACKING">PACKING</option>
+                            <option value="OTHER">OTHER</option>
+                        </select>
                     </div>
-
-
-                    <!-- Remarks -->
-                    <div class="col-md-6 mb-3">
-
-                        <label class="form-label">
-                            Remarks
-                        </label>
-
-                        <input class="form-control"
-                               type="text"
-                               th:field="*{remarks}">
-
+                    <div class="col-12 mb-3">
+                        <label class="form-label">Description/Remarks</label>
+                        <textarea class="form-control" rows="3" maxlength="1000" th:field="*{remarks}"></textarea>
                     </div>
-
-
                 </div>
-
-
-                <button class="btn btn-success"
-                        type="submit">
-                    Save
-                </button>
-
-
-                <a class="btn btn-secondary"
-                   th:href="@{/quality/defects}">
-                    Clear
-                </a>
-
-
+                <button class="quality-btn btn-main" type="submit">Save Defect</button>
+                <a class="quality-btn btn-muted" th:href="@{/quality/defects}">Clear</a>
             </form>
-
         </div>
+    </section>
 
-    </div>
-
-
-    <!-- Defect Record List -->
-    <div class="card shadow-sm">
-
-        <div class="card-header">
-
-            <strong>
-                Defect Record List
-            </strong>
-
-        </div>
-
-
-        <div class="card-body table-responsive">
-
-            <table class="table table-striped table-bordered align-middle">
-
-
-                <thead class="table-dark">
-
+    <section class="quality-panel">
+        <h2 class="h4 fw-bold mb-3">Defect List</h2>
+        <div class="quality-table-wrapper">
+            <table class="quality-table">
+                <thead>
                 <tr>
-
-                    <th>ID</th>
-                    <th>Inspection ID</th>
-                    <th>Defect Type</th>
-                    <th>Severity</th>
-                    <th>Quantity</th>
-                    <th>Department ID</th>
-                    <th>Remarks</th>
-                    <th>Actions</th>
-
+                    <th>Defect</th><th>Inspection</th><th>Type</th><th>Severity</th>
+                    <th>Qty</th><th>Stage</th><th>Description</th><th>Status</th><th>Actions</th>
                 </tr>
-
                 </thead>
-
-
                 <tbody>
-
-
-                <tr th:each="row : ${defectsList}">
-
-
-                    <td th:text="${row.defectId}">
+                <tr th:each="row: ${defectsList}" th:classappend="${row.status == 'ARCHIVED'} ? 'quality-row-archived' : ''">
+                    <td><span class="code-pill" th:text="${row.defectCode}">DEF-001</span></td>
+                    <td th:with="inspection=${inspectionMap.get(row.inspectionId)}" th:text="${inspection != null ? inspection.inspectionCode : 'QIN-' + #numbers.formatInteger(row.inspectionId, 3)}">QIN-001</td>
+                    <td th:text="${row.defectType}">FABRIC_DEFECT</td>
+                    <td th:text="${row.severity}">HIGH</td>
+                    <td th:text="${row.quantity}">10</td>
+                    <td th:text="${row.responsibleStage != null ? row.responsibleStage : '-'}">CUTTING</td>
+                    <td th:text="${row.remarks != null and !#strings.isEmpty(row.remarks) ? row.remarks : '-'}">Remarks</td>
+                    <td><span class="status-pill" th:text="${row.status}">ACTIVE</span></td>
+                    <td>
+                        <div class="quality-actions">
+                            <a class="quality-btn btn-edit" th:href="@{/quality/defects(editId=${row.defectId})}">Edit</a>
+                            <form th:if="${row.status != 'ARCHIVED'}" method="post" th:action="@{/quality/defects/archive/{id}(id=${row.defectId})}">
+                                <button class="quality-btn btn-danger-soft" type="submit">Archive</button>
+                            </form>
+                            <form th:if="${row.status == 'ARCHIVED'}" method="post" th:action="@{/quality/defects/restore/{id}(id=${row.defectId})}">
+                                <button class="quality-btn btn-success-soft" type="submit">Restore</button>
+                            </form>
+                        </div>
                     </td>
-
-
-                    <td th:text="${row.inspectionId}">
-                    </td>
-
-
-                    <td th:text="${row.defectType}">
-                    </td>
-
-
-                    <td th:text="${row.severity}">
-                    </td>
-
-
-                    <td th:text="${row.quantity}">
-                    </td>
-
-
-                    <td th:text="${row.responsibleDepartmentId}">
-                    </td>
-
-
-                    <td th:text="${row.remarks}">
-                    </td>
-
-
-                    <!-- Actions -->
-                    <td class="text-nowrap">
-
-
-                        <!-- Edit -->
-                        <a class="btn btn-warning btn-sm"
-                           th:href="@{/quality/defects(editId=${row.defectId})}">
-                            Edit
-                        </a>
-
-
-                        <!-- Delete -->
-                        <a class="btn btn-danger btn-sm"
-                           th:href="@{/quality/defects/delete/{id}(id=${row.defectId})}"
-                           onclick="return confirm('Permanently delete this Defect Record?');">
-                            Delete
-                        </a>
-
-
-                    </td>
-
-
                 </tr>
-
-
+                <tr th:if="${#lists.isEmpty(defectsList)}"><td colspan="9" class="quality-empty">No defect records found.</td></tr>
                 </tbody>
-
-
             </table>
-
         </div>
-
-    </div>
-
-
-</div>
-
-
+    </section>
+</main>
 </body>
-
 </html>

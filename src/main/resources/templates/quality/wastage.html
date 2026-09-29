@@ -1,386 +1,126 @@
 <!DOCTYPE html>
-<html lang="en"
-      xmlns:th="http://www.thymeleaf.org">
-
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
-
     <meta charset="UTF-8">
-
-    <meta name="viewport"
-          content="width=device-width, initial-scale=1">
-
-    <title>
-        Wastage Record Management - LankaTex
-    </title>
-
-    <!-- Bootstrap CSS -->
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
-          rel="stylesheet">
-
-    <!-- Common LankaTex Navigation CSS -->
-    <link rel="stylesheet"
-          th:href="@{/css/common-navbar.css}">
-
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Wastage Records | LankaTex</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" th:href="@{/css/common-navbar.css}">
+    <link rel="stylesheet" th:href="@{/css/quality/quality-ui.css}">
 </head>
-
-
-<body class="bg-light">
-
-
-<!-- Common LankaTex Navigation Bar -->
+<body class="quality-page">
 <div th:replace="~{fragments/common-navbar :: navbar}"></div>
 
+<main class="quality-shell">
+    <section class="quality-hero">
+        <span class="quality-eyebrow">LankaTex Quality Assurance</span>
+        <h1>Wastage Records</h1>
+        <p>Record material or garment wastage against a valid Production Plan and Material, then approve or reject the record.</p>
+    </section>
 
-<div class="container py-4">
-
-
-    <!-- Page Header -->
-    <div class="d-flex justify-content-between align-items-center mb-4">
-
-        <h2>
-            Wastage Record Management
-        </h2>
-
-        <a class="btn btn-dark"
-           th:href="@{/quality}">
-            Back to Dashboard
-        </a>
-
-    </div>
-
-
-    <!-- Quality Module Navigation -->
-    <div class="mb-3">
-
-        <a class="btn btn-outline-primary btn-sm me-2 mb-2"
-           th:href="@{/quality/inspections}">
-            Quality Inspection
-        </a>
-
-        <a class="btn btn-outline-primary btn-sm me-2 mb-2"
-           th:href="@{/quality/defects}">
-            Defect Record
-        </a>
-
-        <a class="btn btn-primary btn-sm me-2 mb-2"
-           th:href="@{/quality/wastage}">
-            Wastage Record
-        </a>
-
-        <a class="btn btn-outline-primary btn-sm me-2 mb-2"
-           th:href="@{/quality/holds}">
-            Quality Hold
-        </a>
-
-    </div>
-
-
-    <!-- Success Message -->
-    <div th:if="${message}"
-         class="alert alert-success"
-         th:text="${message}">
-    </div>
-
-
-    <!-- Error Message -->
-    <div th:if="${error}"
-         class="alert alert-danger"
-         th:text="${error}">
-    </div>
-
-
-    <!-- Wastage Record Form -->
-    <div class="card shadow-sm mb-4">
-
-        <div class="card-header">
-
-            <strong>
-                Add / Edit Wastage Record
-            </strong>
-
+    <section class="quality-panel">
+        <div class="quality-toolbar">
+            <div class="quality-nav">
+                <a th:href="@{/quality}">Dashboard</a>
+                <a th:href="@{/quality/inspections}">Inspections</a>
+                <a th:href="@{/quality/defects}">Defects</a>
+                <a th:href="@{/quality/rework}">Rework</a>
+                <a th:href="@{/quality/holds}">Holds</a>
+            </div>
         </div>
 
+        <div th:if="${message}" class="alert alert-success" th:text="${message}"></div>
+        <div th:if="${error}" class="alert alert-danger" th:text="${error}"></div>
 
-        <div class="card-body">
-
-            <form th:action="@{/quality/wastage/save}"
-                  th:object="${wastageRecord}"
-                  method="post">
-
-
-                <input type="hidden"
-                       th:field="*{wastageId}">
-
-
+        <div class="quality-form-section">
+            <h2 th:text="${wastageRecord.wastageId == null ? 'New Wastage Record' : 'Edit Wastage Record'}">Wastage Record</h2>
+            <form th:action="@{/quality/wastage/save}" th:object="${wastageRecord}" method="post">
+                <input type="hidden" th:field="*{wastageId}">
+                <input type="hidden" th:field="*{approvalStatus}">
                 <div class="row">
-
-
-                    <!-- Production Plan ID -->
                     <div class="col-md-6 mb-3">
-
-                        <label class="form-label">
-                            Production Plan ID
-                        </label>
-
-                        <input class="form-control"
-                               type="number"
-                               th:field="*{planId}">
-
+                        <label class="form-label">Production Plan</label>
+                        <select class="form-select" th:field="*{planId}" required>
+                            <option value="">Select Production Plan</option>
+                            <option th:each="plan: ${productionPlans}" th:value="${plan.planId}" th:text="${'PP-' + #numbers.formatInteger(plan.planId, 3) + ' | ' + plan.status}"></option>
+                        </select>
                     </div>
-
-
-                    <!-- Material ID -->
                     <div class="col-md-6 mb-3">
-
-                        <label class="form-label">
-                            Material ID
-                        </label>
-
-                        <input class="form-control"
-                               type="number"
-                               th:field="*{materialId}">
-
+                        <label class="form-label">Material</label>
+                        <select class="form-select" th:field="*{materialId}" required>
+                            <option value="">Select Material</option>
+                            <option th:each="material: ${materials}" th:value="${material.materialId}" th:text="${material.materialCode + ' - ' + material.materialName}"></option>
+                        </select>
                     </div>
-
-
-                    <!-- Quantity -->
-                    <div class="col-md-6 mb-3">
-
-                        <label class="form-label">
-                            Quantity
-                        </label>
-
-                        <input class="form-control"
-                               type="number"
-                               step="0.01"
-                               th:field="*{quantity}"
-                               required>
-
+                    <div class="col-md-4 mb-3">
+                        <label class="form-label">Quantity</label>
+                        <input class="form-control" type="number" step="0.01" min="0.01" th:field="*{quantity}" required>
                     </div>
-
-
-                    <!-- Unit -->
-                    <div class="col-md-6 mb-3">
-
-                        <label class="form-label">
-                            Unit
-                        </label>
-
-                        <input class="form-control"
-                               type="text"
-                               th:field="*{unit}"
-                               required>
-
+                    <div class="col-md-4 mb-3">
+                        <label class="form-label">Unit</label>
+                        <input class="form-control" type="text" th:field="*{unit}" placeholder="kg/m/pcs" required>
                     </div>
-
-
-                    <!-- Reason -->
-                    <div class="col-md-6 mb-3">
-
-                        <label class="form-label">
-                            Reason
-                        </label>
-
-                        <input class="form-control"
-                               type="text"
-                               th:field="*{reason}"
-                               required>
-
+                    <div class="col-md-4 mb-3">
+                        <label class="form-label">Recorded By</label>
+                        <select class="form-select" th:field="*{recordedBy}" required>
+                            <option value="">Select Employee</option>
+                            <option th:each="employee: ${employees}" th:value="${employee.employeeId}" th:text="${employee.employeeCode + ' - ' + employee.fullName}"></option>
+                        </select>
                     </div>
-
-
-                    <!-- Approval Status -->
-                    <div class="col-md-6 mb-3">
-
-                        <label class="form-label">
-                            Approval Status
-                        </label>
-
-                        <input class="form-control"
-                               type="text"
-                               th:field="*{approvalStatus}">
-
+                    <div class="col-12 mb-3">
+                        <label class="form-label">Reason</label>
+                        <textarea class="form-control" rows="3" maxlength="1000" th:field="*{reason}" required></textarea>
                     </div>
-
-
-                    <!-- Recorded By -->
-                    <div class="col-md-6 mb-3">
-
-                        <label class="form-label">
-                            Recorded By User ID
-                        </label>
-
-                        <input class="form-control"
-                               type="number"
-                               th:field="*{recordedBy}">
-
-                    </div>
-
-
                 </div>
-
-
-                <button class="btn btn-success"
-                        type="submit">
-                    Save
-                </button>
-
-
-                <a class="btn btn-secondary"
-                   th:href="@{/quality/wastage}">
-                    Clear
-                </a>
-
-
+                <button class="quality-btn btn-main" type="submit">Save Wastage</button>
+                <a class="quality-btn btn-muted" th:href="@{/quality/wastage}">Clear</a>
             </form>
-
         </div>
+    </section>
 
-    </div>
-
-
-    <!-- Wastage Record List -->
-    <div class="card shadow-sm">
-
-        <div class="card-header">
-
-            <strong>
-                Wastage Record List
-            </strong>
-
-        </div>
-
-
-        <div class="card-body table-responsive">
-
-            <table class="table table-striped table-bordered align-middle">
-
-
-                <thead class="table-dark">
-
+    <section class="quality-panel">
+        <h2 class="h4 fw-bold mb-3">Wastage List</h2>
+        <div class="quality-table-wrapper">
+            <table class="quality-table">
+                <thead>
                 <tr>
-
-                    <th>ID</th>
-                    <th>Plan ID</th>
-                    <th>Material ID</th>
-                    <th>Quantity</th>
-                    <th>Unit</th>
-                    <th>Reason</th>
-                    <th>Approval Status</th>
-                    <th>Recorded By</th>
-                    <th>Actions</th>
-
+                    <th>Wastage</th><th>Plan</th><th>Material</th><th>Qty</th><th>Unit</th>
+                    <th>Reason</th><th>Recorded By</th><th>Status</th><th>Actions</th>
                 </tr>
-
                 </thead>
-
-
                 <tbody>
-
-
-                <tr th:each="row : ${wastageList}">
-
-
-                    <td th:text="${row.wastageId}">
-                    </td>
-
-                    <td th:text="${row.planId}">
-                    </td>
-
-                    <td th:text="${row.materialId}">
-                    </td>
-
-                    <td th:text="${row.quantity}">
-                    </td>
-
-                    <td th:text="${row.unit}">
-                    </td>
-
-                    <td th:text="${row.reason}">
-                    </td>
-
-
-                    <!-- Approval Status -->
+                <tr th:each="row: ${wastageList}" th:classappend="${row.approvalStatus == 'ARCHIVED'} ? 'quality-row-archived' : ''">
+                    <td><span class="code-pill" th:text="${row.wastageCode}">WST-001</span></td>
+                    <td th:text="${'PP-' + #numbers.formatInteger(row.planId, 3)}">PP-001</td>
+                    <td th:with="material=${materialMap.get(row.materialId)}" th:text="${material != null ? material.materialCode + ' - ' + material.materialName : 'MAT-' + #numbers.formatInteger(row.materialId, 3)}">MAT-001</td>
+                    <td th:text="${row.quantity}">0</td>
+                    <td th:text="${row.unit}">kg</td>
+                    <td th:text="${row.reason}">Reason</td>
+                    <td th:with="employee=${employeeMap.get(row.recordedBy)}" th:text="${employee != null ? employee.employeeCode + ' - ' + employee.fullName : 'EMP-' + #numbers.formatInteger(row.recordedBy, 3)}">EMP-001</td>
+                    <td><span class="status-pill" th:text="${row.approvalStatus}">PENDING</span></td>
                     <td>
-
-                        <span th:if="${row.approvalStatus == 'Pending'}"
-                              class="badge bg-warning text-dark">
-                            Pending
-                        </span>
-
-                        <span th:if="${row.approvalStatus == 'Archived'}"
-                              class="badge bg-secondary">
-                            Archived
-                        </span>
-
-                        <span th:if="${row.approvalStatus != 'Pending'
-                                      and row.approvalStatus != 'Archived'}"
-                              class="badge bg-info text-dark"
-                              th:text="${row.approvalStatus}">
-                        </span>
-
+                        <div class="quality-actions">
+                            <a class="quality-btn btn-edit" th:if="${row.approvalStatus == 'PENDING'}" th:href="@{/quality/wastage(editId=${row.wastageId})}">Edit</a>
+                            <form th:if="${row.approvalStatus == 'PENDING'}" method="post" th:action="@{/quality/wastage/approve/{id}(id=${row.wastageId})}">
+                                <button class="quality-btn btn-success-soft" type="submit">Approve</button>
+                            </form>
+                            <form th:if="${row.approvalStatus == 'PENDING'}" method="post" th:action="@{/quality/wastage/reject/{id}(id=${row.wastageId})}">
+                                <button class="quality-btn btn-danger-soft" type="submit">Reject</button>
+                            </form>
+                            <form th:if="${row.approvalStatus != 'ARCHIVED'}" method="post" th:action="@{/quality/wastage/archive/{id}(id=${row.wastageId})}">
+                                <button class="quality-btn btn-muted" type="submit">Archive</button>
+                            </form>
+                            <form th:if="${row.approvalStatus == 'ARCHIVED'}" method="post" th:action="@{/quality/wastage/restore/{id}(id=${row.wastageId})}">
+                                <button class="quality-btn btn-success-soft" type="submit">Restore</button>
+                            </form>
+                        </div>
                     </td>
-
-
-                    <td th:text="${row.recordedBy}">
-                    </td>
-
-
-                    <!-- Actions -->
-                    <td class="text-nowrap">
-
-
-                        <!-- Edit -->
-                        <a class="btn btn-warning btn-sm"
-                           th:href="@{/quality/wastage(editId=${row.wastageId})}">
-                            Edit
-                        </a>
-
-
-                        <!-- Archive -->
-                        <a th:if="${row.approvalStatus != 'Archived'}"
-                           class="btn btn-secondary btn-sm"
-                           th:href="@{/quality/wastage/archive/{id}(id=${row.wastageId})}"
-                           onclick="return confirm('Archive this Wastage Record?');">
-                            Archive
-                        </a>
-
-
-                        <!-- Restore -->
-                        <a th:if="${row.approvalStatus == 'Archived'}"
-                           class="btn btn-success btn-sm"
-                           th:href="@{/quality/wastage/restore/{id}(id=${row.wastageId})}"
-                           onclick="return confirm('Restore this Wastage Record back to Pending status?');">
-                            Restore
-                        </a>
-
-
-                        <!-- Permanent Delete -->
-                        <a class="btn btn-danger btn-sm"
-                           th:href="@{/quality/wastage/delete/{id}(id=${row.wastageId})}"
-                           onclick="return confirm('WARNING: Permanently delete this Wastage Record?');">
-                            Delete
-                        </a>
-
-
-                    </td>
-
-
                 </tr>
-
-
+                <tr th:if="${#lists.isEmpty(wastageList)}"><td colspan="9" class="quality-empty">No wastage records found.</td></tr>
                 </tbody>
-
             </table>
-
         </div>
-
-    </div>
-
-
-</div>
-
-
+    </section>
+</main>
 </body>
-
 </html>

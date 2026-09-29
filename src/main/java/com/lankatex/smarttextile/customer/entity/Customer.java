@@ -52,4 +52,13 @@ public class Customer {
     @Size(min = 5, max = 1000, message = "Delivery address must be between 5 and 1000 characters")
     @Column(name = "delivery_address", length = 1000)
     private String deliveryAddress;
+
+    //new
+    @Column(name = "status")
+    private String status = "ACTIVE";
+
+    @Transient
+    public String getCustomerCode() {
+        return customerId == null ? "CUS-NEW" : String.format("CUS-%03d", customerId);
+    }
 }

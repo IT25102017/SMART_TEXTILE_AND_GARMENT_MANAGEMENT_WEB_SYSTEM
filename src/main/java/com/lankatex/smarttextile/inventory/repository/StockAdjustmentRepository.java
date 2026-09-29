@@ -8,5 +8,10 @@ import java.util.List;
 public interface StockAdjustmentRepository
         extends JpaRepository<StockAdjustment, Long> {
 
-    List<StockAdjustment> findAllByOrderByAdjustmentIdDesc();
+    List<StockAdjustment>
+    findAllByOrderByAdjustmentIdDesc();
+
+    boolean existsByBatchBatchId(
+            Long batchId
+    );
 }

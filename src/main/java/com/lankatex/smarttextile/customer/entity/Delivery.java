@@ -48,9 +48,14 @@ public class Delivery {
     private String receiverName;
 
     @Column(name = "status")
-    private String status;
+    private String status = "CONFIRMED";
 
     @Size(max = 1000, message = "Remarks cannot exceed 1000 characters")
     @Column(name = "remarks", length = 1000)
     private String remarks;
+    /// new
+    @Transient
+    public String getDeliveryCode() {
+        return deliveryId == null ? "DEL-NEW" : String.format("DEL-%03d", deliveryId);
+    }
 }

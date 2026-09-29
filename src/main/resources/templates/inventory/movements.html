@@ -1,97 +1,382 @@
 <!DOCTYPE html>
-<html lang="en" xmlns:th="http://www.thymeleaf.org">
+
+<html lang="en"
+      xmlns:th="http://www.thymeleaf.org">
 
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
 
-    <title>Stock Movements - LankaTex</title>
+    <meta charset="UTF-8">
+
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1">
+
+    <title>Stock Movements | LankaTex</title>
+
 
     <!-- Bootstrap CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
           rel="stylesheet">
 
+
     <!-- Common LankaTex Navigation CSS -->
-    <link rel="stylesheet" th:href="@{/css/common-navbar.css}">
+    <link rel="stylesheet"
+          th:href="@{/css/common-navbar.css}">
+
+
+    <!-- Inventory Main Theme -->
+    <link rel="stylesheet"
+          th:href="@{/css/inventory/inventory-ui.css}">
+
+
+    <!-- Stock Movements Theme -->
+    <link rel="stylesheet"
+          th:href="@{/css/inventory/inventory-movements.css}">
+
 </head>
 
-<body class="bg-light">
+
+<body class="inventory-page">
+
 
 <!-- Common LankaTex Navigation Bar -->
 <div th:replace="~{fragments/common-navbar :: navbar}"></div>
 
-<div class="container py-4">
 
-    <!-- Page Header -->
-    <div class="d-flex justify-content-between align-items-center mb-4">
+<main class="inventory-container movements-workspace">
 
-        <h2>Stock Movements</h2>
 
-        <div class="d-flex gap-2">
+    <!-- =====================================================
+         HERO SECTION
+         ===================================================== -->
 
-            <a class="btn btn-dark"
-               th:href="@{/inventory}">
-                Back to Dashboard
-            </a>
+    <section class="movements-hero">
 
-            <a class="btn btn-primary"
-               th:href="@{/inventory/movements/new}">
-                New Movement
-            </a>
+
+        <div class="movements-hero-left">
+
+            <span class="movements-eyebrow">
+                LankaTex Inventory
+            </span>
+
+
+            <h1>
+                Stock Movements
+            </h1>
+
+
+            <p>
+                Track material stock-in, stock-out,
+                returns and wastage transactions across
+                LankaTex inventory operations.
+            </p>
 
         </div>
 
-    </div>
 
-    <!-- Stock Movement List -->
-    <div class="card shadow-sm">
+        <div class="movements-hero-badge">
 
-        <div class="card-header">
-            <strong>Stock Movement List</strong>
+            <div class="movements-hero-badge-line"></div>
+
+
+            <span>
+                Inventory Workspace
+            </span>
+
+
+            <strong>
+                Stock Transaction History
+            </strong>
+
         </div>
 
-        <div class="card-body table-responsive">
 
-            <table class="table table-bordered table-striped align-middle">
+    </section>
 
-                <thead class="table-dark">
+
+
+    <!-- =====================================================
+         MAIN PANEL
+         ===================================================== -->
+
+    <section class="movements-panel">
+
+
+        <!-- Panel Header -->
+
+        <div class="movements-panel-header">
+
+
+            <div class="movements-heading-group">
+
+
+                <div class="movements-heading-icon">
+                    S
+                </div>
+
+
+                <div>
+
+                    <h2 class="movements-panel-title">
+                        Stock Movement List
+                    </h2>
+
+
+                    <p class="movements-panel-subtitle">
+                        View all recorded material stock transactions.
+                    </p>
+
+                </div>
+
+
+            </div>
+
+
+
+            <!-- Top Actions -->
+
+            <div class="movements-top-actions">
+
+
+                <a class="movements-btn movements-btn-back"
+                   th:href="@{/inventory}">
+                    Back to Dashboard
+                </a>
+
+
+                <a class="movements-btn movements-btn-add"
+                   th:href="@{/inventory/movements/new}">
+                    + New Movement
+                </a>
+
+
+            </div>
+
+
+        </div>
+
+
+
+        <!-- =================================================
+             SUCCESS MESSAGE
+             ================================================= -->
+
+        <div th:if="${message}"
+             class="alert alert-success movements-alert"
+             th:text="${message}">
+        </div>
+
+
+
+        <!-- =================================================
+             ERROR MESSAGE
+             ================================================= -->
+
+        <div th:if="${error}"
+             class="alert alert-danger movements-alert"
+             th:text="${error}">
+        </div>
+
+
+
+        <!-- =================================================
+             MOVEMENT TABLE
+             ================================================= -->
+
+        <div class="movements-table-wrapper">
+
+
+            <table class="movements-table">
+
+
+                <thead>
+
                 <tr>
+
                     <th>Date</th>
+
                     <th>Material</th>
+
                     <th>Batch</th>
+
                     <th>Type</th>
+
                     <th>Quantity</th>
+
                     <th>Reference</th>
+
                 </tr>
+
                 </thead>
+
+
 
                 <tbody>
 
+
+                <!-- Movement Records -->
+
                 <tr th:each="movement : ${movements}">
 
-                    <td th:text="${movement.movementDate}"></td>
 
-                    <td th:text="${movement.material.materialName}"></td>
+                    <!-- Date -->
 
-                    <td th:text="${movement.batch != null ? movement.batch.batchNo : '-'}"></td>
+                    <td class="movement-date"
+                        th:text="${movement.movementDate}">
+                    </td>
 
-                    <td th:text="${movement.movementType}"></td>
 
-                    <td th:text="${movement.quantity}"></td>
 
-                    <td th:text="${movement.referenceType}"></td>
+                    <!-- Material -->
+
+                    <td class="movement-material"
+                        th:text="${movement.material.materialName}">
+                    </td>
+
+
+
+                    <!-- Batch -->
+
+                    <td class="movement-batch"
+                        th:text="${movement.batch != null
+                        ? movement.batch.batchNo
+                        : '-'}">
+                    </td>
+
+
+
+                    <!-- Movement Type -->
+
+                    <td>
+
+
+                        <!-- STOCK IN -->
+
+                        <span th:if="${movement.movementType != null
+                                      and movement.movementType.name() == 'STOCK_IN'}"
+                              class="movement-type movement-stock-in">
+
+                            STOCK IN
+
+                        </span>
+
+
+
+                        <!-- STOCK OUT -->
+
+                        <span th:if="${movement.movementType != null
+                                      and movement.movementType.name() == 'STOCK_OUT'}"
+                              class="movement-type movement-stock-out">
+
+                            STOCK OUT
+
+                        </span>
+
+
+
+                        <!-- RETURN -->
+
+                        <span th:if="${movement.movementType != null
+                                      and movement.movementType.name() == 'RETURN'}"
+                              class="movement-type movement-return">
+
+                            RETURN
+
+                        </span>
+
+
+
+                        <!-- WASTAGE -->
+
+                        <span th:if="${movement.movementType != null
+                                      and movement.movementType.name() == 'WASTAGE'}"
+                              class="movement-type movement-wastage">
+
+                            WASTAGE
+
+                        </span>
+
+
+
+                        <!-- Other Type -->
+
+                        <span th:if="${movement.movementType != null
+                                      and movement.movementType.name() != 'STOCK_IN'
+                                      and movement.movementType.name() != 'STOCK_OUT'
+                                      and movement.movementType.name() != 'RETURN'
+                                      and movement.movementType.name() != 'WASTAGE'}"
+                              class="movement-type movement-other"
+                              th:text="${movement.movementType}">
+                        </span>
+
+
+
+                        <!-- No Type -->
+
+                        <span th:if="${movement.movementType == null}"
+                              class="movement-type movement-other">
+
+                            -
+
+                        </span>
+
+
+                    </td>
+
+
+
+                    <!-- Quantity -->
+
+                    <td class="movement-quantity"
+                        th:text="${movement.quantity}">
+                    </td>
+
+
+
+                    <!-- Reference -->
+
+                    <td class="movement-reference"
+                        th:text="${movement.referenceType != null
+                        and !#strings.isEmpty(movement.referenceType)
+                        ? movement.referenceType
+                        : '-'}">
+                    </td>
+
 
                 </tr>
 
+
+
+                <!-- Empty State -->
+
+                <tr th:if="${#lists.isEmpty(movements)}">
+
+
+                    <td colspan="6"
+                        class="movements-empty">
+
+                        No stock movements found.
+
+                    </td>
+
+
+                </tr>
+
+
                 </tbody>
+
 
             </table>
 
+
         </div>
 
-    </div>
 
-</div>
+    </section>
+
+
+</main>
+
 
 </body>
+
 </html>

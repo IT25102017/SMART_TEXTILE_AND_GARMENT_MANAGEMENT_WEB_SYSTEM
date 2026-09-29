@@ -1,0 +1,460 @@
+/* =========================================================
+   LANKATEX INVENTORY - LOW STOCK PAGE
+   ========================================================= */
+
+
+/* =========================================================
+   WORKSPACE
+   ========================================================= */
+
+.low-stock-workspace {
+    padding-top: 34px;
+    padding-bottom: 60px;
+}
+
+
+/* =========================================================
+   HERO SECTION
+   ========================================================= */
+
+.low-stock-hero {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 30px;
+
+    margin-bottom: 26px;
+
+    padding: 34px 38px;
+
+    border-radius: 24px;
+
+    background: rgba(15, 118, 110, 0.88);
+
+    color: #ffffff;
+
+    box-shadow:
+            0 18px 45px rgba(15, 23, 42, 0.18);
+
+    backdrop-filter: blur(12px);
+}
+
+
+.low-stock-hero-left {
+    max-width: 680px;
+}
+
+
+.low-stock-eyebrow {
+    display: inline-block;
+
+    margin-bottom: 8px;
+
+    font-size: 0.78rem;
+
+    font-weight: 800;
+
+    letter-spacing: 0.13em;
+
+    text-transform: uppercase;
+
+    color: #ccfbf1;
+}
+
+
+.low-stock-hero h1 {
+    margin: 0 0 12px;
+
+    font-size: 2.2rem;
+
+    font-weight: 800;
+}
+
+
+.low-stock-hero p {
+    margin: 0;
+
+    max-width: 650px;
+
+    line-height: 1.7;
+
+    color: rgba(255, 255, 255, 0.90);
+}
+
+
+/* =========================================================
+   HERO BADGE
+   ========================================================= */
+
+.low-stock-hero-badge {
+    min-width: 220px;
+
+    padding: 18px 20px;
+
+    border-radius: 18px;
+
+    background: rgba(255, 255, 255, 0.12);
+
+    border: 1px solid rgba(255, 255, 255, 0.18);
+}
+
+
+.low-stock-hero-badge-line {
+    width: 42px;
+    height: 4px;
+
+    margin-bottom: 12px;
+
+    border-radius: 10px;
+
+    background: #fbbf24;
+}
+
+
+.low-stock-hero-badge span {
+    display: block;
+
+    margin-bottom: 4px;
+
+    font-size: 0.76rem;
+
+    text-transform: uppercase;
+
+    letter-spacing: 0.1em;
+
+    color: #ccfbf1;
+}
+
+
+.low-stock-hero-badge strong {
+    font-size: 1rem;
+
+    color: #ffffff;
+}
+
+
+/* =========================================================
+   MAIN PANEL
+   ========================================================= */
+
+.low-stock-panel {
+    padding: 30px;
+
+    border-radius: 24px;
+
+    background: rgba(255, 255, 255, 0.95);
+
+    border: 1px solid rgba(15, 118, 110, 0.12);
+
+    box-shadow:
+            0 18px 45px rgba(15, 23, 42, 0.12);
+
+    backdrop-filter: blur(12px);
+}
+
+
+/* =========================================================
+   PANEL HEADER
+   ========================================================= */
+
+.low-stock-panel-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 20px;
+
+    margin-bottom: 24px;
+}
+
+
+.low-stock-heading-group {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+}
+
+
+.low-stock-heading-icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    width: 48px;
+    height: 48px;
+
+    border-radius: 14px;
+
+    background: #fef3c7;
+
+    color: #92400e;
+
+    font-size: 1.2rem;
+
+    font-weight: 900;
+}
+
+
+.low-stock-panel-title {
+    margin: 0;
+
+    color: #0f172a;
+
+    font-size: 1.45rem;
+
+    font-weight: 800;
+}
+
+
+.low-stock-panel-subtitle {
+    margin: 4px 0 0;
+
+    color: #64748b;
+
+    font-size: 0.92rem;
+}
+
+
+/* =========================================================
+   BUTTON
+   ========================================================= */
+
+.low-stock-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+
+    min-height: 44px;
+
+    padding: 0 18px;
+
+    border-radius: 11px;
+
+    text-decoration: none;
+
+    font-weight: 700;
+
+    transition:
+            transform 0.2s ease,
+            background-color 0.2s ease;
+}
+
+
+.low-stock-btn:hover {
+    transform: translateY(-1px);
+}
+
+
+.low-stock-btn-back {
+    background: #e2e8f0;
+
+    color: #334155;
+}
+
+
+.low-stock-btn-back:hover {
+    background: #cbd5e1;
+
+    color: #0f172a;
+}
+
+
+/* =========================================================
+   ALERT BANNER
+   ========================================================= */
+
+.low-stock-warning {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+
+    margin-bottom: 24px;
+
+    padding: 16px 18px;
+
+    border-radius: 14px;
+
+    background: #fff7ed;
+
+    border: 1px solid #fed7aa;
+
+    color: #9a3412;
+}
+
+
+.low-stock-warning-icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    flex-shrink: 0;
+
+    width: 32px;
+    height: 32px;
+
+    border-radius: 50%;
+
+    background: #ffedd5;
+
+    font-weight: 900;
+}
+
+
+/* =========================================================
+   TABLE WRAPPER
+   ========================================================= */
+
+.low-stock-table-wrapper {
+    width: 100%;
+
+    overflow-x: auto;
+
+    border: 1px solid #e2e8f0;
+
+    border-radius: 16px;
+}
+
+
+/* =========================================================
+   TABLE
+   ========================================================= */
+
+.low-stock-table {
+    width: 100%;
+
+    margin: 0;
+
+    border-collapse: collapse;
+
+    background: #ffffff;
+}
+
+
+.low-stock-table thead {
+    background: #fff7ed;
+}
+
+
+.low-stock-table th {
+    padding: 16px 18px;
+
+    border-bottom: 1px solid #fed7aa;
+
+    color: #9a3412;
+
+    font-size: 0.82rem;
+
+    font-weight: 800;
+
+    text-transform: uppercase;
+
+    letter-spacing: 0.04em;
+}
+
+
+.low-stock-table td {
+    padding: 17px 18px;
+
+    border-bottom: 1px solid #e2e8f0;
+
+    color: #334155;
+
+    vertical-align: middle;
+}
+
+
+.low-stock-table tbody tr:last-child td {
+    border-bottom: none;
+}
+
+
+.low-stock-table tbody tr {
+    transition: background-color 0.2s ease;
+}
+
+
+.low-stock-table tbody tr:hover {
+    background: #f8fafc;
+}
+
+
+/* =========================================================
+   TABLE VALUES
+   ========================================================= */
+
+.low-stock-code {
+    font-weight: 800;
+
+    color: #0f766e;
+}
+
+
+.low-stock-material {
+    font-weight: 700;
+
+    color: #0f172a;
+}
+
+
+.low-stock-current {
+    font-weight: 800;
+
+    color: #dc2626;
+}
+
+
+.low-stock-reorder {
+    font-weight: 700;
+
+    color: #92400e;
+}
+
+
+/* =========================================================
+   EMPTY STATE
+   ========================================================= */
+
+.low-stock-empty {
+    padding: 42px 20px !important;
+
+    text-align: center;
+
+    color: #64748b;
+
+    font-weight: 600;
+}
+
+
+/* =========================================================
+   RESPONSIVE
+   ========================================================= */
+
+@media (max-width: 768px) {
+
+    .low-stock-hero {
+        flex-direction: column;
+        align-items: flex-start;
+
+        padding: 26px 22px;
+    }
+
+    .low-stock-hero-badge {
+        width: 100%;
+    }
+
+    .low-stock-panel {
+        padding: 22px 16px;
+    }
+
+    .low-stock-panel-header {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    .low-stock-btn {
+        width: 100%;
+    }
+
+    .low-stock-hero h1 {
+        font-size: 1.75rem;
+    }
+}
