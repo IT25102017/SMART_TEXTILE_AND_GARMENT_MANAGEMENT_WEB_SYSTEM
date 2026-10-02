@@ -3,6 +3,7 @@ package com.lankatex.smarttextile.customer.controller;
 import com.lankatex.smarttextile.customer.entity.Customer;
 import com.lankatex.smarttextile.customer.entity.CustomerOrder;
 import com.lankatex.smarttextile.customer.entity.Delivery;
+import com.lankatex.smarttextile.customer.entity.ExportCustomer;
 import com.lankatex.smarttextile.customer.entity.Quotation;
 import com.lankatex.smarttextile.customer.service.CustomerService;
 import org.springframework.stereotype.Controller;
@@ -32,14 +33,43 @@ public class CustomerController {
     public String customers(@RequestParam(required = false) Long editId, Model model) {
         Customer customer = editId == null ? new Customer() : service.getCustomer(editId);
         if (customer.getStatus() == null) customer.setStatus("ACTIVE");
+        if (customer.getCustomerType() == null) customer.setCustomerType("LOCAL");
         model.addAttribute("customer", customer);
         model.addAttribute("customersList", service.getAllCustomers());
+
+        ExportCustomer exportCustomer = null;
+        if (editId != null) {
+            exportCustomer = service.getExportCustomer(editId);
+        }
+        model.addAttribute("exportCustomer", exportCustomer != null ? exportCustomer : new ExportCustomer());
         return "customer/customers";
     }
     @PostMapping("/customers/save")
-    public String saveCustomer(@ModelAttribute Customer customer, RedirectAttributes ra) {
+    public String saveCustomer(@ModelAttribute Customer customer,
+                               @RequestParam(required = false) String country,
+                               @RequestParam(required = false) String exportRegistrationDetails,
+                               @RequestParam(required = false) String shippingPreferences,
+                               RedirectAttributes ra) {
         try {
-            service.saveCustomer(customer);
+            if ("EXPORT".equalsIgnoreCase(customer.getCustomerType())) {
+                ExportCustomer ec = new ExportCustomer();
+                ec.setCustomerId(customer.getCustomerId());
+                ec.setCustomerName(customer.getCustomerName());
+                ec.setCustomerType("EXPORT");
+                ec.setContactPerson(customer.getContactPerson());
+                ec.setPhone(customer.getPhone());
+                ec.setEmail(customer.getEmail());
+                ec.setBillingAddress(customer.getBillingAddress());
+                ec.setDeliveryAddress(customer.getDeliveryAddress());
+                ec.setRegistrationDate(customer.getRegistrationDate());
+                ec.setStatus(customer.getStatus());
+                ec.setCountry(country);
+                ec.setExportRegistrationDetails(exportRegistrationDetails);
+                ec.setShippingPreferences(shippingPreferences);
+                service.saveCustomer(ec);
+            } else {
+                service.saveCustomer(customer);
+            }
             ra.addFlashAttribute("message", "Customer saved successfully.");
         } catch (IllegalArgumentException ex) {
             ra.addFlashAttribute("error", ex.getMessage());
