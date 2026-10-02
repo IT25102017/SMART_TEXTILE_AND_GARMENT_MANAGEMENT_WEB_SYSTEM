@@ -9,8 +9,11 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.time.LocalDate;
+
 @Entity
 @Table(name = "customers")
+@Inheritance(strategy = InheritanceType.JOINED)
 @Getter
 @Setter
 @NoArgsConstructor
@@ -53,9 +56,38 @@ public class Customer {
     @Column(name = "delivery_address", length = 1000)
     private String deliveryAddress;
 
+    @Column(name = "registration_date")
+    private LocalDate registrationDate;
+
     //new
     @Column(name = "status")
     private String status = "ACTIVE";
+
+    @PrePersist
+    public void prePersist() {
+        if (registrationDate == null) {
+            registrationDate = LocalDate.now();
+        }
+        if (status == null || status.isBlank()) {
+            status = "ACTIVE";
+        }
+    }
+
+    public String getPhoneNumber() {
+        return phone;
+    }
+
+    public void setPhoneNumber(String phoneNumber) {
+        this.phone = phoneNumber;
+    }
+
+    public String getEmailAddress() {
+        return email;
+    }
+
+    public void setEmailAddress(String emailAddress) {
+        this.email = emailAddress;
+    }
 
     @Transient
     public String getCustomerCode() {

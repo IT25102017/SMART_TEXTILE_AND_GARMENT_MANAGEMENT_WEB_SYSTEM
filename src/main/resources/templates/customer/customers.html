@@ -38,10 +38,22 @@
                 </div>
                 <div class="col-md-6 mb-3">
                     <label class="form-label">Customer Type</label>
-                    <select class="form-select" th:field="*{customerType}" required>
+                    <select class="form-select" id="customerTypeSelect" th:field="*{customerType}" required>
                         <option value="LOCAL">LOCAL</option>
                         <option value="EXPORT">EXPORT</option>
                     </select>
+                </div>
+                <div class="col-md-4 mb-3 export-fields" style="display: none;">
+                    <label class="form-label">Export Country</label>
+                    <input class="form-control" name="country" th:value="${exportCustomer != null ? exportCustomer.country : ''}" placeholder="e.g. United Kingdom">
+                </div>
+                <div class="col-md-4 mb-3 export-fields" style="display: none;">
+                    <label class="form-label">Export Registration Details</label>
+                    <input class="form-control" name="exportRegistrationDetails" th:value="${exportCustomer != null ? exportCustomer.exportRegistrationDetails : ''}" placeholder="e.g. EXP-REG-2026-99">
+                </div>
+                <div class="col-md-4 mb-3 export-fields" style="display: none;">
+                    <label class="form-label">Shipping Preferences</label>
+                    <input class="form-control" name="shippingPreferences" th:value="${exportCustomer != null ? exportCustomer.shippingPreferences : ''}" placeholder="e.g. FOB Colombo / Air Cargo">
                 </div>
                 <div class="col-md-6 mb-3">
                     <label class="form-label">Contact Person</label>
@@ -63,6 +75,7 @@
                     <label class="form-label">Delivery Address</label>
                     <textarea class="form-control" rows="2" th:field="*{deliveryAddress}"></textarea>
                 </div>
+                <input type="hidden" th:field="*{registrationDate}">
                 <input type="hidden" th:field="*{status}">
             </div>
             <button class="customer-btn btn-main" type="submit" th:text="${customer.customerId == null ? 'Save Customer' : 'Update Customer'}"></button>
@@ -78,6 +91,7 @@
                     <th>Code</th>
                     <th>Name</th>
                     <th>Type</th>
+                    <th>Registered</th>
                     <th>Contact</th>
                     <th>Status</th>
                     <th>Actions</th>
@@ -87,7 +101,10 @@
                 <tr th:each="c : ${customersList}">
                     <td class="code-pill" th:text="${c.customerCode}"></td>
                     <td th:text="${c.customerName}"></td>
-                    <td th:text="${c.customerType}"></td>
+                    <td>
+                        <span class="badge" th:classappend="${c.customerType == 'EXPORT' ? 'bg-info text-dark' : 'bg-secondary'}" th:text="${c.customerType}"></span>
+                    </td>
+                    <td th:text="${c.registrationDate != null ? c.registrationDate : '-'}"></td>
                     <td>
                         <span th:text="${c.phone}"></span><br>
                         <small th:text="${c.email}"></small>
@@ -110,5 +127,21 @@
         </div>
     </section>
 </main>
+<script>
+    function toggleExportFields() {
+        const typeSelect = document.getElementById('customerTypeSelect');
+        const isExport = typeSelect && typeSelect.value === 'EXPORT';
+        document.querySelectorAll('.export-fields').forEach(el => {
+            el.style.display = isExport ? '' : 'none';
+        });
+    }
+    document.addEventListener('DOMContentLoaded', function() {
+        const typeSelect = document.getElementById('customerTypeSelect');
+        if (typeSelect) {
+            typeSelect.addEventListener('change', toggleExportFields);
+            toggleExportFields();
+        }
+    });
+</script>
 </body>
 </html>

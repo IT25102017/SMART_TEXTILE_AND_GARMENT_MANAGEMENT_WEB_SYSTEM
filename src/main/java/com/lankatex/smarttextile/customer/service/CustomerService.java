@@ -1,14 +1,8 @@
 package com.lankatex.smarttextile.customer.service;
 
 import com.lankatex.smarttextile.customer.dto.CustomerDashboardStats;
-import com.lankatex.smarttextile.customer.entity.Customer;
-import com.lankatex.smarttextile.customer.entity.CustomerOrder;
-import com.lankatex.smarttextile.customer.entity.Delivery;
-import com.lankatex.smarttextile.customer.entity.Quotation;
-import com.lankatex.smarttextile.customer.repository.CustomerOrderRepository;
-import com.lankatex.smarttextile.customer.repository.CustomerRepository;
-import com.lankatex.smarttextile.customer.repository.DeliveryRepository;
-import com.lankatex.smarttextile.customer.repository.QuotationRepository;
+import com.lankatex.smarttextile.customer.entity.*;
+import com.lankatex.smarttextile.customer.repository.*;
 import com.lankatex.smarttextile.quality.entity.QualityHold;
 import com.lankatex.smarttextile.quality.repository.QualityHoldRepository;
 import org.springframework.data.domain.Sort;
@@ -32,20 +26,35 @@ import java.util.stream.Collectors;
 public class CustomerService {
 
     private final CustomerRepository customerRepository;
+    private final LocalCustomerRepository localCustomerRepository;
+    private final ExportCustomerRepository exportCustomerRepository;
     private final QuotationRepository quotationRepository;
+    private final QuotationItemRepository quotationItemRepository;
     private final CustomerOrderRepository customerOrderRepository;
+    private final CustomerOrderItemRepository customerOrderItemRepository;
     private final DeliveryRepository deliveryRepository;
+    private final DeliveryItemRepository deliveryItemRepository;
     private final QualityHoldRepository qualityHoldRepository;
     public CustomerService(
             CustomerRepository customerRepository,
+            LocalCustomerRepository localCustomerRepository,
+            ExportCustomerRepository exportCustomerRepository,
             QuotationRepository quotationRepository,
+            QuotationItemRepository quotationItemRepository,
             CustomerOrderRepository customerOrderRepository,
+            CustomerOrderItemRepository customerOrderItemRepository,
             DeliveryRepository deliveryRepository,
+            DeliveryItemRepository deliveryItemRepository,
             QualityHoldRepository qualityHoldRepository) {
         this.customerRepository = customerRepository;
+        this.localCustomerRepository = localCustomerRepository;
+        this.exportCustomerRepository = exportCustomerRepository;
         this.quotationRepository = quotationRepository;
+        this.quotationItemRepository = quotationItemRepository;
         this.customerOrderRepository = customerOrderRepository;
+        this.customerOrderItemRepository = customerOrderItemRepository;
         this.deliveryRepository = deliveryRepository;
+        this.deliveryItemRepository = deliveryItemRepository;
         this.qualityHoldRepository = qualityHoldRepository;
     }
 
@@ -114,7 +123,37 @@ public class CustomerService {
         if (customer.getStatus() == null || customer.getStatus().isBlank()) {
             customer.setStatus("ACTIVE");
         }
+        if (customer.getRegistrationDate() == null) {
+            customer.setRegistrationDate(LocalDate.now());
+        }
+
+        if (customer instanceof ExportCustomer ec) {
+            return exportCustomerRepository.save(ec);
+        } else if (customer instanceof LocalCustomer lc) {
+            return localCustomerRepository.save(lc);
+        } else if ("EXPORT".equalsIgnoreCase(customer.getCustomerType())) {
+            ExportCustomer ec = new ExportCustomer();
+            copyCustomerProperties(customer, ec);
+            return exportCustomerRepository.save(ec);
+        } else if ("LOCAL".equalsIgnoreCase(customer.getCustomerType())) {
+            LocalCustomer lc = new LocalCustomer();
+            copyCustomerProperties(customer, lc);
+            return localCustomerRepository.save(lc);
+        }
         return customerRepository.save(customer);
+    }
+
+    private void copyCustomerProperties(Customer src, Customer target) {
+        target.setCustomerId(src.getCustomerId());
+        target.setCustomerName(src.getCustomerName());
+        target.setCustomerType(src.getCustomerType());
+        target.setContactPerson(src.getContactPerson());
+        target.setPhone(src.getPhone());
+        target.setEmail(src.getEmail());
+        target.setBillingAddress(src.getBillingAddress());
+        target.setDeliveryAddress(src.getDeliveryAddress());
+        target.setRegistrationDate(src.getRegistrationDate());
+        target.setStatus(src.getStatus());
     }
 
     public void archiveCustomer(Long id) {
@@ -132,7 +171,9 @@ public class CustomerService {
     /// QUOTATIONS
 
     public List<Quotation> getAllQuotations() {
-        return quotationRepository.findAll(Sort.by(Sort.Direction.DESC, "quotationId"));
+        List<Quotation> list = quotationRepository.findAll(Sort.by(Sort.Direction.DESC, "quotationId"));
+        list.forEach(this::populateQuotationTransientItems);
+        return list;
     }
     public List<Quotation> getApprovedQuotations() {
         return getAllQuotations().stream()
@@ -141,12 +182,30 @@ public class CustomerService {
     }
 
     public Map<Long, Quotation> getQuotationMap() {
-        return quotationRepository.findAll().stream()
+        return getAllQuotations().stream()
                 .collect(Collectors.toMap(Quotation::getQuotationId, Function.identity()));
     }
     public Quotation getQuotation(Long id) {
-        return quotationRepository.findById(id)
+        Quotation q = quotationRepository.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("Quotation not found."));
+        populateQuotationTransientItems(q);
+        return q;
+    }
+
+    private void populateQuotationTransientItems(Quotation q) {
+        if (q == null) return;
+        List<QuotationItem> items = quotationItemRepository.findByQuotationId(q.getQuotationId());
+        if (!items.isEmpty()) {
+            QuotationItem first = items.get(0);
+            q.setGarmentType(first.getGarmentType());
+            q.setColour(first.getColour());
+            q.setSize(first.getSize());
+            q.setQuantity(first.getQuantity());
+            q.setUnitPrice(first.getUnitPrice());
+            if (first.getQuantity() != null && first.getUnitPrice() != null) {
+                q.setTotalValue(first.getQuantity().multiply(first.getUnitPrice()));
+            }
+        }
     }
 
     public Quotation saveQuotation(Quotation quotation) {
@@ -160,13 +219,32 @@ public class CustomerService {
         if (quotation.getValidUntil().isBefore(quotation.getQuotationDate())) {
             throw new IllegalArgumentException("Valid-until date cannot be before quotation date.");
         }
-        requirePositive(quotation.getQuantity(), "Quotation quantity");
-        requireNonNegative(quotation.getUnitPrice(), "Unit price");
-        quotation.setTotalValue(quotation.getQuantity().multiply(quotation.getUnitPrice()));
+        if (quotation.getQuantity() != null && quotation.getUnitPrice() != null) {
+            requirePositive(quotation.getQuantity(), "Quotation quantity");
+            requireNonNegative(quotation.getUnitPrice(), "Unit price");
+            quotation.setTotalValue(quotation.getQuantity().multiply(quotation.getUnitPrice()));
+        }
         if (quotation.getStatus() == null || quotation.getStatus().isBlank()) {
             quotation.setStatus("PENDING");
         }
-        return quotationRepository.save(quotation);
+        Quotation saved = quotationRepository.save(quotation);
+
+        // Keep QUOTATION_ITEM synchronized with header line item
+        if (quotation.getGarmentType() != null && !quotation.getGarmentType().isBlank()
+                && quotation.getQuantity() != null && quotation.getUnitPrice() != null) {
+            List<QuotationItem> items = quotationItemRepository.findByQuotationId(saved.getQuotationId());
+            QuotationItem item = items.isEmpty() ? new QuotationItem() : items.get(0);
+            item.setQuotationId(saved.getQuotationId());
+            item.setGarmentType(quotation.getGarmentType());
+            item.setColour(quotation.getColour());
+            item.setSize(quotation.getSize());
+            item.setQuantity(quotation.getQuantity());
+            item.setUnitPrice(quotation.getUnitPrice());
+            quotationItemRepository.save(item);
+        }
+
+        populateQuotationTransientItems(saved);
+        return saved;
     }
 
     public void approveQuotation(Long id, Long approvedBy) {
@@ -197,16 +275,32 @@ public class CustomerService {
     /// CUSTOMER ORDERS
 
     public List<CustomerOrder> getAllCustomerOrders() {
-        return customerOrderRepository.findAll(Sort.by(Sort.Direction.DESC, "orderId"));
+        List<CustomerOrder> list = customerOrderRepository.findAll(Sort.by(Sort.Direction.DESC, "orderId"));
+        list.forEach(this::populateOrderTransientItems);
+        return list;
     }
     public Map<Long, CustomerOrder> getOrderMap() {
-        return customerOrderRepository.findAll().stream()
+        return getAllCustomerOrders().stream()
                 .collect(Collectors.toMap(CustomerOrder::getOrderId, Function.identity()));
     }
 
     public CustomerOrder getCustomerOrder(Long id) {
-        return customerOrderRepository.findById(id)
+        CustomerOrder order = customerOrderRepository.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("Customer Order not found."));
+        populateOrderTransientItems(order);
+        return order;
+    }
+
+    private void populateOrderTransientItems(CustomerOrder order) {
+        if (order == null) return;
+        List<CustomerOrderItem> items = customerOrderItemRepository.findByCustomerOrderId(order.getOrderId());
+        if (!items.isEmpty()) {
+            CustomerOrderItem first = items.get(0);
+            order.setGarmentType(first.getGarmentType());
+            order.setColour(first.getColour());
+            order.setSize(first.getSize());
+            order.setOrderQty(first.getQuantity());
+        }
     }
     public CustomerOrder buildOrderFromQuotation(Long quotationId) {
         Quotation q = getQuotation(quotationId);
@@ -257,7 +351,30 @@ public class CustomerService {
         if (order.getStatus() == null || order.getStatus().isBlank()) {
             order.setStatus("PENDING");
         }
-        return customerOrderRepository.save(order);}
+        CustomerOrder saved = customerOrderRepository.save(order);
+
+        // Keep CUSTOMER_ORDER_ITEM synchronized with header line item
+        if (order.getGarmentType() != null && !order.getGarmentType().isBlank()
+                && order.getOrderQty() != null) {
+            List<CustomerOrderItem> items = customerOrderItemRepository.findByCustomerOrderId(saved.getOrderId());
+            CustomerOrderItem item = items.isEmpty() ? new CustomerOrderItem() : items.get(0);
+            item.setCustomerOrderId(saved.getOrderId());
+            item.setGarmentType(order.getGarmentType());
+            item.setColour(order.getColour());
+            item.setSize(order.getSize());
+            item.setQuantity(order.getOrderQty());
+            if (saved.getQuotationId() != null) {
+                Quotation q = quotationRepository.findById(saved.getQuotationId()).orElse(null);
+                item.setUnitPrice(q != null && q.getUnitPrice() != null ? q.getUnitPrice() : BigDecimal.ZERO);
+            } else if (item.getUnitPrice() == null) {
+                item.setUnitPrice(BigDecimal.ZERO);
+            }
+            customerOrderItemRepository.save(item);
+        }
+
+        populateOrderTransientItems(saved);
+        return saved;
+    }
 
     public void approveOrder(Long id, Long approvedBy) {
         if (approvedBy == null) {
@@ -290,11 +407,27 @@ public class CustomerService {
     /// DELIVERIES
 
     public List<Delivery> getAllDeliveries() {
-        return deliveryRepository.findAll(Sort.by(Sort.Direction.DESC, "deliveryId"));
+        List<Delivery> list = deliveryRepository.findAll(Sort.by(Sort.Direction.DESC, "deliveryId"));
+        list.forEach(this::populateDeliveryTransientItems);
+        return list;
     }
     public Delivery getDelivery(Long id) {
-        return deliveryRepository.findById(id)
+        Delivery d = deliveryRepository.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("Delivery not found."));
+        populateDeliveryTransientItems(d);
+        return d;
+    }
+
+    private void populateDeliveryTransientItems(Delivery d) {
+        if (d == null) return;
+        List<DeliveryItem> items = deliveryItemRepository.findByDeliveryId(d.getDeliveryId());
+        if (!items.isEmpty()) {
+            BigDecimal sum = items.stream()
+                    .map(DeliveryItem::getQuantityDelivered)
+                    .filter(Objects::nonNull)
+                    .reduce(BigDecimal.ZERO, BigDecimal::add);
+            d.setDeliveredQty(sum);
+        }
     }
     public List<CustomerOrder> getDeliverableOrders() {
         return getAllCustomerOrders().stream()
@@ -307,11 +440,22 @@ public class CustomerService {
     public BigDecimal getRemainingQuantity(Long orderId) {
         CustomerOrder order = getCustomerOrder(orderId);
         if (order.getOrderQty() == null) return BigDecimal.ZERO;
-        BigDecimal delivered = deliveryRepository.findByOrderIdOrderByDeliveryDateAsc(orderId).stream()
-                .filter(d -> !"ARCHIVED".equalsIgnoreCase(d.getStatus()))
-                .map(Delivery::getDeliveredQty)
-                .filter(Objects::nonNull)
-                .reduce(BigDecimal.ZERO, BigDecimal::add);
+        List<Delivery> deliveries = deliveryRepository.findByOrderIdOrderByDeliveryDateAsc(orderId);
+        BigDecimal delivered = BigDecimal.ZERO;
+        for (Delivery d : deliveries) {
+            if (!"ARCHIVED".equalsIgnoreCase(d.getStatus())) {
+                List<DeliveryItem> items = deliveryItemRepository.findByDeliveryId(d.getDeliveryId());
+                if (!items.isEmpty()) {
+                    for (DeliveryItem di : items) {
+                        if (di.getQuantityDelivered() != null) {
+                            delivered = delivered.add(di.getQuantityDelivered());
+                        }
+                    }
+                } else if (d.getDeliveredQty() != null) {
+                    delivered = delivered.add(d.getDeliveredQty());
+                }
+            }
+        }
         return order.getOrderQty().subtract(delivered).max(BigDecimal.ZERO);
     }
 
@@ -348,12 +492,29 @@ public class CustomerService {
             delivery.setDeliveryDate(LocalDate.now());
         }
         delivery.setStatus("CONFIRMED");
+        if (delivery.getConfirmation() == null || delivery.getConfirmation().isBlank()) {
+            delivery.setConfirmation("CONFIRMED");
+        }
         Delivery saved = deliveryRepository.save(delivery);
+
+        // Keep DELIVERY_ITEM synchronized with CustomerOrderItem
+        List<CustomerOrderItem> orderItems = customerOrderItemRepository.findByCustomerOrderId(saved.getOrderId());
+        if (!orderItems.isEmpty()) {
+            CustomerOrderItem firstItem = orderItems.get(0);
+            List<DeliveryItem> deliveryItems = deliveryItemRepository.findByDeliveryId(saved.getDeliveryId());
+            DeliveryItem dItem = deliveryItems.isEmpty() ? new DeliveryItem() : deliveryItems.get(0);
+            dItem.setDeliveryId(saved.getDeliveryId());
+            dItem.setCustomerOrderItemId(firstItem.getCustomerOrderItemId());
+            dItem.setQuantityDelivered(delivery.getDeliveredQty());
+            deliveryItemRepository.save(dItem);
+        }
+
         BigDecimal remainingAfter = getRemainingQuantity(order.getOrderId());
         if (remainingAfter.signum() == 0) {
             order.setStatus("DELIVERED");
             customerOrderRepository.save(order);
         }
+        populateDeliveryTransientItems(saved);
         return saved;
     }
 
@@ -382,6 +543,62 @@ public class CustomerService {
         deliveryRepository.save(delivery);
         order.setStatus(getRemainingQuantity(order.getOrderId()).signum() == 0 ? "DELIVERED" : "READY");
         customerOrderRepository.save(order);
+    }
+
+
+    /// LINE ITEMS & SUBTYPES
+
+    public List<QuotationItem> getQuotationItems(Long quotationId) {
+        return quotationItemRepository.findByQuotationId(quotationId);
+    }
+
+    public QuotationItem saveQuotationItem(QuotationItem item) {
+        requirePositive(item.getQuantity(), "Item quantity");
+        requireNonNegative(item.getUnitPrice(), "Item unit price");
+        return quotationItemRepository.save(item);
+    }
+
+    public void deleteQuotationItem(Long itemId) {
+        quotationItemRepository.deleteById(itemId);
+    }
+
+    public List<CustomerOrderItem> getCustomerOrderItems(Long orderId) {
+        return customerOrderItemRepository.findByCustomerOrderId(orderId);
+    }
+
+    public CustomerOrderItem saveCustomerOrderItem(CustomerOrderItem item) {
+        requirePositive(item.getQuantity(), "Item quantity");
+        requireNonNegative(item.getUnitPrice(), "Item unit price");
+        return customerOrderItemRepository.save(item);
+    }
+
+    public void deleteCustomerOrderItem(Long itemId) {
+        customerOrderItemRepository.deleteById(itemId);
+    }
+
+    public List<DeliveryItem> getDeliveryItems(Long deliveryId) {
+        return deliveryItemRepository.findByDeliveryId(deliveryId);
+    }
+
+    public DeliveryItem saveDeliveryItem(DeliveryItem item) {
+        requirePositive(item.getQuantityDelivered(), "Delivered quantity");
+        return deliveryItemRepository.save(item);
+    }
+
+    public void deleteDeliveryItem(Long itemId) {
+        deliveryItemRepository.deleteById(itemId);
+    }
+
+    public List<LocalCustomer> getAllLocalCustomers() {
+        return localCustomerRepository.findAll();
+    }
+
+    public List<ExportCustomer> getAllExportCustomers() {
+        return exportCustomerRepository.findAll();
+    }
+
+    public ExportCustomer getExportCustomer(Long id) {
+        return exportCustomerRepository.findById(id).orElse(null);
     }
 
 

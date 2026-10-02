@@ -41,27 +41,23 @@ public class Quotation {
     @Column(name = "requested_delivery_date", nullable = true)
     private LocalDate requestedDeliveryDate;
 
-    @NotBlank(message = "Garment type is required")
-    @Column(name = "garment_type", nullable = true)
+    /// Line items (persisted in quotation_items table, transient here for form binding)
+    @Transient
     private String garmentType;
 
-    @Column(name = "colour")
+    @Transient
     private String colour;
 
-    @Column(name = "size")
+    @Transient
     private String size;
 
-    @NotNull(message = "Quantity is required")
-    @DecimalMin(value = "0.01", message = "Quantity must be greater than zero")
-    @Column(name = "quantity", nullable = true)
+    @Transient
     private BigDecimal quantity;
 
-    @NotNull(message = "Unit price is required")
-    @DecimalMin(value = "0.0", message = "Unit price cannot be negative")
-    @Column(name = "unit_price", nullable = true)
+    @Transient
     private BigDecimal unitPrice;
 
-    @Column(name = "total_value", nullable = false)
+    @Transient
     private BigDecimal totalValue = BigDecimal.ZERO;
 
     @Column(name = "status")
@@ -70,18 +66,30 @@ public class Quotation {
     @Column(name = "approved_by")
     private Long approvedBy;
 
-    @PrePersist
-    @PreUpdate
-    private void calculateTotal() {
+    public void calculateTotal() {
         if (quantity != null && unitPrice != null) {
             totalValue = quantity.multiply(unitPrice);
         }
+    }
+
+    public LocalDate getValidityPeriod() {
+        return validUntil;
+    }
+
+    public void setValidityPeriod(LocalDate validityPeriod) {
+        this.validUntil = validityPeriod;
+    }
+
+    public LocalDate getDeliveryPeriod() {
+        return requestedDeliveryDate;
+    }
+
+    public void setDeliveryPeriod(LocalDate deliveryPeriod) {
+        this.requestedDeliveryDate = deliveryPeriod;
     }
 
     @Transient
     public String getQuotationCode() {
         return quotationId == null ? "QTN-NEW" : String.format("QTN-%03d", quotationId);
     }
-
-
 }

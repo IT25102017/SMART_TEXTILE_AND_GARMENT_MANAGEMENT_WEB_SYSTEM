@@ -38,9 +38,8 @@ public class Delivery {
     @Column(name = "delivery_address", nullable = false, length = 1000)
     private String deliveryAddress;
 
-    @NotNull(message = "Delivered quantity is required")
-    @DecimalMin(value = "0.01", message = "Delivered quantity must be greater than 0")
-    @Column(name = "delivered_qty", nullable = false)
+    /// Line items (persisted in delivery_items table, transient here for form binding)
+    @Transient
     private BigDecimal deliveredQty;
 
     @Size(max = 100, message = "Receiver name cannot exceed 100 characters")
@@ -50,9 +49,21 @@ public class Delivery {
     @Column(name = "status")
     private String status = "CONFIRMED";
 
+    @Column(name = "confirmation")
+    private String confirmation = "CONFIRMED";
+
     @Size(max = 1000, message = "Remarks cannot exceed 1000 characters")
     @Column(name = "remarks", length = 1000)
     private String remarks;
+
+    public Long getCustomerOrderId() {
+        return orderId;
+    }
+
+    public void setCustomerOrderId(Long customerOrderId) {
+        this.orderId = customerOrderId;
+    }
+
     /// new
     @Transient
     public String getDeliveryCode() {

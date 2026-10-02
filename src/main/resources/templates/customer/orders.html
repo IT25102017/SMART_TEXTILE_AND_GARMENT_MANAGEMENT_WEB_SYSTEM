@@ -91,6 +91,7 @@
                     <th>Order</th>
                     <th>Customer</th>
                     <th>Quotation</th>
+                    <th>Item</th>
                     <th>Qty</th>
                     <th>Remaining</th>
                     <th>Required Date</th>
@@ -103,6 +104,7 @@
                     <td class="code-pill" th:text="${o.orderCode}"></td>
                     <td th:text="${customerMap.get(o.customerId) != null ? customerMap.get(o.customerId).customerName : 'Unavailable'}"></td>
                     <td th:text="${o.quotationId != null && quotationMap.get(o.quotationId) != null ? quotationMap.get(o.quotationId).quotationCode : 'Direct Order'}"></td>
+                    <td th:text="${(o.garmentType != null ? o.garmentType : '-') + (o.colour != null ? ' (' + o.colour + ')' : '')}"></td>
                     <td th:text="${o.orderQty != null ? o.orderQty : '-'}"></td>
                     <td th:text="${remainingQtyMap.get(o.orderId) != null ? remainingQtyMap.get(o.orderId) : '-'}"></td>
                     <td th:text="${o.requiredDeliveryDate}"></td>

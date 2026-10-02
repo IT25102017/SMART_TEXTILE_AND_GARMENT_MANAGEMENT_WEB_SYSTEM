@@ -29,7 +29,7 @@ public class CustomerOrder {
     private Long customerId;
 
     @Positive(message = "Quotation ID must be a valid positive number")
-    @Column(name = "quotation_id")
+    @Column(name = "quotation_id", unique = true)
     private Long quotationId;
 
     @NotNull(message = "Order date is required")
@@ -44,19 +44,17 @@ public class CustomerOrder {
     @Column(name = "priority", nullable = false)
     private String priority;
 
-    /// new
-    @Column(name = "garment_type")
+    /// Line items (persisted in customer_order_items table, transient here for form binding)
+    @Transient
     private String garmentType;
 
-    @Column(name = "colour")
+    @Transient
     private String colour;
 
-    @Column(name = "size")
+    @Transient
     private String size;
 
-    @NotNull(message = "Order quantity is required")
-    @DecimalMin(value = "0.01", message = "Order quantity must be greater than zero")
-    @Column(name = "order_qty", nullable = true)
+    @Transient
     private BigDecimal orderQty;
 
     @Column(name = "status")
@@ -65,6 +63,14 @@ public class CustomerOrder {
     @Positive(message = "Approved by User ID must be a positive number")
     @Column(name = "approved_by")
     private Long approvedBy;
+
+    public Long getCustomerOrderId() {
+        return orderId;
+    }
+
+    public void setCustomerOrderId(Long customerOrderId) {
+        this.orderId = customerOrderId;
+    }
 
     /// new
     @Transient
