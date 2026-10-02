@@ -1,16 +1,16 @@
 package com.lankatex.smarttextile.purchasing.entity;
 
 import jakarta.persistence.*;
+import lombok.Getter;
+import lombok.Setter;
+
 import java.math.BigDecimal;
 import java.time.LocalDate;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+
 @Entity
 @Table(name = "purchase_orders")
 @Getter
 @Setter
-@NoArgsConstructor
 public class PurchaseOrder {
 
     @Id
@@ -38,4 +38,19 @@ public class PurchaseOrder {
 
     @Column(name = "approved_by")
     private Long approvedBy;
+
+    // User-friendly display code.
+    // This value is calculated from poId and is not stored in the database.
+    @Transient
+    public String getPoCode() {
+
+        if (poId == null) {
+            return "PO-NEW";
+        }
+
+        return String.format(
+                "PO-%03d",
+                poId
+        );
+    }
 }

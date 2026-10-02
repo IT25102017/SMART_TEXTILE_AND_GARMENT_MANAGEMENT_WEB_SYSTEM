@@ -1,37 +1,50 @@
 package com.lankatex.smarttextile.purchasing.entity;
+
 import jakarta.persistence.*;
 import lombok.Getter;
-import lombok.NoArgsConstructor;
 import lombok.Setter;
-@Entity
 
+@Entity
 @Table(name = "suppliers")
 @Getter
 @Setter
-@NoArgsConstructor
 public class Supplier {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "supplier_id")
     private Long supplierId;
+
     @Column(name = "supplier_name", nullable = false)
     private String supplierName;
+
     @Column(name = "contact_person")
     private String contactPerson;
+
     @Column(name = "phone")
     private String phone;
+
     @Column(name = "email")
     private String email;
+
     @Column(name = "address", length = 1000)
     private String address;
+
     @Column(name = "status")
     private String status;
-    // User-friendly display code. This is NOT stored as a new DB column.
+
+    // User-friendly display code.
+    // This value is calculated from supplierId and is not stored in the database.
     @Transient
     public String getSupplierCode() {
+
         if (supplierId == null) {
             return "SUP-NEW";
         }
-        return String.format("SUP-%03d", supplierId);
+
+        return String.format(
+                "SUP-%03d",
+                supplierId
+        );
     }
 }
