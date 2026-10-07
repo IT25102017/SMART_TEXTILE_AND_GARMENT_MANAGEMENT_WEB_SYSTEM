@@ -1,405 +1,200 @@
 <!DOCTYPE html>
-<html lang="en"
-      xmlns:th="http://www.thymeleaf.org">
-
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
-
   <meta charset="UTF-8">
-
-  <meta name="viewport"
-        content="width=device-width, initial-scale=1">
-
-  <title>
-    Leave Request Management - LankaTex
-  </title>
-
-  <!-- Bootstrap CSS -->
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
-        rel="stylesheet">
-
-  <!-- Common LankaTex Navigation CSS -->
-  <link rel="stylesheet"
-        th:href="@{/css/common-navbar.css}">
-
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Leave Requests | LankaTex</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link rel="stylesheet" th:href="@{/css/common-navbar.css}">   <!-- Shared navbar styles (don't edit) -->
+  <link rel="stylesheet" th:href="@{/css/hr/hr-ui.css}">        <!-- Your HR styles -->
 </head>
+<body class="hr-page">
 
-
-<body class="bg-light">
-
-
-<!-- Common LankaTex Navigation Bar -->
+<!-- Shared navbar from dev -->
 <div th:replace="~{fragments/common-navbar :: navbar}"></div>
 
+<main class="hr-container">
 
-<div class="container py-4">
-
-
-  <!-- Page Header -->
-  <div class="d-flex justify-content-between align-items-center mb-4">
-
-    <h2>
-      Leave Request Management
-    </h2>
-
-    <a class="btn btn-dark"
-       th:href="@{/hr}">
-      Back to Dashboard
-    </a>
-
-  </div>
-
-
-  <!-- HR Module Navigation -->
-  <div class="mb-3">
-
-    <a class="btn btn-outline-primary btn-sm me-2 mb-2"
-       th:href="@{/hr/employees}">
-      Employee
-    </a>
-
-    <a class="btn btn-outline-primary btn-sm me-2 mb-2"
-       th:href="@{/hr/shifts}">
-      Shift
-    </a>
-
-    <a class="btn btn-outline-primary btn-sm me-2 mb-2"
-       th:href="@{/hr/attendance}">
-      Attendance Record
-    </a>
-
-    <a class="btn btn-primary btn-sm me-2 mb-2"
-       th:href="@{/hr/leaves}">
-      Leave Request
-    </a>
-
-  </div>
-
-
-  <!-- Success Message -->
-  <div th:if="${message}"
-       class="alert alert-success"
-       th:text="${message}">
-  </div>
-
-
-  <!-- Error Message -->
-  <div th:if="${error}"
-       class="alert alert-danger"
-       th:text="${error}">
-  </div>
-
-
-  <!-- Leave Request Form -->
-  <div class="card shadow-sm mb-4">
-
-    <div class="card-header">
-
-      <strong>
-        Add / Edit Leave Request
-      </strong>
-
+  <!-- Banner -->
+  <section class="hr-hero">
+    <div>
+      <span class="hr-eyebrow">LankaTex HR</span>
+      <h1>Leave Request Management</h1>
+      <p>Create employee leave requests and process pending requests through approval or rejection.</p>
     </div>
+  </section>
 
+  <!-- Links to the other HR pages -->
+  <nav class="hr-nav">
+    <a th:href="@{/hr}">Dashboard</a>
+    <a th:href="@{/hr/employees}">Employees</a>
+    <a th:href="@{/hr/shifts}">Shifts</a>
+    <a th:href="@{/hr/attendance}">Attendance</a>
+  </nav>
 
-    <div class="card-body">
+  <!-- Success / error messages -->
+  <div th:if="${message}" class="alert alert-success" th:text="${message}"></div>
+  <div th:if="${error}" class="alert alert-danger" th:text="${error}"></div>
 
-      <form th:action="@{/hr/leaves/save}"
-            th:object="${leaveRequest}"
-            method="post">
+  <!-- ================= FORM PANEL ================= -->
+  <section class="hr-panel">
+    <!-- Title: no leaveId = new request, otherwise editing a pending one -->
+    <h2 th:text="${leaveRequest.leaveId == null ? 'New Leave Request' : 'Edit Pending Leave Request'}">New Leave Request</h2>
 
+    <!-- Bound to the LeaveRequest object from the controller -->
+    <form th:action="@{/hr/leaves/save}" th:object="${leaveRequest}" method="post">
 
-        <input type="hidden"
-               th:field="*{leaveId}">
+      <!-- Hidden ID so save knows INSERT vs UPDATE -->
+      <input type="hidden" th:field="*{leaveId}">
 
+      <div class="hr-form-grid">
 
-        <div class="row">
-
-
-          <!-- Employee ID -->
-          <div class="col-md-6 mb-3">
-
-            <label class="form-label">
-              Employee ID
-            </label>
-
-            <input class="form-control"
-                   type="number"
-                   th:field="*{employeeId}"
-                   required>
-
-          </div>
-
-
-          <!-- Leave Type -->
-          <div class="col-md-6 mb-3">
-
-            <label class="form-label">
-              Leave Type
-            </label>
-
-            <input class="form-control"
-                   type="text"
-                   th:field="*{leaveType}"
-                   required>
-
-          </div>
-
-
-          <!-- Start Date -->
-          <div class="col-md-6 mb-3">
-
-            <label class="form-label">
-              Start Date
-            </label>
-
-            <input class="form-control"
-                   type="date"
-                   th:field="*{startDate}"
-                   required>
-
-          </div>
-
-
-          <!-- End Date -->
-          <div class="col-md-6 mb-3">
-
-            <label class="form-label">
-              End Date
-            </label>
-
-            <input class="form-control"
-                   type="date"
-                   th:field="*{endDate}"
-                   required>
-
-          </div>
-
-
-          <!-- Reason -->
-          <div class="col-md-6 mb-3">
-
-            <label class="form-label">
-              Reason
-            </label>
-
-            <input class="form-control"
-                   type="text"
-                   th:field="*{reason}"
-                   required>
-
-          </div>
-
-
-          <!-- Status -->
-          <div class="col-md-6 mb-3">
-
-            <label class="form-label">
-              Status
-            </label>
-
-            <input class="form-control"
-                   type="text"
-                   th:field="*{status}">
-
-          </div>
-
-
-          <!-- Approved By -->
-          <div class="col-md-6 mb-3">
-
-            <label class="form-label">
-              Approved By User ID
-            </label>
-
-            <input class="form-control"
-                   type="number"
-                   th:field="*{approvedBy}">
-
-          </div>
-
-
+        <div>
+          <label class="form-label">Employee</label>
+          <!-- Dropdown of active employees: shows "EMP-001 - Name", saves the employee ID -->
+          <select class="form-select" th:field="*{employeeId}" required>
+            <option value="">Select Employee</option>
+            <option th:each="employee : ${employees}"
+                    th:value="${employee.employeeId}"
+                    th:text="${employee.employeeCode + ' - ' + employee.fullName}"></option>
+          </select>
         </div>
 
+        <div>
+          <label class="form-label">Leave Type</label>
+          <select class="form-select" th:field="*{leaveType}" required>
+            <option value="">Select Type</option>
+            <option value="ANNUAL">ANNUAL</option>
+            <option value="CASUAL">CASUAL</option>
+            <option value="MEDICAL">MEDICAL</option>
+            <option value="NO_PAY">NO PAY</option>
+          </select>
+        </div>
 
-        <button class="btn btn-success"
-                type="submit">
-          Save
-        </button>
+        <div>
+          <label class="form-label">Start Date</label>
+          <input class="form-control" type="date" th:field="*{startDate}" required>
+        </div>
 
+        <div>
+          <label class="form-label">End Date</label>
+          <input class="form-control" type="date" th:field="*{endDate}" required>
+        </div>
 
-        <a class="btn btn-secondary"
-           th:href="@{/hr/leaves}">
-          Clear
-        </a>
+        <!-- grid-column:1/-1 makes this field span both columns -->
+        <div style="grid-column:1/-1">
+          <label class="form-label">Reason</label>
+          <!-- maxlength="1000" matches the database column length -->
+          <textarea class="form-control" rows="3" maxlength="1000" th:field="*{reason}" required></textarea>
+        </div>
+      </div>
 
+      <div class="mt-3 d-flex gap-2">
+        <button class="hr-button hr-button-primary" type="submit">Save Leave Request</button>
+        <a class="hr-button hr-button-secondary" th:href="@{/hr/leaves}">Clear</a>
+      </div>
+    </form>
+  </section>
 
-      </form>
-
-    </div>
-
-  </div>
-
-
-  <!-- Leave Request List -->
-  <div class="card shadow-sm">
-
-    <div class="card-header">
-
-      <strong>
-        Leave Request List
-      </strong>
-
-    </div>
-
-
-    <div class="card-body table-responsive">
-
-      <table class="table table-striped table-bordered align-middle">
-
-
-        <thead class="table-dark">
-
+  <!-- ================= LEAVE LIST PANEL ================= -->
+  <section class="hr-panel">
+    <h2>Leave Request List</h2>
+    <div class="hr-table-wrap">
+      <table class="hr-table">
+        <thead>
         <tr>
-
-          <th>ID</th>
-          <th>Employee ID</th>
-          <th>Leave Type</th>
-          <th>Start Date</th>
-          <th>End Date</th>
-          <th>Reason</th>
-          <th>Status</th>
-          <th>Approved By User ID</th>
-          <th>Actions</th>
-
+          <th>Leave</th><th>Employee</th><th>Type</th><th>Dates</th>
+          <th>Reason</th><th>Status</th><th>Approved By</th><th>Actions</th>
         </tr>
-
         </thead>
-
-
         <tbody>
+        <!-- th:with creates 2 local variables per row:
+             employee = the requester, approver = the approving employee (null if nobody decided yet) -->
+        <tr th:each="row : ${leaveRequestsList}"
+            th:with="employee=${employeeMap.get(row.employeeId)},
+                             approver=${row.approvedBy != null ? employeeMap.get(row.approvedBy) : null}"
+            th:classappend="${row.status == 'ARCHIVED' ? 'hr-row-archived' : ''}">
 
+          <!-- ID 1 -> LEV-001 -->
+          <td><strong th:text="${'LEV-' + #numbers.formatInteger(row.leaveId,3)}">LEV-001</strong></td>
+          <td th:text="${employee != null ? employee.employeeCode + ' - ' + employee.fullName : 'Employee unavailable'}"></td>
+          <td th:text="${row.leaveType}"></td>
+          <td th:text="${row.startDate + ' to ' + row.endDate}"></td>
+          <td th:text="${row.reason}"></td>
 
-        <tr th:each="row : ${leavesList}">
-
-
-          <td th:text="${row.leaveId}">
-          </td>
-
-
-          <td th:text="${row.employeeId}">
-          </td>
-
-
-          <td th:text="${row.leaveType}">
-          </td>
-
-
-          <td th:text="${row.startDate}">
-          </td>
-
-
-          <td th:text="${row.endDate}">
-          </td>
-
-
-          <td th:text="${row.reason}">
-          </td>
-
-
-          <!-- Status -->
+          <!-- Status badge: green / red / yellow / grey -->
           <td>
-
-                        <span th:if="${row.status == 'Pending'}"
-                              class="badge bg-warning text-dark">
-                            Pending
-                        </span>
-
-            <span th:if="${row.status == 'Approved'}"
-                  class="badge bg-success">
-                            Approved
-                        </span>
-
-            <span th:if="${row.status == 'Rejected'}"
-                  class="badge bg-danger">
-                            Rejected
-                        </span>
-
-            <span th:if="${row.status == 'Archived'}"
-                  class="badge bg-secondary">
-                            Archived
-                        </span>
-
-            <span th:if="${row.status != 'Pending'
-                                      and row.status != 'Approved'
-                                      and row.status != 'Rejected'
-                                      and row.status != 'Archived'}"
-                  class="badge bg-info text-dark"
-                  th:text="${row.status}">
-                        </span>
-
+                        <span class="hr-status"
+                              th:classappend="${row.status == 'APPROVED' ? ' hr-status-approved'
+                                              : row.status == 'REJECTED' ? ' hr-status-rejected'
+                                              : row.status == 'PENDING' ? ' hr-status-pending'
+                                              : ' hr-status-archived'}"
+                              th:text="${row.status}"></span>
           </td>
 
+          <!-- Approver name, or "-" if nobody has decided yet -->
+          <td th:text="${approver != null ? approver.employeeCode + ' - ' + approver.fullName : '-'}"></td>
 
-          <td th:text="${row.approvedBy}">
+          <td>
+            <div class="hr-actions">
+
+              <!-- Edit: only while PENDING (decided requests are locked) -->
+              <a th:if="${row.status == 'PENDING'}" class="hr-button hr-button-warning"
+                 th:href="@{/hr/leaves(editId=${row.leaveId})}">Edit</a>
+
+              <!-- Approve: pick the approver from the dropdown, then click Approve.
+                   The dropdown's name="approvedBy" matches @RequestParam approvedBy in the controller -->
+              <form th:if="${row.status == 'PENDING'}" method="post"
+                    th:action="@{/hr/leaves/approve/{id}(id=${row.leaveId})}">
+                <select class="form-select form-select-sm mb-1" name="approvedBy" required>
+                  <option value="">Approver</option>
+                  <option th:each="employee : ${employees}"
+                          th:value="${employee.employeeId}"
+                          th:text="${employee.employeeCode + ' - ' + employee.fullName}"></option>
+                </select>
+                <button class="hr-button hr-button-success" type="submit">Approve</button>
+              </form>
+
+              <!-- Reject: same idea, posts to the reject URL -->
+              <form th:if="${row.status == 'PENDING'}" method="post"
+                    th:action="@{/hr/leaves/reject/{id}(id=${row.leaveId})}">
+                <select class="form-select form-select-sm mb-1" name="approvedBy" required>
+                  <option value="">Approver</option>
+                  <option th:each="employee : ${employees}"
+                          th:value="${employee.employeeId}"
+                          th:text="${employee.employeeCode + ' - ' + employee.fullName}"></option>
+                </select>
+                <button class="hr-button hr-button-danger" type="submit">Reject</button>
+              </form>
+
+              <!-- Archive when not archived -->
+              <form th:if="${row.status != 'ARCHIVED'}" method="post"
+                    th:action="@{/hr/leaves/archive/{id}(id=${row.leaveId})}">
+                <button class="hr-button hr-button-secondary" type="submit">Archive</button>
+              </form>
+
+              <!-- Restore when archived (goes back to PENDING) -->
+              <form th:if="${row.status == 'ARCHIVED'}" method="post"
+                    th:action="@{/hr/leaves/restore/{id}(id=${row.leaveId})}">
+                <button class="hr-button hr-button-success" type="submit">Restore</button>
+              </form>
+
+              <!-- Delete: the service only allows PENDING or ARCHIVED requests -->
+              <form method="post" th:action="@{/hr/leaves/delete/{id}(id=${row.leaveId})}">
+                <button class="hr-button hr-button-danger" type="submit"
+                        onclick="return confirm('Permanently delete this leave request?')">Delete</button>
+              </form>
+            </div>
           </td>
-
-
-          <!-- Actions -->
-          <td class="text-nowrap">
-
-
-            <!-- Edit -->
-            <a class="btn btn-warning btn-sm"
-               th:href="@{/hr/leaves(editId=${row.leaveId})}">
-              Edit
-            </a>
-
-
-            <!-- Archive - only non archived records -->
-            <a th:if="${row.status != 'Archived'}"
-               class="btn btn-secondary btn-sm"
-               th:href="@{/hr/leaves/archive/{id}(id=${row.leaveId})}"
-               onclick="return confirm('Archive this leave request?');">
-              Archive
-            </a>
-
-
-            <!-- Restore - only archived records -->
-            <a th:if="${row.status == 'Archived'}"
-               class="btn btn-success btn-sm"
-               th:href="@{/hr/leaves/restore/{id}(id=${row.leaveId})}"
-               onclick="return confirm('Restore this leave request back to Pending status?');">
-              Restore
-            </a>
-
-
-            <!-- Permanent Delete -->
-            <a class="btn btn-danger btn-sm"
-               th:href="@{/hr/leaves/delete/{id}(id=${row.leaveId})}"
-               onclick="return confirm('WARNING: This will permanently delete the leave request. Are you sure?');">
-              Delete
-            </a>
-
-
-          </td>
-
-
         </tr>
 
-
+        <tr th:if="${#lists.isEmpty(leaveRequestsList)}">
+          <td colspan="8" class="text-center text-muted py-4">No leave requests found.</td>
+        </tr>
         </tbody>
-
-
       </table>
-
     </div>
-
-  </div>
-
-
-</div>
-
-
+  </section>
+</main>
 </body>
-
 </html>

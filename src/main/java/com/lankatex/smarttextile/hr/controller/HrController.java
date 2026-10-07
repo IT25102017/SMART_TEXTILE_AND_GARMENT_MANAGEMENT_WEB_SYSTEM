@@ -5,470 +5,374 @@ import com.lankatex.smarttextile.hr.entity.Employee;
 import com.lankatex.smarttextile.hr.entity.LeaveRequest;
 import com.lankatex.smarttextile.hr.entity.Shift;
 import com.lankatex.smarttextile.hr.service.HrService;
-import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.*;
-import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+import jakarta.validation.Valid;                                      // Triggers the @NotBlank/@NotNull checks on the form object
+import org.springframework.stereotype.Controller;                     // Marks this class as a web controller that returns HTML pages
+import org.springframework.ui.Model;                                  // A bag of data we pass to the HTML page
+import org.springframework.validation.BindingResult;                  // Holds the validation errors after @Valid runs
+import org.springframework.web.bind.annotation.*;                     // @GetMapping, @PostMapping, @PathVariable, @RequestParam...
+import org.springframework.web.servlet.mvc.support.RedirectAttributes; // Carries a message across a redirect (one-time "flash" message)
 
-@Controller
-@RequestMapping("/hr")
+import java.time.LocalDate;
+
+@Controller                                                           // Spring registers this as a web controller
+@RequestMapping("/hr")                                                // Every URL in this class starts with /hr
 public class HrController {
 
-    private final HrService service;
+    private final HrService service;                                  // The business logic layer
 
+    // Constructor injection: Spring passes in HrService automatically
     public HrController(HrService service) {
         this.service = service;
     }
 
-
-    // =========================================================
+    // =====================================================
     // DASHBOARD
-    // =========================================================
+    // =====================================================
 
-    @GetMapping
+    @GetMapping                                                       // Handles GET /hr
     public String dashboard(Model model) {
-
-        model.addAttribute(
-                "stats",
-                service.getDashboardStats()
-        );
-
-        return "hr/dashboard";
+        model.addAttribute("stats", service.getDashboardStats());     // HTML reads this as ${stats}
+        return "hr/dashboard";                                        // Opens templates/hr/dashboard.html
     }
 
+    // =====================================================
+    // EMPLOYEES
+    // =====================================================
 
-    // =========================================================
-    // EMPLOYEE MANAGEMENT
-    // =========================================================
-
-    @GetMapping("/employees")
+    @GetMapping("/employees")                                         // Handles GET /hr/employees
     public String employees(
-            @RequestParam(required = false) Long editId,
+            @RequestParam(required = false) Long editId,              // Optional ?editId=5 in the URL
             Model model) {
 
+        // If editId is given, load that employee into the form; otherwise show an empty form
         model.addAttribute(
                 "employee",
-                editId == null
-                        ? new Employee()
-                        : service.getEmployee(editId)
+                editId == null ? new Employee() : service.getEmployee(editId)
         );
-
-        model.addAttribute(
-                "employeesList",
-                service.getAllEmployees()
-        );
-
+        model.addAttribute("employeesList", service.getAllEmployees()); // The table at the bottom of the page
         return "hr/employees";
     }
 
-
-    @PostMapping("/employees/save")
+    @PostMapping("/employees/save")                                   // Handles the Save button (POST)
     public String saveEmployee(
-            @ModelAttribute Employee employee,
+            @Valid @ModelAttribute("employee") Employee employee,     // Form fields are filled into an Employee and validated
+            BindingResult result,                                     // Must come right after the @Valid object
+            Model model,
             RedirectAttributes redirectAttributes) {
 
-        try {
-
-            service.saveEmployee(employee);
-
-            redirectAttributes.addFlashAttribute(
-                    "message",
-                    "Employee saved successfully."
-            );
-
-        } catch (IllegalArgumentException ex) {
-
-            redirectAttributes.addFlashAttribute(
-                    "error",
-                    ex.getMessage()
-            );
+        // If annotation validation failed, show the same page again with the field errors
+        if (result.hasErrors()) {
+            model.addAttribute("employeesList", service.getAllEmployees());
+            return "hr/employees";
         }
 
-        return "redirect:/hr/employees";
-    }
-
-
-    @GetMapping("/employees/archive/{id}")
-    public String archiveEmployee(
-            @PathVariable Long id,
-            RedirectAttributes redirectAttributes) {
-
-        service.archiveEmployee(id);
-
-        redirectAttributes.addFlashAttribute(
-                "message",
-                "Employee archived successfully."
-        );
-
-        return "redirect:/hr/employees";
-    }
-
-
-    @GetMapping("/employees/restore/{id}")
-    public String restoreEmployee(
-            @PathVariable Long id,
-            RedirectAttributes redirectAttributes) {
-
-        service.restoreEmployee(id);
-
-        redirectAttributes.addFlashAttribute(
-                "message",
-                "Employee restored successfully."
-        );
-
-        return "redirect:/hr/employees";
-    }
-
-
-    @GetMapping("/employees/delete/{id}")
-    public String deleteEmployee(
-            @PathVariable Long id,
-            RedirectAttributes redirectAttributes) {
-
         try {
-
-            service.deleteEmployee(id);
-
-            redirectAttributes.addFlashAttribute(
-                    "message",
-                    "Employee permanently deleted."
-            );
-
-        } catch (Exception ex) {
-
-            redirectAttributes.addFlashAttribute(
-                    "error",
-                    "Employee cannot be deleted because it may be used by other records."
-            );
+            service.saveEmployee(employee);                           // Business-rule checks + save
+            redirectAttributes.addFlashAttribute("message", "Employee saved successfully."); // Shown once after the redirect
+            return "redirect:/hr/employees";                          // Redirect avoids a duplicate save on browser refresh
+        } catch (IllegalArgumentException ex) {                       // Service rule broken (e.g. duplicate code)
+            model.addAttribute("error", ex.getMessage());             // Red error box on the page
+            model.addAttribute("employeesList", service.getAllEmployees());
+            return "hr/employees";
         }
-
-        return "redirect:/hr/employees";
     }
 
+    @PostMapping("/employees/archive/{id}")                           // {id} in the URL is the employee's ID
+    public String archiveEmployee(@PathVariable Long id, RedirectAttributes redirectAttributes) {
+        return runAction(                                             // Helper method defined at the bottom (Part 2)
+                () -> service.archiveEmployee(id),                    // The action to run
+                "Employee archived successfully.",                    // Message if it works
+                "redirect:/hr/employees",                             // Where to go afterwards
+                redirectAttributes
+        );
+    }
 
-    // =========================================================
-    // SHIFT MANAGEMENT
-    // =========================================================
+    @PostMapping("/employees/restore/{id}")
+    public String restoreEmployee(@PathVariable Long id, RedirectAttributes redirectAttributes) {
+        return runAction(
+                () -> service.restoreEmployee(id),
+                "Employee restored successfully.",
+                "redirect:/hr/employees",
+                redirectAttributes
+        );
+    }
 
-    @GetMapping("/shifts")
+    @PostMapping("/employees/delete/{id}")
+    public String deleteEmployee(@PathVariable Long id, RedirectAttributes redirectAttributes) {
+        return runAction(
+                () -> service.deleteEmployee(id),
+                "Employee permanently deleted successfully.",
+                "redirect:/hr/employees",
+                redirectAttributes
+        );
+    }
+
+    // =====================================================
+    // SHIFTS
+    // =====================================================
+
+    @GetMapping("/shifts")                                            // GET /hr/shifts
     public String shifts(
             @RequestParam(required = false) Long editId,
             Model model) {
-
         model.addAttribute(
                 "shift",
-                editId == null
-                        ? new Shift()
-                        : service.getShift(editId)
+                editId == null ? new Shift() : service.getShift(editId)
         );
-
-        model.addAttribute(
-                "shiftsList",
-                service.getAllShifts()
-        );
-
+        model.addAttribute("shiftsList", service.getAllShifts());
         return "hr/shifts";
     }
 
-
     @PostMapping("/shifts/save")
     public String saveShift(
-            @ModelAttribute Shift shift,
+            @Valid @ModelAttribute("shift") Shift shift,
+            BindingResult result,
+            Model model,
             RedirectAttributes redirectAttributes) {
 
-        try {
+        if (result.hasErrors()) {
+            model.addAttribute("shiftsList", service.getAllShifts());
+            return "hr/shifts";
+        }
 
+        try {
             service.saveShift(shift);
-
-            redirectAttributes.addFlashAttribute(
-                    "message",
-                    "Shift saved successfully."
-            );
-
+            redirectAttributes.addFlashAttribute("message", "Shift saved successfully.");
+            return "redirect:/hr/shifts";
         } catch (IllegalArgumentException ex) {
-
-            redirectAttributes.addFlashAttribute(
-                    "error",
-                    ex.getMessage()
-            );
+            model.addAttribute("error", ex.getMessage());
+            model.addAttribute("shiftsList", service.getAllShifts());
+            return "hr/shifts";
         }
-
-        return "redirect:/hr/shifts";
     }
 
-
-    @GetMapping("/shifts/archive/{id}")
-    public String archiveShift(
-            @PathVariable Long id,
-            RedirectAttributes redirectAttributes) {
-
-        service.archiveShift(id);
-
-        redirectAttributes.addFlashAttribute(
-                "message",
-                "Shift archived successfully."
+    @PostMapping("/shifts/archive/{id}")
+    public String archiveShift(@PathVariable Long id, RedirectAttributes redirectAttributes) {
+        return runAction(
+                () -> service.archiveShift(id),
+                "Shift archived successfully.",
+                "redirect:/hr/shifts",
+                redirectAttributes
         );
-
-        return "redirect:/hr/shifts";
     }
 
-
-    @GetMapping("/shifts/restore/{id}")
-    public String restoreShift(
-            @PathVariable Long id,
-            RedirectAttributes redirectAttributes) {
-
-        service.restoreShift(id);
-
-        redirectAttributes.addFlashAttribute(
-                "message",
-                "Shift restored successfully."
+    @PostMapping("/shifts/restore/{id}")
+    public String restoreShift(@PathVariable Long id, RedirectAttributes redirectAttributes) {
+        return runAction(
+                () -> service.restoreShift(id),
+                "Shift restored successfully.",
+                "redirect:/hr/shifts",
+                redirectAttributes
         );
+    }
 
-        return "redirect:/hr/shifts";
+    @PostMapping("/shifts/delete/{id}")
+    public String deleteShift(@PathVariable Long id, RedirectAttributes redirectAttributes) {
+        return runAction(
+                () -> service.deleteShift(id),
+                "Shift permanently deleted successfully.",
+                "redirect:/hr/shifts",
+                redirectAttributes
+        );
     }
 
 
-    @GetMapping("/shifts/delete/{id}")
-    public String deleteShift(
-            @PathVariable Long id,
-            RedirectAttributes redirectAttributes) {
+    // =====================================================
+    // ATTENDANCE
+    // =====================================================
 
-        try {
-
-            service.deleteShift(id);
-
-            redirectAttributes.addFlashAttribute(
-                    "message",
-                    "Shift permanently deleted."
-            );
-
-        } catch (Exception ex) {
-
-            redirectAttributes.addFlashAttribute(
-                    "error",
-                    "Shift cannot be deleted because it may be used by attendance records."
-            );
-        }
-
-        return "redirect:/hr/shifts";
-    }
-
-
-    // =========================================================
-    // ATTENDANCE MANAGEMENT
-    // =========================================================
-
-    @GetMapping("/attendance")
+    @GetMapping("/attendance")                                        // GET /hr/attendance
     public String attendance(
             @RequestParam(required = false) Long editId,
             Model model) {
 
-        model.addAttribute(
-                "attendanceRecord",
-                editId == null
-                        ? new AttendanceRecord()
-                        : service.getAttendanceRecord(editId)
-        );
+        // Edit mode loads the saved record; otherwise start with a blank record
+        AttendanceRecord record = editId == null
+                ? new AttendanceRecord()
+                : service.getAttendanceRecord(editId);
 
-        model.addAttribute(
-                "attendanceList",
-                service.getAllAttendanceRecords()
-        );
+        // For a new record, pre-fill the date with today
+        if (editId == null) {
+            record.setAttendanceDate(LocalDate.now());
+        }
 
+        prepareAttendanceModel(model, record);                        // Adds the form object, table data and dropdown data
         return "hr/attendance";
     }
 
-
     @PostMapping("/attendance/save")
-    public String saveAttendanceRecord(
-            @ModelAttribute AttendanceRecord attendanceRecord,
+    public String saveAttendance(
+            @Valid @ModelAttribute("attendanceRecord") AttendanceRecord record,
+            BindingResult result,
+            Model model,
             RedirectAttributes redirectAttributes) {
 
+        // Validation errors: show the page again (dropdowns must be reloaded too)
+        if (result.hasErrors()) {
+            prepareAttendanceModel(model, record);
+            return "hr/attendance";
+        }
+
         try {
-
-            service.saveAttendanceRecord(attendanceRecord);
-
-            redirectAttributes.addFlashAttribute(
-                    "message",
-                    "Attendance Record saved successfully."
-            );
-
+            service.saveAttendanceRecord(record);                     // Duplicate check, hours, status, save
+            redirectAttributes.addFlashAttribute("message", "Attendance saved successfully.");
+            return "redirect:/hr/attendance";
         } catch (IllegalArgumentException ex) {
-
-            redirectAttributes.addFlashAttribute(
-                    "error",
-                    ex.getMessage()
-            );
+            model.addAttribute("error", ex.getMessage());
+            prepareAttendanceModel(model, record);
+            return "hr/attendance";
         }
-
-        return "redirect:/hr/attendance";
     }
 
-
-    @GetMapping("/attendance/archive/{id}")
-    public String archiveAttendanceRecord(
-            @PathVariable Long id,
-            RedirectAttributes redirectAttributes) {
-
-        service.archiveAttendanceRecord(id);
-
-        redirectAttributes.addFlashAttribute(
-                "message",
-                "Attendance Record archived successfully."
+    @PostMapping("/attendance/archive/{id}")
+    public String archiveAttendance(@PathVariable Long id, RedirectAttributes redirectAttributes) {
+        return runAction(
+                () -> service.archiveAttendanceRecord(id),
+                "Attendance record archived successfully.",
+                "redirect:/hr/attendance",
+                redirectAttributes
         );
-
-        return "redirect:/hr/attendance";
     }
 
-
-    @GetMapping("/attendance/restore/{id}")
-    public String restoreAttendanceRecord(
-            @PathVariable Long id,
-            RedirectAttributes redirectAttributes) {
-
-        service.restoreAttendanceRecord(id);
-
-        redirectAttributes.addFlashAttribute(
-                "message",
-                "Attendance Record restored successfully."
+    @PostMapping("/attendance/restore/{id}")
+    public String restoreAttendance(@PathVariable Long id, RedirectAttributes redirectAttributes) {
+        return runAction(
+                () -> service.restoreAttendanceRecord(id),
+                "Attendance record restored successfully.",
+                "redirect:/hr/attendance",
+                redirectAttributes
         );
-
-        return "redirect:/hr/attendance";
     }
 
-
-    @GetMapping("/attendance/delete/{id}")
-    public String deleteAttendanceRecord(
-            @PathVariable Long id,
-            RedirectAttributes redirectAttributes) {
-
-        try {
-
-            service.deleteAttendanceRecord(id);
-
-            redirectAttributes.addFlashAttribute(
-                    "message",
-                    "Attendance Record permanently deleted."
-            );
-
-        } catch (Exception ex) {
-
-            redirectAttributes.addFlashAttribute(
-                    "error",
-                    "Attendance Record could not be deleted."
-            );
-        }
-
-        return "redirect:/hr/attendance";
+    // Puts everything the attendance page needs into the Model (used in 3 places above)
+    private void prepareAttendanceModel(Model model, AttendanceRecord record) {
+        model.addAttribute("attendanceRecord", record);                // The form object
+        model.addAttribute("attendanceList", service.getAllAttendanceRecords()); // History table
+        model.addAttribute("employees", service.getActiveEmployees()); // Employee dropdown (no archived)
+        model.addAttribute("shifts", service.getActiveShifts());       // Shift dropdown (no archived)
+        model.addAttribute("employeeMap", service.getEmployeeMap());   // Lets the table show "EMP-001 - Name"
+        model.addAttribute("shiftMap", service.getShiftMap());         // Lets the table show the shift name
     }
 
+    // =====================================================
+    // LEAVE REQUESTS
+    // =====================================================
 
-    // =========================================================
-    // LEAVE REQUEST MANAGEMENT
-    // =========================================================
-
-    @GetMapping("/leaves")
+    @GetMapping("/leaves")                                            // GET /hr/leaves
     public String leaves(
             @RequestParam(required = false) Long editId,
             Model model) {
-
         model.addAttribute(
                 "leaveRequest",
-                editId == null
-                        ? new LeaveRequest()
-                        : service.getLeaveRequest(editId)
+                editId == null ? new LeaveRequest() : service.getLeaveRequest(editId)
         );
-
-        model.addAttribute(
-                "leavesList",
-                service.getAllLeaveRequests()
-        );
-
+        prepareLeaveModel(model);
         return "hr/leaves";
     }
 
-
     @PostMapping("/leaves/save")
-    public String saveLeaveRequest(
-            @ModelAttribute LeaveRequest leaveRequest,
+    public String saveLeave(
+            @Valid @ModelAttribute("leaveRequest") LeaveRequest leaveRequest,
+            BindingResult result,
+            Model model,
             RedirectAttributes redirectAttributes) {
 
-        try {
+        if (result.hasErrors()) {
+            prepareLeaveModel(model);
+            return "hr/leaves";
+        }
 
+        try {
             service.saveLeaveRequest(leaveRequest);
-
-            redirectAttributes.addFlashAttribute(
-                    "message",
-                    "Leave Request saved successfully."
-            );
-
+            redirectAttributes.addFlashAttribute("message", "Leave request saved successfully.");
+            return "redirect:/hr/leaves";
         } catch (IllegalArgumentException ex) {
-
-            redirectAttributes.addFlashAttribute(
-                    "error",
-                    ex.getMessage()
-            );
+            model.addAttribute("error", ex.getMessage());
+            prepareLeaveModel(model);
+            return "hr/leaves";
         }
-
-        return "redirect:/hr/leaves";
     }
 
-
-    @GetMapping("/leaves/archive/{id}")
-    public String archiveLeaveRequest(
-            @PathVariable Long id,
+    @PostMapping("/leaves/approve/{id}")
+    public String approveLeave(
+            @PathVariable Long id,                                    // Leave request ID from the URL
+            @RequestParam Long approvedBy,                            // Approver employee ID from the dropdown in the form
             RedirectAttributes redirectAttributes) {
-
-        service.archiveLeaveRequest(id);
-
-        redirectAttributes.addFlashAttribute(
-                "message",
-                "Leave Request archived successfully."
+        return runAction(
+                () -> service.approveLeave(id, approvedBy),
+                "Leave request approved successfully.",
+                "redirect:/hr/leaves",
+                redirectAttributes
         );
-
-        return "redirect:/hr/leaves";
     }
 
-
-    @GetMapping("/leaves/restore/{id}")
-    public String restoreLeaveRequest(
+    @PostMapping("/leaves/reject/{id}")
+    public String rejectLeave(
             @PathVariable Long id,
+            @RequestParam Long approvedBy,
             RedirectAttributes redirectAttributes) {
-
-        service.restoreLeaveRequest(id);
-
-        redirectAttributes.addFlashAttribute(
-                "message",
-                "Leave Request restored successfully."
+        return runAction(
+                () -> service.rejectLeave(id, approvedBy),
+                "Leave request rejected successfully.",
+                "redirect:/hr/leaves",
+                redirectAttributes
         );
-
-        return "redirect:/hr/leaves";
     }
 
+    @PostMapping("/leaves/archive/{id}")
+    public String archiveLeave(@PathVariable Long id, RedirectAttributes redirectAttributes) {
+        return runAction(
+                () -> service.archiveLeaveRequest(id),
+                "Leave request archived successfully.",
+                "redirect:/hr/leaves",
+                redirectAttributes
+        );
+    }
 
-    @GetMapping("/leaves/delete/{id}")
-    public String deleteLeaveRequest(
-            @PathVariable Long id,
+    @PostMapping("/leaves/restore/{id}")
+    public String restoreLeave(@PathVariable Long id, RedirectAttributes redirectAttributes) {
+        return runAction(
+                () -> service.restoreLeaveRequest(id),
+                "Leave request restored as PENDING.",
+                "redirect:/hr/leaves",
+                redirectAttributes
+        );
+    }
+
+    @PostMapping("/leaves/delete/{id}")
+    public String deleteLeave(@PathVariable Long id, RedirectAttributes redirectAttributes) {
+        return runAction(
+                () -> service.deleteLeaveRequest(id),
+                "Leave request permanently deleted successfully.",
+                "redirect:/hr/leaves",
+                redirectAttributes
+        );
+    }
+
+    // Data for the leave page: table, employee dropdown (no archived), and the name lookup map
+    private void prepareLeaveModel(Model model) {
+        model.addAttribute("leaveRequestsList", service.getAllLeaveRequests());
+        model.addAttribute("employees", service.getActiveEmployees());
+        model.addAttribute("employeeMap", service.getEmployeeMap());
+    }
+
+    // =====================================================
+    // COMMON ACTION HANDLER
+    // =====================================================
+
+    // Runs any service action and turns the result into a flash message.
+    // This avoids repeating the same try/catch in every archive/restore/delete/approve method.
+    private String runAction(
+            Runnable action,                                          // The code to run, e.g. () -> service.archiveShift(id)
+            String successMessage,                                    // Green message if it works
+            String redirect,                                          // Page to go back to
             RedirectAttributes redirectAttributes) {
-
         try {
-
-            service.deleteLeaveRequest(id);
-
-            redirectAttributes.addFlashAttribute(
-                    "message",
-                    "Leave Request permanently deleted."
-            );
-
-        } catch (Exception ex) {
-
-            redirectAttributes.addFlashAttribute(
-                    "error",
-                    "Leave Request could not be deleted."
-            );
+            action.run();                                             // Execute the service call
+            redirectAttributes.addFlashAttribute("message", successMessage);
+        } catch (IllegalArgumentException ex) {                       // A business rule blocked it
+            redirectAttributes.addFlashAttribute("error", ex.getMessage()); // Red message with the reason
         }
-
-        return "redirect:/hr/leaves";
+        return redirect;                                              // Always redirect back to the list page
     }
-}
+}   // <-- closing brace of the HrController class
