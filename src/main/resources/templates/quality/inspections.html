@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Quality Inspections | LankaTex</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" th:href="@{/css/common-navbar.css}">
+    <link rel="stylesheet" th:href="@{/css/quality/quality-ui.css}">
+</head>
+<body class="quality-page">
+<div th:replace="~{fragments/common-navbar :: navbar}"></div>
+
+<main class="quality-shell">
+    <section class="quality-hero">
+        <span class="quality-eyebrow">LankaTex Quality Assurance</span>
+        <h1>Quality Inspections</h1>
+        <p>Record inspected, accepted, rejected and pending quantities against the correct Production Plan and Customer Order.</p>
+    </section>
+
+    <section class="quality-panel">
+        <div class="quality-toolbar">
+            <div class="quality-nav">
+                <a th:href="@{/quality}">Dashboard</a>
+                <a th:href="@{/quality/defects}">Defects</a>
+                <a th:href="@{/quality/rework}">Rework</a>
+                <a th:href="@{/quality/wastage}">Wastage</a>
+                <a th:href="@{/quality/holds}">Holds</a>
+            </div>
+        </div>
+
+        <div th:if="${message}" class="alert alert-success" th:text="${message}"></div>
+        <div th:if="${error}" class="alert alert-danger" th:text="${error}"></div>
+
+        <div class="quality-form-section">
+            <h2 th:text="${qualityInspection.inspectionId == null ? 'New Quality Inspection' : 'Edit Quality Inspection'}">Quality Inspection</h2>
+            <form th:action="@{/quality/inspections/save}" th:object="${qualityInspection}" method="post">
+                <input type="hidden" th:field="*{inspectionId}">
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        <label class="form-label">Production Plan</label>
+                        <select id="planId" class="form-select" th:field="*{planId}" required>
+                            <option value="">Select Production Plan</option>
+                            <option th:each="plan: ${productionPlans}" th:value="${plan.planId}" th:attr="data-order-id=${plan.orderId}" th:text="${'PP-' + #numbers.formatInteger(plan.planId, 3) + ' | ORD-' + #numbers.formatInteger(plan.orderId, 3) + ' | ' + plan.status}">PP-001</option>
+                        </select>
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <label class="form-label">Customer Order</label>
+                        <select id="orderId" class="form-select" th:field="*{orderId}" required>
+                            <option value="">Select Customer Order</option>
+                            <option th:each="order: ${customerOrders}" th:value="${order.orderId}" th:text="${'ORD-' + #numbers.formatInteger(order.orderId, 3) + ' | ' + order.status}">ORD-001</option>
+                        </select>
+                        <small class="quality-help">Selecting a Production Plan automatically matches its Customer Order. The backend validates the relationship before saving.</small>
+                    </div>
+                    <div class="col-md-4 mb-3">
+                        <label class="form-label">Stage</label>
+                        <select class="form-select" th:field="*{stageName}" required>
+                            <option value="">Select Stage</option>
+                            <option value="CUTTING">CUTTING</option>
+                            <option value="SEWING">SEWING</option>
+                            <option value="FINISHING">FINISHING</option>
+                            <option value="PACKING">PACKING</option>
+                            <option value="FINAL">FINAL</option>
+                        </select>
+                    </div>
+                    <div class="col-md-4 mb-3">
+                        <label class="form-label">Inspection Date</label>
+                        <input class="form-control" type="date" th:field="*{inspectionDate}" required>
+                    </div>
+                    <div class="col-md-4 mb-3">
+                        <label class="form-label">Inspector</label>
+                        <select class="form-select" th:field="*{inspectorId}" required>
+                            <option value="">Select Employee</option>
+                            <option th:each="employee: ${employees}" th:value="${employee.employeeId}" th:text="${employee.employeeCode + ' - ' + employee.fullName}">EMP-001</option>
+                        </select>
+                    </div>
+                    <div class="col-md-3 mb-3">
+                        <label class="form-label">Inspected Qty</label>
+                        <input class="form-control" type="number" step="0.01" min="0" th:field="*{inspectedQty}" required>
+                    </div>
+                    <div class="col-md-3 mb-3">
+                        <label class="form-label">Accepted Qty</label>
+                        <input class="form-control" type="number" step="0.01" min="0" th:field="*{acceptedQty}" required>
+                    </div>
+                    <div class="col-md-3 mb-3">
+                        <label class="form-label">Rejected Qty</label>
+                        <input class="form-control" type="number" step="0.01" min="0" th:field="*{rejectedQty}" required>
+                    </div>
+                    <div class="col-md-3 mb-3">
+                        <label class="form-label">Pending Qty</label>
+                        <input class="form-control" type="number" step="0.01" min="0" th:field="*{pendingQty}" required>
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <label class="form-label">Inspection Status</label>
+                        <select class="form-select" th:field="*{status}" required>
+                            <option value="PENDING">PENDING</option>
+                            <option value="PASSED">PASSED</option>
+                            <option value="FAILED">FAILED</option>
+                            <option value="REWORK_REQUIRED">REWORK REQUIRED</option>
+                            <option value="ON_HOLD">ON HOLD</option>
+                            <option th:if="${qualityInspection.status == 'ARCHIVED'}" value="ARCHIVED">ARCHIVED</option>
+                        </select>
+                    </div>
+                </div>
+                <button class="quality-btn btn-main" type="submit">Save Inspection</button>
+                <a class="quality-btn btn-muted" th:href="@{/quality/inspections}">Clear</a>
+            </form>
+        </div>
+    </section>
+
+    <section class="quality-panel">
+        <h2 class="h4 fw-bold mb-3">Inspection List</h2>
+        <div class="quality-table-wrapper">
+            <table class="quality-table">
+                <thead>
+                <tr>
+                    <th>Inspection</th><th>Plan</th><th>Order</th><th>Stage</th><th>Date</th>
+                    <th>Inspector</th><th>Inspected</th><th>Accepted</th><th>Rejected</th>
+                    <th>Pending</th><th>Status</th><th>Actions</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr th:each="row: ${inspectionsList}" th:classappend="${row.status == 'ARCHIVED'} ? 'quality-row-archived' : ''">
+                    <td><span class="code-pill" th:text="${row.inspectionCode}">QIN-001</span></td>
+                    <td th:text="${'PP-' + #numbers.formatInteger(row.planId, 3)}">PP-001</td>
+                    <td th:text="${'ORD-' + #numbers.formatInteger(row.orderId, 3)}">ORD-001</td>
+                    <td th:text="${row.stageName}">FINAL</td>
+                    <td th:text="${row.inspectionDate}">2026-09-24</td>
+                    <td th:with="employee=${employeeMap.get(row.inspectorId)}" th:text="${employee != null ? employee.employeeCode + ' - ' + employee.fullName : 'EMP-' + #numbers.formatInteger(row.inspectorId, 3)}">EMP-001</td>
+                    <td th:text="${row.inspectedQty}">0</td>
+                    <td th:text="${row.acceptedQty}">0</td>
+                    <td th:text="${row.rejectedQty}">0</td>
+                    <td th:text="${row.pendingQty}">0</td>
+                    <td><span class="status-pill" th:text="${row.status}">PENDING</span></td>
+                    <td>
+                        <div class="quality-actions">
+                            <a class="quality-btn btn-edit" th:href="@{/quality/inspections(editId=${row.inspectionId})}">Edit</a>
+                            <form th:if="${row.status != 'ARCHIVED'}" method="post" th:action="@{/quality/inspections/archive/{id}(id=${row.inspectionId})}">
+                                <button class="quality-btn btn-danger-soft" type="submit">Archive</button>
+                            </form>
+                            <form th:if="${row.status == 'ARCHIVED'}" method="post" th:action="@{/quality/inspections/restore/{id}(id=${row.inspectionId})}">
+                                <button class="quality-btn btn-success-soft" type="submit">Restore</button>
+                            </form>
+                        </div>
+                    </td>
+                </tr>
+                <tr th:if="${#lists.isEmpty(inspectionsList)}"><td colspan="12" class="quality-empty">No inspections found.</td></tr>
+                </tbody>
+            </table>
+        </div>
+    </section>
+</main>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        const plan = document.getElementById("planId");
+        const order = document.getElementById("orderId");
+        if (!plan || !order) return;
+        function matchOrder() {
+            const selected = plan.options[plan.selectedIndex];
+            if (selected && selected.dataset.orderId) order.value = selected.dataset.orderId;
+        }
+        plan.addEventListener("change", matchOrder);
+    });
+</script>
+</body>
+</html>

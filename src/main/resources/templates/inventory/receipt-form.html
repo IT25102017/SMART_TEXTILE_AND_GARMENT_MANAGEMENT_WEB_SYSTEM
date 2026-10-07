@@ -1,94 +1,613 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
+
+<html lang="en"
+      xmlns:th="http://www.thymeleaf.org">
+
 <head>
+
     <meta charset="UTF-8">
-    <title>Goods Receipt</title>
+
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1">
+
+    <title th:text="${isEdit}
+                    ? 'Edit Goods Receipt | LankaTex'
+                    : 'New Goods Receipt | LankaTex'">
+        Goods Receipt | LankaTex
+    </title>
+
+
+    <!-- Bootstrap CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
           rel="stylesheet">
+
+
+    <!-- Common LankaTex Navigation CSS -->
+    <link rel="stylesheet"
+          th:href="@{/css/common-navbar.css}">
+
+
+    <!-- Inventory Main Theme -->
+    <link rel="stylesheet"
+          th:href="@{/css/inventory/inventory-ui.css}">
+
+
+    <!-- Goods Receipts Theme -->
+    <link rel="stylesheet"
+          th:href="@{/css/inventory/inventory-receipts.css}">
+
 </head>
 
-<body>
 
-<div class="container py-4">
+<body class="inventory-page">
 
-    <h2>Goods Receipt</h2>
 
-    <form method="post"
-          th:action="@{/inventory/receipts/save}"
-          th:object="${receipt}">
+<!-- Common LankaTex Navigation Bar -->
+<div th:replace="~{fragments/common-navbar :: navbar}"></div>
 
-        <div class="mb-3">
 
-            <label>Purchase Order ID</label>
+<main class="inventory-container receipt-form-workspace">
 
-            <input type="number"
-                   class="form-control"
-                   th:field="*{poId}">
 
-        </div>
+    <!-- =====================================================
+         GOODS RECEIPT FORM
+         ===================================================== -->
 
-        <div class="mb-3">
+    <section class="receipt-form-card">
 
-            <label>Supplier ID</label>
 
-            <input type="number"
-                   class="form-control"
-                   th:field="*{supplierId}">
+        <!-- =================================================
+             FORM HEADING
+             ================================================= -->
 
-        </div>
+        <div class="receipt-form-heading">
 
-        <div class="mb-3">
+            <span class="receipts-eyebrow">
+                LankaTex Inventory
+            </span>
 
-            <label>Received Date</label>
 
-            <input type="date"
-                   class="form-control"
-                   th:field="*{receivedDate}">
+            <h1 th:text="${isEdit}
+                        ? 'Edit Goods Receipt'
+                        : 'New Goods Receipt'">
 
-        </div>
+                Goods Receipt
 
-        <div class="mb-3">
+            </h1>
 
-            <label>Received By User ID</label>
 
-            <input type="number"
-                   class="form-control"
-                   th:field="*{receivedBy}">
+            <p th:text="${isEdit}
+                       ? 'Update the receiving information for this goods receipt.'
+                       : 'Record goods received from a valid supplier against a valid purchase order.'">
+            </p>
 
         </div>
 
-        <div class="mb-3">
 
-            <label>Status</label>
 
-            <select class="form-select"
-                    th:field="*{status}">
+        <!-- =================================================
+             RECEIPT CODE
+             ================================================= -->
 
-                <option value="RECEIVED">RECEIVED</option>
-                <option value="PENDING">PENDING</option>
-                <option value="REJECTED">REJECTED</option>
+        <div th:if="${isEdit}"
+             class="alert alert-light border mb-4">
 
-            </select>
+            <strong>
+                Goods Receipt Number:
+            </strong>
 
-        </div>
-
-        <div class="mb-3">
-
-            <label>Remarks</label>
-
-            <textarea class="form-control"
-                      th:field="*{remarks}">
-            </textarea>
+            <span class="fw-bold text-success"
+                  th:text="${receipt.receiptCode}">
+                GRN-001
+            </span>
 
         </div>
 
-        <button class="btn btn-success">
-            Save
-        </button>
 
-    </form>
 
-</div>
+        <!-- =================================================
+             ERROR MESSAGE
+             ================================================= -->
+
+        <div th:if="${error}"
+             class="alert alert-danger"
+             th:text="${error}">
+        </div>
+
+
+
+        <!-- =================================================
+             NO PURCHASING DATA WARNING
+             ================================================= -->
+
+        <div th:if="${!isEdit
+                     and (#lists.isEmpty(purchaseOrders)
+                     or #lists.isEmpty(suppliers))}"
+             class="alert alert-warning">
+
+            A Goods Receipt requires at least one valid Purchase Order
+            and one active Supplier from the Purchasing module.
+
+        </div>
+
+
+
+        <!-- =================================================
+             FORM
+             ================================================= -->
+
+        <form method="post"
+              th:action="@{/inventory/receipts/save}"
+              th:object="${receipt}">
+
+
+            <!-- =================================================
+                 RECEIPT ID
+                 ================================================= -->
+
+            <input type="hidden"
+                   th:field="*{receiptId}">
+
+
+
+            <!-- =================================================
+                 PURCHASING RELATIONSHIP
+                 ================================================= -->
+
+            <div class="mb-4">
+
+                <h5 class="fw-bold mb-3">
+                    Purchasing Information
+                </h5>
+
+
+                <!-- =================================================
+                     CREATE MODE - PURCHASE ORDER
+                     ================================================= -->
+
+                <div th:if="${!isEdit}"
+                     class="mb-3">
+
+                    <label class="form-label">
+                        Purchase Order
+                    </label>
+
+
+                    <select id="poId"
+                            class="form-select"
+                            th:field="*{poId}"
+                            required>
+
+
+                        <option value="">
+                            Select Purchase Order
+                        </option>
+
+
+                        <option th:each="order : ${purchaseOrders}"
+                                th:value="${order.poId}"
+                                th:attr="data-supplier-id=${order.supplierId}"
+                                th:text="${'PO-'
+                                + #numbers.formatInteger(order.poId, 3)
+                                + ' | Supplier SUP-'
+                                + #numbers.formatInteger(order.supplierId, 3)
+                                + ' | '
+                                + (order.status != null
+                                   ? order.status
+                                   : 'No Status')}">
+
+                            PO-001
+
+                        </option>
+
+
+                    </select>
+
+
+                    <small class="text-muted">
+
+                        Only available Purchase Orders are shown.
+                        Archived Purchase Orders are excluded.
+
+                    </small>
+
+                </div>
+
+
+
+                <!-- =================================================
+                     EDIT MODE - PURCHASE ORDER
+                     ================================================= -->
+
+                <div th:if="${isEdit}"
+                     class="mb-3">
+
+                    <label class="form-label">
+                        Purchase Order
+                    </label>
+
+
+                    <input type="text"
+                           class="form-control"
+                           th:value="${'PO-'
+                           + #numbers.formatInteger(receipt.poId, 3)}"
+                           readonly>
+
+
+                    <input type="hidden"
+                           th:field="*{poId}">
+
+
+                    <small class="text-muted">
+
+                        The original Purchase Order cannot be changed
+                        after the Goods Receipt is created.
+
+                    </small>
+
+                </div>
+
+
+
+                <!-- =================================================
+                     CREATE MODE - SUPPLIER
+                     ================================================= -->
+
+                <div th:if="${!isEdit}"
+                     class="mb-3">
+
+                    <label class="form-label">
+                        Supplier
+                    </label>
+
+
+                    <select id="supplierId"
+                            class="form-select"
+                            th:field="*{supplierId}"
+                            required>
+
+
+                        <option value="">
+                            Select Supplier
+                        </option>
+
+
+                        <option th:each="supplier : ${suppliers}"
+                                th:value="${supplier.supplierId}"
+                                th:text="${'SUP-'
+                                + #numbers.formatInteger(
+                                    supplier.supplierId,
+                                    3
+                                  )
+                                + ' - '
+                                + supplier.supplierName}">
+
+                            SUP-001 - Supplier Name
+
+                        </option>
+
+
+                    </select>
+
+
+                    <small class="text-muted">
+
+                        The Supplier is automatically matched when
+                        a Purchase Order is selected. The system also
+                        validates this relationship before saving.
+
+                    </small>
+
+                </div>
+
+
+
+                <!-- =================================================
+                     EDIT MODE - SUPPLIER
+                     ================================================= -->
+
+                <div th:if="${isEdit}"
+                     class="mb-3">
+
+                    <label class="form-label">
+                        Supplier
+                    </label>
+
+
+                    <input type="text"
+                           class="form-control"
+                           th:value="${'SUP-'
+                           + #numbers.formatInteger(
+                               receipt.supplierId,
+                               3
+                             )}"
+                           readonly>
+
+
+                    <input type="hidden"
+                           th:field="*{supplierId}">
+
+
+                    <small class="text-muted">
+
+                        The original Supplier cannot be changed
+                        after the Goods Receipt is created.
+
+                    </small>
+
+                </div>
+
+            </div>
+
+
+
+            <!-- =================================================
+                 RECEIVING INFORMATION
+                 ================================================= -->
+
+            <div class="mb-4">
+
+                <h5 class="fw-bold mb-3">
+                    Receiving Information
+                </h5>
+
+
+                <div class="row">
+
+
+                    <!-- =================================================
+                         RECEIVED DATE
+                         ================================================= -->
+
+                    <div class="col-md-6 mb-3">
+
+                        <label class="form-label">
+                            Received Date
+                        </label>
+
+
+                        <input type="date"
+                               class="form-control"
+                               th:field="*{receivedDate}"
+                               required>
+
+                    </div>
+
+
+
+                    <!-- =================================================
+                         RECEIVED BY USER ID
+                         ================================================= -->
+
+                    <div class="col-md-6 mb-3">
+
+                        <label class="form-label">
+                            Received By User ID
+                        </label>
+
+
+                        <input type="number"
+                               min="1"
+                               class="form-control"
+                               th:field="*{receivedBy}"
+                               placeholder="Example: 1">
+
+
+                        <small class="text-muted">
+
+                            Employee integration can later replace this
+                            field with an Employee dropdown.
+
+                        </small>
+
+                    </div>
+
+
+                </div>
+
+            </div>
+
+
+
+            <!-- =================================================
+                 STATUS
+                 ================================================= -->
+
+            <div class="mb-3">
+
+                <label class="form-label">
+                    Status
+                </label>
+
+
+                <!-- Normal Receipt Status -->
+
+                <select th:if="${receipt.status != 'ARCHIVED'}"
+                        class="form-select"
+                        th:field="*{status}">
+
+                    <option value="RECEIVED">
+                        RECEIVED
+                    </option>
+
+                    <option value="PENDING">
+                        PENDING
+                    </option>
+
+                    <option value="REJECTED">
+                        REJECTED
+                    </option>
+
+                </select>
+
+
+
+                <!-- Archived Receipt Status -->
+
+                <input th:if="${receipt.status == 'ARCHIVED'}"
+                       type="text"
+                       class="form-control"
+                       value="ARCHIVED"
+                       readonly>
+
+
+                <input th:if="${receipt.status == 'ARCHIVED'}"
+                       type="hidden"
+                       th:field="*{status}">
+
+
+                <small th:if="${receipt.status == 'ARCHIVED'}"
+                       class="text-muted">
+
+                    Use the Restore button from the Goods Receipt list
+                    to reactivate this record.
+
+                </small>
+
+            </div>
+
+
+
+            <!-- =================================================
+                 REMARKS
+                 ================================================= -->
+
+            <div class="mb-4">
+
+                <label class="form-label">
+                    Remarks
+                </label>
+
+
+                <textarea class="form-control"
+                          rows="4"
+                          maxlength="500"
+                          th:field="*{remarks}"
+                          placeholder="Enter receiving notes or remarks">
+                </textarea>
+
+
+                <small class="text-muted">
+
+                    Maximum 500 characters.
+
+                </small>
+
+            </div>
+
+
+
+            <!-- =================================================
+                 FORM ACTIONS
+                 ================================================= -->
+
+            <div class="d-flex gap-2 flex-wrap">
+
+
+                <button type="submit"
+                        class="btn btn-success"
+                        th:disabled="${!isEdit
+                                     and (#lists.isEmpty(purchaseOrders)
+                                     or #lists.isEmpty(suppliers))}"
+                        th:text="${isEdit}
+                                 ? 'Update Receipt'
+                                 : 'Save Receipt'">
+
+                    Save Receipt
+
+                </button>
+
+
+                <a class="btn btn-secondary"
+                   th:href="@{/inventory/receipts}">
+
+                    Cancel
+
+                </a>
+
+
+            </div>
+
+
+        </form>
+
+
+    </section>
+
+
+</main>
+
+
+
+<!-- =========================================================
+     PURCHASE ORDER -> SUPPLIER AUTO MATCH
+     ========================================================= -->
+
+<script>
+
+    document.addEventListener(
+        "DOMContentLoaded",
+        function () {
+
+            const purchaseOrderSelect =
+                document.getElementById("poId");
+
+            const supplierSelect =
+                document.getElementById("supplierId");
+
+
+            if (!purchaseOrderSelect ||
+                !supplierSelect) {
+
+                return;
+            }
+
+
+            function matchSupplierToPurchaseOrder() {
+
+                const selectedOption =
+                    purchaseOrderSelect.options[
+                        purchaseOrderSelect.selectedIndex
+                        ];
+
+
+                if (!selectedOption) {
+                    return;
+                }
+
+
+                const supplierId =
+                    selectedOption.dataset.supplierId;
+
+
+                if (supplierId) {
+
+                    supplierSelect.value =
+                        supplierId;
+
+                }
+
+            }
+
+
+            purchaseOrderSelect.addEventListener(
+                "change",
+                matchSupplierToPurchaseOrder
+            );
+
+
+            if (purchaseOrderSelect.value) {
+
+                matchSupplierToPurchaseOrder();
+
+            }
+
+        }
+    );
+
+</script>
+
 
 </body>
+
 </html>

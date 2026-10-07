@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <title>LankaTex Login</title>
+
+  <link rel="stylesheet" th:href="@{/css/login.css}">
+</head>
+
+<body>
+
+<div class="login-page">
+
+  <div class="login-overlay"></div>
+
+  <div class="login-container">
+
+    <!-- LEFT SIDE -->
+    <div class="login-info">
+
+      <div class="brand">
+
+        <div class="brand-logo">
+          LT
+        </div>
+
+        <div>
+          <h2>LankaTex</h2>
+          <span>APPAREL</span>
+        </div>
+
+      </div>
+
+      <h1>
+        Smart Textile &<br>
+        Garment Management
+      </h1>
+
+      <p>
+        Secure access to LankaTex integrated
+        management operations.
+      </p>
+
+      <a th:href="@{/}" class="home-link">
+        ← Back to Home
+      </a>
+
+    </div>
+
+
+    <!-- LOGIN BOX -->
+    <div class="login-card">
+
+      <div class="login-card-header">
+
+        <p class="small-title">
+          MANAGEMENT PORTAL
+        </p>
+
+        <h2>
+          Welcome Back
+        </h2>
+
+        <p>
+          Sign in to access the LankaTex management system.
+        </p>
+
+      </div>
+
+
+      <!-- LOGIN ERROR MESSAGE -->
+      <div class="error-message"
+           th:if="${param.error}">
+
+        Invalid username or password.
+
+      </div>
+
+
+      <!-- LOGOUT SUCCESS MESSAGE -->
+      <div class="logout-message"
+           th:if="${param.logout}">
+
+        You have been logged out successfully.
+
+      </div>
+
+
+      <form th:action="@{/login}" method="post">
+
+        <div class="form-group">
+
+          <label for="username">
+            Username
+          </label>
+
+          <input
+                  type="text"
+                  id="username"
+                  name="username"
+                  placeholder="Enter your username"
+                  required
+                  autofocus>
+
+        </div>
+
+
+        <div class="form-group">
+
+          <label for="password">
+            Password
+          </label>
+
+          <input
+                  type="password"
+                  id="password"
+                  name="password"
+                  placeholder="Enter your password"
+                  required>
+
+        </div>
+
+
+        <button type="submit"
+                class="login-submit">
+
+          Sign In
+
+        </button>
+
+      </form>
+
+
+      <div class="login-footer">
+
+        <p>
+          Authorized LankaTex personnel only
+        </p>
+
+      </div>
+
+    </div>
+
+  </div>
+
+</div>
+
+</body>
+
+</html>

@@ -8,8 +8,21 @@ import java.util.List;
 public interface StockMovementRepository
         extends JpaRepository<StockMovement, Long> {
 
-    List<StockMovement> findAllByOrderByMovementDateDesc();
+    List<StockMovement>
+    findAllByOrderByMovementDateDesc();
 
     List<StockMovement>
-    findByMaterialMaterialIdOrderByMovementDateDesc(Long materialId);
+    findByMaterialMaterialIdOrderByMovementDateDesc(
+            Long materialId
+    );
+
+    List<StockMovement>
+    findByBatchBatchId(
+            Long batchId
+    );
+
+    boolean existsByReferenceTypeIgnoreCaseAndReferenceId(
+            String referenceType,
+            Long referenceId
+    );
 }

@@ -1,0 +1,391 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <title>LankaTex Apparel</title>
+
+  <link rel="stylesheet" th:href="@{/css/home.css}">
+</head>
+
+<body>
+
+<!-- NAVIGATION BAR -->
+<header class="navbar">
+
+  <div class="logo">
+    <div class="logo-mark">LT</div>
+
+    <div>
+      <h2>LankaTex</h2>
+      <span>APPAREL</span>
+    </div>
+  </div>
+
+  <nav>
+    <a href="#home">Home</a>
+    <a href="#about">About Us</a>
+    <a href="#operations">Our Operations</a>
+    <a href="#sustainability">Sustainability</a>
+    <a href="#contact">Contact</a>
+
+    <!-- Show login button when the user is not authenticated -->
+    <a class="login-button"
+       th:if="${!loggedIn}"
+       th:href="@{/login}">
+      Login
+    </a>
+
+    <!-- Show logout button when the user is authenticated -->
+    <form th:if="${loggedIn}"
+          th:action="@{/logout}"
+          method="post"
+          class="logout-form">
+
+      <button type="submit"
+              class="logout-button">
+        Logout
+      </button>
+
+    </form>
+  </nav>
+
+</header>
+
+
+<!-- HERO SECTION -->
+<section class="hero" id="home">
+
+  <div class="hero-overlay"></div>
+
+  <div class="hero-content">
+
+    <p class="hero-label">
+      INNOVATION • QUALITY • SUSTAINABILITY
+    </p>
+
+    <h1>
+      Smart Textile &<br>
+      Garment Management
+    </h1>
+
+    <p class="hero-text">
+      Connecting every stage of our apparel manufacturing
+      journey through one smart, reliable and integrated
+      management system.
+    </p>
+
+    <a href="#operations" class="main-button">
+      Explore Our Operations
+    </a>
+
+  </div>
+
+</section>
+
+
+<!-- HIGHLIGHTS -->
+<section class="highlights">
+
+  <div>
+    <h3>6</h3>
+    <p>Integrated Modules</p>
+  </div>
+
+  <div>
+    <h3>100%</h3>
+    <p>Digital Workflow</p>
+  </div>
+
+  <div>
+    <h3>Quality</h3>
+    <p>Driven Manufacturing</p>
+  </div>
+
+  <div>
+    <h3>Smart</h3>
+    <p>Operations</p>
+  </div>
+
+</section>
+
+
+<!-- ABOUT -->
+<section class="section about" id="about">
+
+  <div class="section-heading">
+    <span>WHO WE ARE</span>
+
+    <h2>About LankaTex Apparel</h2>
+
+    <p>
+      LankaTex Apparel is a modern textile and garment
+      manufacturing organization focused on efficient
+      production, quality products and reliable customer service.
+    </p>
+  </div>
+
+  <div class="about-grid">
+
+    <div class="info-card">
+      <h3>Our Vision</h3>
+      <p>
+        To become a trusted and innovative apparel
+        manufacturer powered by modern technology.
+      </p>
+    </div>
+
+    <div class="info-card">
+      <h3>Our Mission</h3>
+      <p>
+        To deliver high-quality garments while improving
+        operational efficiency through smart digital management.
+      </p>
+    </div>
+
+    <div class="info-card">
+      <h3>Our Commitment</h3>
+      <p>
+        Quality, responsibility, employee wellbeing and
+        customer satisfaction guide our operations.
+      </p>
+    </div>
+
+  </div>
+
+</section>
+
+
+<!-- OPERATIONS / MODULES -->
+<section class="section operations" id="operations">
+
+  <div class="section-heading">
+
+    <span>OUR OPERATIONS</span>
+
+    <h2>Integrated Management System</h2>
+
+    <p>
+      Manage all major LankaTex operations through one
+      connected platform.
+    </p>
+
+  </div>
+
+
+  <div class="module-grid">
+
+
+    <!-- INVENTORY -->
+    <div class="module-card">
+
+      <img th:src="@{/images/inventory.jpg}"
+           alt="Inventory Management">
+
+      <div class="module-content">
+
+        <h3>Inventory Management</h3>
+
+        <p>
+          Manage materials, batches, stock movements,
+          receipts and stock adjustments.
+        </p>
+
+        <a th:href="@{/inventory}">
+          View Module →
+        </a>
+
+      </div>
+
+    </div>
+
+
+    <!-- PURCHASING -->
+    <div class="module-card">
+
+      <img th:src="@{/images/supplier.jpg}"
+           alt="Supplier and Purchase Management">
+
+      <div class="module-content">
+
+        <h3>Supplier & Purchase Orders</h3>
+
+        <p>
+          Manage suppliers, purchase requests,
+          orders and purchased items.
+        </p>
+
+        <a th:href="@{/purchasing}">
+          View Module →
+        </a>
+
+      </div>
+
+    </div>
+
+
+    <!-- CUSTOMER -->
+    <div class="module-card">
+
+      <img th:src="@{/images/customer.jpg}"
+           alt="Customer Order Management">
+
+      <div class="module-content">
+
+        <h3>Customer Orders & Delivery</h3>
+
+        <p>
+          Manage customers, quotations,
+          customer orders and deliveries.
+        </p>
+
+        <a th:href="@{/customer}">
+          View Module →
+        </a>
+
+      </div>
+
+    </div>
+
+
+    <!-- PRODUCTION -->
+    <div class="module-card">
+
+      <img th:src="@{/images/production.jpg}"
+           alt="Production Management">
+
+      <div class="module-content">
+
+        <h3>Production Planning</h3>
+
+        <p>
+          Manage production plans, material requests,
+          material issues and production progress.
+        </p>
+
+        <a th:href="@{/production}">
+          View Module →
+        </a>
+
+      </div>
+
+    </div>
+
+
+    <!-- HR -->
+    <div class="module-card">
+
+      <img th:src="@{/images/hr.jpg}"
+           alt="Employee Management">
+
+      <div class="module-content">
+
+        <h3>Employee & Attendance</h3>
+
+        <p>
+          Manage employees, work shifts,
+          attendance and leave requests.
+        </p>
+
+        <a th:href="@{/hr}">
+          View Module →
+        </a>
+
+      </div>
+
+    </div>
+
+
+    <!-- QUALITY -->
+    <div class="module-card">
+
+      <img th:src="@{/images/quality.jpg}"
+           alt="Quality Management">
+
+      <div class="module-content">
+
+        <h3>Quality Control</h3>
+
+        <p>
+          Manage inspections, defects,
+          wastage and quality holds.
+        </p>
+
+        <a th:href="@{/quality}">
+          View Module →
+        </a>
+
+      </div>
+
+    </div>
+
+  </div>
+
+</section>
+
+
+<!-- SUSTAINABILITY -->
+<section class="sustainability" id="sustainability">
+
+  <div>
+
+    <span>RESPONSIBLE MANUFACTURING</span>
+
+    <h2>Sustainability & Quality</h2>
+
+    <p>
+      LankaTex aims to reduce unnecessary material wastage,
+      improve production efficiency and maintain strong
+      quality standards throughout the manufacturing process.
+    </p>
+
+    <div class="sustainability-list">
+      <span>✓ Waste Monitoring</span>
+      <span>✓ Quality Control</span>
+      <span>✓ Efficient Inventory</span>
+      <span>✓ Digital Operations</span>
+    </div>
+
+  </div>
+
+</section>
+
+
+<!-- CONTACT -->
+<section class="contact" id="contact">
+
+  <h2>Smart Operations. Better Apparel.</h2>
+
+  <p>
+    One integrated digital platform connecting LankaTex
+    operations from materials to delivery.
+  </p>
+
+  <a th:href="@{/login}" class="contact-button">
+    Access Management System
+  </a>
+
+</section>
+
+
+<!-- FOOTER -->
+<footer>
+
+  <div>
+    <h3>LankaTex Apparel</h3>
+    <p>Smart Textile & Garment Management Web System</p>
+  </div>
+
+  <p class="copyright">
+    © 2026 LankaTex Apparel
+  </p>
+
+</footer>
+
+
+<script th:src="@{/js/home.js}"></script>
+
+</body>
+</html>

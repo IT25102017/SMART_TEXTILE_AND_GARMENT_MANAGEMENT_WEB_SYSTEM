@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Material Issues | LankaTex</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" th:href="@{/css/common-navbar.css}">
+    <link rel="stylesheet" th:href="@{/css/production/production-ui.css}">
+</head>
+<body class="production-page">
+<div th:replace="~{fragments/common-navbar :: navbar}"></div>
+<main class="production-container">
+    <section class="production-hero"><span class="production-eyebrow">LankaTex Production</span><h1>Material Issue Notes</h1><p>Issue inventory material against approved requests. Saving an issue automatically reduces batch stock and creates a STOCK_OUT movement.</p></section>
+    <nav class="production-nav"><a th:href="@{/production}">Dashboard</a><a th:href="@{/production/plans}">Plans</a><a th:href="@{/production/requests}">Requests</a><a th:href="@{/production/progress}">Progress</a></nav>
+    <div th:if="${message}" class="alert alert-success" th:text="${message}"></div><div th:if="${error}" class="alert alert-danger" th:text="${error}"></div>
+
+    <section class="production-panel">
+        <h2>New Material Issue</h2>
+        <form th:action="@{/production/issues/save}" th:object="${materialIssueNote}" method="post">
+            <div class="production-form-grid">
+                <div><label class="form-label">Approved Material Request</label><select id="requestId" class="form-select" th:field="*{materialRequestId}" required><option value="">Select Request</option><option th:each="request : ${requests}" th:value="${request.materialRequestId}" th:attr="data-plan-id=${request.planId}" th:text="${request.requestCode + ' | Plan PP-' + #numbers.formatInteger(request.planId,3)}"></option></select></div>
+                <div><label class="form-label">Production Plan</label><select id="planId" class="form-select" th:field="*{planId}" required><option value="">Select Plan</option><option th:each="plan : ${plans}" th:value="${plan.planId}" th:text="${plan.planCode + ' - ' + plan.productionLine}"></option></select></div>
+                <div><label class="form-label">Material</label><select id="materialId" class="form-select" th:field="*{materialId}" required><option value="">Select Material</option><option th:each="material : ${materials}" th:value="${material.materialId}" th:text="${material.materialCode + ' - ' + material.materialName}"></option></select></div>
+                <div><label class="form-label">Available Batch</label><select id="batchId" class="form-select" th:field="*{batchId}" required><option value="">Select Batch</option><option th:each="batch : ${batches}" th:value="${batch.batchId}" th:attr="data-material-id=${batch.material.materialId}" th:text="${batch.batchNo + ' | ' + batch.material.materialCode + ' | Available: ' + batch.availableQty}"></option></select></div>
+                <div><label class="form-label">Issued Quantity</label><input class="form-control" type="number" min="0.01" step="0.01" th:field="*{issuedQty}" required></div>
+                <div><label class="form-label">Issue Date</label><input class="form-control" type="date" th:field="*{issueDate}" required></div>
+                <div><label class="form-label">Issued By User ID</label><input class="form-control" type="number" min="1" th:field="*{issuedBy}"></div>
+            </div>
+            <div class="mt-3"><button class="production-button production-button-primary" type="submit">Issue Material &amp; Update Stock</button></div>
+        </form>
+    </section>
+
+    <section class="production-panel">
+        <h2>Material Issue History</h2>
+        <div class="production-table-wrap"><table class="production-table">
+            <thead><tr><th>Issue</th><th>Request</th><th>Plan</th><th>Material</th><th>Batch</th><th>Qty</th><th>Date</th><th>Issued By</th><th>Actions</th></tr></thead>
+            <tbody>
+            <tr th:each="row : ${issuesList}" th:with="request=${requestMap.get(row.materialRequestId)}, plan=${planMap.get(row.planId)}, material=${materialMap.get(row.materialId)}, batch=${batchMap.get(row.batchId)}">
+                <td><strong th:text="${row.issueCode}">MIN-001</strong></td><td th:text="${request != null ? request.requestCode : 'Request unavailable'}"></td><td th:text="${plan != null ? plan.planCode : 'Plan unavailable'}"></td>
+                <td th:text="${material != null ? material.materialCode + ' - ' + material.materialName : 'Material unavailable'}"></td><td th:text="${batch != null ? batch.batchNo : 'Batch unavailable'}"></td><td th:text="${row.issuedQty}"></td><td th:text="${row.issueDate}"></td><td th:text="${row.issuedBy != null ? 'User ID ' + row.issuedBy : '-'}"></td><td><span class="production-lock">Locked Inventory Audit Record</span></td>
+            </tr>
+            <tr th:if="${#lists.isEmpty(issuesList)}"><td colspan="9">No Material Issue Notes found.</td></tr>
+            </tbody>
+        </table></div>
+    </section>
+</main>
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const requestSelect = document.getElementById('requestId');
+        const planSelect = document.getElementById('planId');
+        const materialSelect = document.getElementById('materialId');
+        const batchSelect = document.getElementById('batchId');
+
+        if (requestSelect && planSelect) {
+            requestSelect.addEventListener('change', function () {
+                const option = requestSelect.options[requestSelect.selectedIndex];
+                if (option && option.dataset.planId) planSelect.value = option.dataset.planId;
+            });
+        }
+
+        if (materialSelect && batchSelect) {
+            function filterBatches() {
+                const materialId = materialSelect.value;
+                Array.from(batchSelect.options).forEach(function (option, index) {
+                    if (index === 0) return;
+                    option.hidden = materialId && option.dataset.materialId !== materialId;
+                });
+                batchSelect.value = '';
+            }
+            materialSelect.addEventListener('change', filterBatches);
+        }
+    });
+</script>
+</body>
+</html>

@@ -1,85 +1,453 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
+
+<html lang="en"
+      xmlns:th="http://www.thymeleaf.org">
+
 <head>
+
     <meta charset="UTF-8">
-    <title>Stock Adjustments</title>
+
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1">
+
+    <title>Stock Adjustments | LankaTex</title>
+
+
+    <!-- Bootstrap CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
           rel="stylesheet">
+
+
+    <!-- Common LankaTex Navigation CSS -->
+    <link rel="stylesheet"
+          th:href="@{/css/common-navbar.css}">
+
+
+    <!-- Inventory Main Theme -->
+    <link rel="stylesheet"
+          th:href="@{/css/inventory/inventory-ui.css}">
+
+
+    <!-- Stock Adjustment Theme -->
+    <link rel="stylesheet"
+          th:href="@{/css/inventory/inventory-adjustments.css}">
+
 </head>
 
-<body>
 
-<div class="container py-4">
+<body class="inventory-page">
 
-    <div class="d-flex justify-content-between">
 
-        <h2>Stock Adjustments</h2>
+<!-- Common LankaTex Navigation Bar -->
+<div th:replace="~{fragments/common-navbar :: navbar}"></div>
 
-        <a class="btn btn-primary"
-           th:href="@{/inventory/adjustments/new}">
-            New Adjustment
-        </a>
 
-    </div>
+<main class="inventory-container adjustments-workspace">
 
-    <table class="table table-bordered mt-4">
 
-        <thead class="table-dark">
-        <tr>
-            <th>Material</th>
-            <th>Batch</th>
-            <th>Previous</th>
-            <th>Adjusted</th>
-            <th>Reason</th>
-            <th>Status</th>
-            <th>Action</th>
-        </tr>
-        </thead>
+    <!-- =====================================================
+         HERO SECTION
+         ===================================================== -->
 
-        <tbody>
+    <section class="adjustments-hero">
 
-        <tr th:each="adjustment : ${adjustments}">
 
-            <td th:text="${adjustment.material.materialName}"></td>
+        <div class="adjustments-hero-left">
 
-            <td th:text="${adjustment.batch.batchNo}"></td>
+            <span class="adjustments-eyebrow">
+                LankaTex Inventory
+            </span>
 
-            <td th:text="${adjustment.previousQty}"></td>
 
-            <td th:text="${adjustment.adjustedQty}"></td>
+            <h1>
+                Stock Adjustments
+            </h1>
 
-            <td th:text="${adjustment.reason}"></td>
 
-            <td th:text="${adjustment.approvalStatus}"></td>
+            <p>
+                Correct inventory quantity discrepancies through
+                controlled stock adjustments while preserving
+                a clear approval and audit history.
+            </p>
 
-            <td>
+        </div>
 
-                <form th:if="${adjustment.approvalStatus == 'PENDING'}"
-                      method="post"
-                      th:action="@{/inventory/adjustments/approve/{id}
-                      (id=${adjustment.adjustmentId})}">
 
-                    <input type="number"
-                           name="approvedBy"
-                           value="1"
-                           required
-                           style="width: 90px">
+        <div class="adjustments-hero-badge">
 
-                    <button class="btn btn-sm btn-success">
-                        Approve
-                    </button>
+            <div class="adjustments-hero-badge-line"></div>
 
-                </form>
 
-            </td>
+            <span>
+                Inventory Workspace
+            </span>
 
-        </tr>
 
-        </tbody>
+            <strong>
+                Controlled Stock Correction
+            </strong>
 
-    </table>
+        </div>
 
-</div>
+
+    </section>
+
+
+
+    <!-- =====================================================
+         MAIN PANEL
+         ===================================================== -->
+
+    <section class="adjustments-panel">
+
+
+        <div class="adjustments-panel-header">
+
+
+            <div class="adjustments-heading-group">
+
+
+                <div class="adjustments-heading-icon">
+                    A
+                </div>
+
+
+                <div>
+
+                    <h2 class="adjustments-panel-title">
+                        Stock Adjustment List
+                    </h2>
+
+
+                    <p class="adjustments-panel-subtitle">
+                        Pending requests may be edited or deleted.
+                        Approved adjustments are locked as audit records.
+                    </p>
+
+                </div>
+
+
+            </div>
+
+
+
+            <div class="adjustments-top-actions">
+
+
+                <a class="adjustments-btn adjustments-btn-back"
+                   th:href="@{/inventory}">
+
+                    Back to Dashboard
+
+                </a>
+
+
+                <a class="adjustments-btn adjustments-btn-add"
+                   th:href="@{/inventory/adjustments/new}">
+
+                    + New Adjustment
+
+                </a>
+
+
+            </div>
+
+
+        </div>
+
+
+
+        <!-- =================================================
+             MESSAGES
+             ================================================= -->
+
+        <div th:if="${message}"
+             class="alert alert-success adjustments-alert"
+             th:text="${message}">
+        </div>
+
+
+        <div th:if="${error}"
+             class="alert alert-danger adjustments-alert"
+             th:text="${error}">
+        </div>
+
+
+
+        <!-- =================================================
+             ADJUSTMENT TABLE
+             ================================================= -->
+
+        <div class="adjustments-table-wrapper">
+
+
+            <table class="adjustments-table">
+
+
+                <thead>
+
+                <tr>
+
+                    <th>Material</th>
+
+                    <th>Batch</th>
+
+                    <th>Previous Qty</th>
+
+                    <th>Corrected Qty</th>
+
+                    <th>Reason</th>
+
+                    <th>Status</th>
+
+                    <th>Approved By</th>
+
+                    <th>Actions</th>
+
+                </tr>
+
+                </thead>
+
+
+
+                <tbody>
+
+
+                <!-- Adjustment Records -->
+
+                <tr th:each="adjustment : ${adjustments}">
+
+
+                    <!-- Material -->
+
+                    <td class="adjustment-material"
+                        th:text="${adjustment.material.materialName}">
+                    </td>
+
+
+                    <!-- Batch -->
+
+                    <td class="adjustment-batch"
+                        th:text="${adjustment.batch.batchNo}">
+                    </td>
+
+
+                    <!-- Previous Quantity -->
+
+                    <td class="adjustment-previous"
+                        th:text="${adjustment.previousQty}">
+                    </td>
+
+
+                    <!-- Corrected Quantity -->
+
+                    <td class="adjustment-new"
+                        th:text="${adjustment.adjustedQty}">
+                    </td>
+
+
+                    <!-- Reason -->
+
+                    <td class="adjustment-reason"
+                        th:text="${adjustment.reason}">
+                    </td>
+
+
+
+                    <!-- =================================================
+                         STATUS
+                         ================================================= -->
+
+                    <td>
+
+
+                        <!-- Pending -->
+
+                        <span th:if="${adjustment.approvalStatus == 'PENDING'}"
+                              class="adjustment-status
+                                     adjustment-status-pending">
+
+                            PENDING
+
+                        </span>
+
+
+                        <!-- Approved -->
+
+                        <span th:if="${adjustment.approvalStatus == 'APPROVED'}"
+                              class="adjustment-status
+                                     adjustment-status-approved">
+
+                            APPROVED
+
+                        </span>
+
+
+                        <!-- Other Status -->
+
+                        <span th:if="${adjustment.approvalStatus != 'PENDING'
+                                      and adjustment.approvalStatus != 'APPROVED'}"
+                              class="adjustment-status
+                                     adjustment-status-other"
+                              th:text="${adjustment.approvalStatus}">
+                        </span>
+
+
+                    </td>
+
+
+
+                    <!-- Approved By -->
+
+                    <td th:text="${adjustment.approvedBy != null
+                        ? adjustment.approvedBy
+                        : '-'}">
+                    </td>
+
+
+
+                    <!-- =================================================
+                         ACTIONS
+                         ================================================= -->
+
+                    <td>
+
+
+                        <!-- =============================================
+                             PENDING ACTIONS
+                             ============================================= -->
+
+                        <div th:if="${adjustment.approvalStatus == 'PENDING'}"
+                             class="adjustment-actions">
+
+
+                            <!-- Edit -->
+
+                            <a class="adjustment-action-button
+                                      adjustment-action-edit"
+                               th:href="@{/inventory/adjustments/edit/{id}
+                               (id=${adjustment.adjustmentId})}">
+
+                                Edit
+
+                            </a>
+
+
+
+                            <!-- Approve -->
+
+                            <form method="post"
+                                  class="adjustment-approval-form"
+                                  th:action="@{/inventory/adjustments/approve/{id}
+                                  (id=${adjustment.adjustmentId})}">
+
+
+                                <input type="number"
+                                       name="approvedBy"
+                                       value="1"
+                                       min="1"
+                                       required
+                                       class="adjustment-approver-input"
+                                       placeholder="User ID">
+
+
+                                <button type="submit"
+                                        class="adjustment-approve-button"
+                                        onclick="return confirm(
+                                        'Approve this stock adjustment? The batch quantity will be updated and this record will become locked.'
+                                        );">
+
+                                    Approve
+
+                                </button>
+
+
+                            </form>
+
+
+
+                            <!-- Delete Pending -->
+
+                            <form method="post"
+                                  th:action="@{/inventory/adjustments/delete/{id}
+                                  (id=${adjustment.adjustmentId})}">
+
+
+                                <button type="submit"
+                                        class="adjustment-action-button
+                                               adjustment-action-delete"
+                                        onclick="return confirm(
+                                        'Delete this pending stock adjustment?'
+                                        );">
+
+                                    Delete
+
+                                </button>
+
+
+                            </form>
+
+
+                        </div>
+
+
+
+                        <!-- =============================================
+                             APPROVED - LOCKED AUDIT RECORD
+                             ============================================= -->
+
+                        <div th:if="${adjustment.approvalStatus == 'APPROVED'}"
+                             class="adjustment-locked-area">
+
+
+                            <span class="adjustment-locked-label">
+                                🔒 Locked Audit Record
+                            </span>
+
+
+                        </div>
+
+
+                    </td>
+
+
+                </tr>
+
+
+
+                <!-- =================================================
+                     EMPTY STATE
+                     ================================================= -->
+
+                <tr th:if="${#lists.isEmpty(adjustments)}">
+
+
+                    <td colspan="8"
+                        class="adjustments-empty">
+
+                        No stock adjustments found.
+
+                    </td>
+
+
+                </tr>
+
+
+                </tbody>
+
+
+            </table>
+
+
+        </div>
+
+
+    </section>
+
+
+</main>
+
 
 </body>
+
 </html>

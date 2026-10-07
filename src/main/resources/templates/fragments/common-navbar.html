@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en"
+      xmlns:th="http://www.thymeleaf.org">
+
+<body>
+
+<nav class="common-navbar"
+     th:fragment="navbar">
+
+  <!-- LankaTex Brand -->
+  <div class="common-brand">
+
+    <a th:href="@{/}">
+
+            <span class="common-logo">
+                LT
+            </span>
+
+      <span class="common-brand-text">
+
+                <strong>
+                    LankaTex
+                </strong>
+
+                <small>
+                    APPAREL
+                </small>
+
+            </span>
+
+    </a>
+
+  </div>
+
+
+  <!-- Module Navigation Links -->
+  <div class="common-nav-links">
+
+    <a th:href="@{/}">
+      Home
+    </a>
+
+    <a th:href="@{/inventory}">
+      Inventory
+    </a>
+
+    <a th:href="@{/purchasing}">
+      Purchasing
+    </a>
+
+    <a th:href="@{/customer}">
+      Customer
+    </a>
+
+    <a th:href="@{/production}">
+      Production
+    </a>
+
+    <a th:href="@{/hr}">
+      HR
+    </a>
+
+    <a th:href="@{/quality}">
+      Quality
+    </a>
+
+  </div>
+
+
+  <!-- Logout -->
+  <form th:action="@{/logout}"
+        method="post"
+        class="common-logout-form">
+
+    <button type="submit"
+            class="common-logout-button">
+
+      Logout
+
+    </button>
+
+  </form>
+
+</nav>
+
+</body>
+
+</html>

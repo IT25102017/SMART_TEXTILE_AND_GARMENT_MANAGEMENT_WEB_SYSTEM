@@ -1,115 +1,490 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
+
+<html lang="en"
+      xmlns:th="http://www.thymeleaf.org">
+
 <head>
+
     <meta charset="UTF-8">
-    <title>Receive Material</title>
+
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1">
+
+    <title th:text="${isEdit}
+                    ? 'Edit Material Batch | LankaTex'
+                    : 'Receive Material Batch | LankaTex'">
+        Material Batch | LankaTex
+    </title>
+
+
+    <!-- Bootstrap CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
           rel="stylesheet">
+
+
+    <!-- Common LankaTex Navigation CSS -->
+    <link rel="stylesheet"
+          th:href="@{/css/common-navbar.css}">
+
+
+    <!-- Inventory Main Theme -->
+    <link rel="stylesheet"
+          th:href="@{/css/inventory/inventory-ui.css}">
+
+
+    <!-- Material Batches Theme -->
+    <link rel="stylesheet"
+          th:href="@{/css/inventory/inventory-batches.css}">
+
+
+    <!-- Shared Inventory Form Theme -->
+    <link rel="stylesheet"
+          th:href="@{/css/inventory/inventory-forms.css}">
+
 </head>
 
-<body>
 
-<div class="container py-4">
+<body class="inventory-page">
 
-    <h2>Receive Material Batch</h2>
 
-    <div th:if="${error}"
-         class="alert alert-danger"
-         th:text="${error}">
-    </div>
+<!-- Common LankaTex Navigation Bar -->
+<div th:replace="~{fragments/common-navbar :: navbar}"></div>
 
-    <form method="post"
-          th:action="@{/inventory/batches/save}"
-          th:object="${batch}">
 
-        <div class="mb-3">
+<main class="inventory-container inventory-form-workspace">
 
-            <label>Material</label>
 
-            <select class="form-select"
-                    name="materialId"
-                    required>
+    <section class="inventory-form-card">
 
-                <option th:each="material : ${materials}"
-                        th:value="${material.materialId}"
-                        th:text="${material.materialCode
-                        + ' - '
-                        + material.materialName}">
-                </option>
 
-            </select>
+        <!-- =================================================
+             FORM HEADING
+             ================================================= -->
 
-        </div>
+        <div class="inventory-form-heading">
 
-        <div class="mb-3">
+            <span class="inventory-form-eyebrow">
+                LankaTex Inventory
+            </span>
 
-            <label>Supplier ID</label>
 
-            <input type="number"
-                   class="form-control"
-                   th:field="*{supplierId}">
+            <h1 th:text="${isEdit}
+                        ? 'Edit Material Batch'
+                        : 'Receive Material Batch'">
+
+                Material Batch
+
+            </h1>
+
+
+            <p th:text="${isEdit}
+                       ? 'Update the editable information for this material batch while preserving its stock history.'
+                       : 'Record a newly received textile material batch and connect it with a valid supplier.'">
+            </p>
 
         </div>
 
-        <div class="mb-3">
 
-            <label>Batch Number</label>
 
-            <input class="form-control"
-                   th:field="*{batchNo}">
+        <!-- =================================================
+             ERROR MESSAGE
+             ================================================= -->
 
+        <div th:if="${error}"
+             class="alert alert-danger inventory-form-alert"
+             th:text="${error}">
         </div>
 
-        <div class="mb-3">
 
-            <label>Received Date</label>
 
-            <input type="date"
-                   class="form-control"
-                   th:field="*{receivedDate}">
+        <!-- =================================================
+             FORM
+             ================================================= -->
 
-        </div>
+        <form method="post"
+              th:action="@{/inventory/batches/save}"
+              th:object="${batch}">
 
-        <div class="mb-3">
 
-            <label>Unit Cost</label>
+            <!-- Batch ID -->
 
-            <input type="number"
-                   step="0.01"
-                   min="0"
-                   class="form-control"
-                   th:field="*{unitCost}">
+            <input type="hidden"
+                   th:field="*{batchId}">
 
-        </div>
 
-        <div class="mb-3">
 
-            <label>Received Quantity</label>
+            <!-- =================================================
+                 MATERIAL & SUPPLIER INFORMATION
+                 ================================================= -->
 
-            <input type="number"
-                   step="0.01"
-                   min="0.01"
-                   class="form-control"
-                   th:field="*{availableQty}">
+            <div class="inventory-form-section">
 
-        </div>
 
-        <div class="mb-3">
+                <h2 class="inventory-form-section-title">
+                    Material &amp; Supplier Information
+                </h2>
 
-            <label>Location</label>
 
-            <input class="form-control"
-                   th:field="*{location}">
 
-        </div>
+                <!-- =================================================
+                     MATERIAL
+                     ================================================= -->
 
-        <button class="btn btn-success">
-            Save Receipt
-        </button>
+                <div class="mb-3">
 
-    </form>
+                    <label class="form-label">
+                        Material
+                    </label>
 
-</div>
+
+                    <!-- Create Mode -->
+
+                    <select th:if="${!isEdit}"
+                            class="form-select"
+                            name="materialId"
+                            required>
+
+                        <option value=""
+                                disabled
+                                th:selected="${batch.material == null}">
+                            Select Material
+                        </option>
+
+
+                        <option th:each="material : ${materials}"
+                                th:value="${material.materialId}"
+                                th:selected="${batch.material != null
+                                and batch.material.materialId
+                                == material.materialId}"
+                                th:text="${material.materialCode
+                                + ' - '
+                                + material.materialName}">
+                        </option>
+
+                    </select>
+
+
+
+                    <!-- Edit Mode -->
+
+                    <input th:if="${isEdit}"
+                           type="text"
+                           class="form-control"
+                           th:value="${batch.material.materialCode
+                           + ' - '
+                           + batch.material.materialName}"
+                           readonly>
+
+
+                    <input th:if="${isEdit}"
+                           type="hidden"
+                           name="materialId"
+                           th:value="${batch.material.materialId}">
+
+
+                    <small th:if="${isEdit}"
+                           class="inventory-field-help">
+
+                        Material cannot be changed after the batch
+                        has been received because stock transactions
+                        already depend on it.
+
+                    </small>
+
+                </div>
+
+
+
+                <!-- =================================================
+                     SUPPLIER
+                     ================================================= -->
+
+                <div class="mb-3">
+
+                    <label class="form-label">
+                        Supplier
+                    </label>
+
+
+                    <select class="form-select"
+                            th:field="*{supplierId}">
+
+
+                        <option value="">
+                            No Supplier / Select Supplier
+                        </option>
+
+
+                        <option th:each="supplier : ${suppliers}"
+                                th:value="${supplier.supplierId}"
+                                th:text="${'SUP-'
+                                + #numbers.formatInteger(
+                                    supplier.supplierId,
+                                    3
+                                  )
+                                + ' - '
+                                + supplier.supplierName}">
+
+                            SUP-001 - Supplier Name
+
+                        </option>
+
+
+                    </select>
+
+
+                    <small class="inventory-field-help">
+
+                        Only active Suppliers from the Purchasing
+                        module are available for selection.
+
+                    </small>
+
+                </div>
+
+
+            </div>
+
+
+
+            <!-- =================================================
+                 BATCH DETAILS
+                 ================================================= -->
+
+            <div class="inventory-form-section">
+
+
+                <h2 class="inventory-form-section-title">
+                    Batch Details
+                </h2>
+
+
+
+                <!-- Batch Number -->
+
+                <div class="mb-3">
+
+                    <label class="form-label">
+                        Batch Number
+                    </label>
+
+
+                    <input type="text"
+                           class="form-control"
+                           th:field="*{batchNo}"
+                           placeholder="Example: B001"
+                           required>
+
+
+                    <small class="inventory-field-help">
+
+                        Use a clear batch reference such as B001,
+                        B002 or BATCH-001.
+
+                    </small>
+
+                </div>
+
+
+
+                <!-- Received Date -->
+
+                <div class="mb-3">
+
+                    <label class="form-label">
+                        Received Date
+                    </label>
+
+
+                    <input type="date"
+                           class="form-control"
+                           th:field="*{receivedDate}"
+                           required>
+
+                </div>
+
+
+
+                <!-- Location -->
+
+                <div class="mb-3">
+
+                    <label class="form-label">
+                        Storage Location
+                    </label>
+
+
+                    <input type="text"
+                           class="form-control"
+                           th:field="*{location}"
+                           placeholder="Example: Warehouse A - Rack 05">
+
+                </div>
+
+
+            </div>
+
+
+
+            <!-- =================================================
+                 STOCK AND COST INFORMATION
+                 ================================================= -->
+
+            <div class="inventory-form-section">
+
+
+                <h2 class="inventory-form-section-title">
+                    Stock &amp; Cost Information
+                </h2>
+
+
+
+                <!-- Unit Cost -->
+
+                <div class="mb-3">
+
+                    <label class="form-label">
+                        Unit Cost
+                    </label>
+
+
+                    <input type="number"
+                           step="0.01"
+                           min="0"
+                           class="form-control"
+                           th:field="*{unitCost}"
+                           placeholder="Example: 250.00">
+
+                </div>
+
+
+
+                <!-- Received Quantity -->
+
+                <div class="mb-3">
+
+                    <label class="form-label">
+                        Received Quantity
+                    </label>
+
+
+                    <input type="number"
+                           step="0.01"
+                           min="0.01"
+                           class="form-control"
+                           th:field="*{availableQty}"
+                           th:readonly="${isEdit}"
+                           placeholder="Example: 500"
+                           required>
+
+
+                    <small th:if="${isEdit}"
+                           class="inventory-field-help">
+
+                        Quantity cannot be edited because stock
+                        transactions already depend on this value.
+
+                    </small>
+
+
+                    <small th:if="${!isEdit}"
+                           class="inventory-field-help">
+
+                        Saving a new batch automatically creates
+                        its initial STOCK_IN transaction.
+
+                    </small>
+
+                </div>
+
+
+            </div>
+
+
+
+            <!-- =================================================
+                 CURRENT RECORD INFORMATION
+                 ================================================= -->
+
+            <div th:if="${isEdit}"
+                 class="inventory-form-section">
+
+
+                <h2 class="inventory-form-section-title">
+                    Current Record
+                </h2>
+
+
+                <div class="alert alert-light border mb-0">
+
+                    <strong>
+                        Batch:
+                    </strong>
+
+                    <span th:text="${batch.batchNo}">
+                        B001
+                    </span>
+
+
+                    <span class="mx-2">
+                        |
+                    </span>
+
+
+                    <strong>
+                        Status:
+                    </strong>
+
+                    <span th:text="${batch.status}">
+                        ACTIVE
+                    </span>
+
+                </div>
+
+            </div>
+
+
+
+            <!-- =================================================
+                 FORM ACTIONS
+                 ================================================= -->
+
+            <div class="inventory-form-actions">
+
+
+                <button type="submit"
+                        class="inventory-form-button
+                               inventory-form-button-primary"
+                        th:text="${isEdit}
+                                 ? 'Update Batch'
+                                 : 'Save Material Batch'">
+
+                    Save Material Batch
+
+                </button>
+
+
+                <a class="inventory-form-button
+                          inventory-form-button-secondary"
+                   th:href="@{/inventory/batches}">
+
+                    Cancel
+
+                </a>
+
+
+            </div>
+
+
+        </form>
+
+
+    </section>
+
+
+</main>
+
 
 </body>
+
 </html>

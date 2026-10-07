@@ -29,7 +29,7 @@ public class MaterialBatch {
 
     /*
      * Supplier module is developed by another member.
-     * For now we store the shared supplier ID.
+     * The shared supplier ID is stored here.
      */
     @Column(name = "supplier_id")
     private Long supplierId;
@@ -42,15 +42,38 @@ public class MaterialBatch {
     @Column(name = "received_date", nullable = false)
     private LocalDate receivedDate;
 
-    @DecimalMin(value = "0.0", message = "Unit cost cannot be negative")
+    @DecimalMin(
+            value = "0.0",
+            message = "Unit cost cannot be negative"
+    )
     @Column(name = "unit_cost")
     private BigDecimal unitCost = BigDecimal.ZERO;
 
     @NotNull
-    @DecimalMin(value = "0.0", message = "Available quantity cannot be negative")
+    @DecimalMin(
+            value = "0.0",
+            message = "Available quantity cannot be negative"
+    )
     @Column(name = "available_qty", nullable = false)
     private BigDecimal availableQty = BigDecimal.ZERO;
 
     @Column(name = "location")
     private String location;
+
+    /*
+     * Kept nullable in the database so Hibernate can safely
+     * add this column when old batch records already exist.
+     */
+    @Column(name = "status")
+    private String status = "ACTIVE";
+
+    @PrePersist
+    @PreUpdate
+    @PostLoad
+    private void ensureStatus() {
+
+        if (status == null || status.isBlank()) {
+            status = "ACTIVE";
+        }
+    }
 }
