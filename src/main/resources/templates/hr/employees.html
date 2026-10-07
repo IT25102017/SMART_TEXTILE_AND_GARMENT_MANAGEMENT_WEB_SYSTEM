@@ -1,84 +1,182 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Employee - Employee and Attendance Management</title>
+  <title>Employees | LankaTex</title>
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link rel="stylesheet" th:href="@{/css/common-navbar.css}">   <!-- Shared navbar styles (don't edit) -->
+  <link rel="stylesheet" th:href="@{/css/hr/hr-ui.css}">        <!-- Your HR styles -->
 </head>
-<body class="bg-light">
-<div class="container py-4">
-  <div class="d-flex justify-content-between align-items-center mb-3">
-    <h2>Employee and Attendance Management</h2>
-    <a class="btn btn-dark btn-sm" th:href="@{/hr}">Dashboard</a>
-  </div>
-  <div class="mb-3">
-    <a class="btn btn-outline-primary btn-sm me-2 mb-2" th:href="@{/hr/employees}">Employee</a>
-    <a class="btn btn-outline-primary btn-sm me-2 mb-2" th:href="@{/hr/shifts}">Shift</a>
-    <a class="btn btn-outline-primary btn-sm me-2 mb-2" th:href="@{/hr/attendance}">Attendance Record</a>
-    <a class="btn btn-outline-primary btn-sm me-2 mb-2" th:href="@{/hr/leaves}">Leave Request</a>
-  </div>
-  <div th:if="${message}" class="alert alert-success" th:text="${message}"></div>
-  <div th:if="${error}" class="alert alert-danger" th:text="${error}"></div>
-  <div class="card shadow-sm mb-4">
-    <div class="card-header"><strong>Add / Edit Employee</strong></div>
-    <div class="card-body">
-      <form th:action="@{/hr/employees/save}" th:object="${employee}" method="post">
-        <input type="hidden" th:field="*{employeeId}">
-        <div class="row">
-          <div class="col-md-6 mb-3">
-            <label class="form-label">Employee Code</label>
-            <input class="form-control" type="text" th:field="*{employeeCode}" required>
-          </div>
-          <div class="col-md-6 mb-3">
-            <label class="form-label">Full Name</label>
-            <input class="form-control" type="text" th:field="*{fullName}" required>
-          </div>
-          <div class="col-md-6 mb-3">
-            <label class="form-label">NIC Number</label>
-            <input class="form-control" type="text" th:field="*{nicNo}" required>
-          </div>
-          <div class="col-md-6 mb-3">
-            <label class="form-label">Department ID</label>
-            <input class="form-control" type="number" th:field="*{departmentId}">
-          </div>
-          <div class="col-md-6 mb-3">
-            <label class="form-label">Designation</label>
-            <input class="form-control" type="text" th:field="*{designation}" required>
-          </div>
-          <div class="col-md-6 mb-3">
-            <label class="form-label">Employment Type</label>
-            <input class="form-control" type="text" th:field="*{employmentType}" required>
-          </div>
-          <div class="col-md-6 mb-3">
-            <label class="form-label">Status</label>
-            <input class="form-control" type="text" th:field="*{status}">
-          </div>
-        </div>
-        <button class="btn btn-success" type="submit">Save</button>
-        <a class="btn btn-secondary" th:href="@{/hr/employees}">Clear</a>
-      </form>
+<body class="hr-page">
+
+<!-- Shared navbar from dev -->
+<div th:replace="~{fragments/common-navbar :: navbar}"></div>
+
+<main class="hr-container">
+
+  <!-- Banner -->
+  <section class="hr-hero">
+    <div>
+      <span class="hr-eyebrow">LankaTex HR</span>
+      <h1>Employee Management</h1>
+      <p>Create, update, archive and restore employee profiles while preserving attendance and leave history.</p>
     </div>
-  </div>
-  <div class="card shadow-sm">
-    <div class="card-header"><strong>Employee List</strong></div>
-    <div class="card-body table-responsive">
-      <table class="table table-striped table-bordered align-middle">
-        <thead class="table-dark"><tr><th>ID</th><th>Employee Code</th><th>Full Name</th><th>NIC
-          Number</th><th>Department ID</th><th>Designation</th><th>Employment Type</th><th>Status</th><th>Actions</th></tr></thead>
+  </section>
+
+  <!-- Links to the other HR pages -->
+  <nav class="hr-nav">
+    <a th:href="@{/hr}">Dashboard</a>
+    <a th:href="@{/hr/shifts}">Shifts</a>
+    <a th:href="@{/hr/attendance}">Attendance</a>
+    <a th:href="@{/hr/leaves}">Leave Requests</a>
+  </nav>
+
+  <!-- th:if shows the box ONLY when "message" / "error" exists in the model (set by the controller) -->
+  <div th:if="${message}" class="alert alert-success" th:text="${message}"></div> <!-- green success box -->
+  <div th:if="${error}" class="alert alert-danger" th:text="${error}"></div>      <!-- red error box -->
+
+  <!-- ================= FORM PANEL ================= -->
+  <section class="hr-panel">
+    <!-- Title changes: no ID = new employee, has ID = editing -->
+    <h2 th:text="${employee.employeeId == null ? 'Add Employee' : 'Edit Employee'}">Add Employee</h2>
+
+    <!-- th:object = the Employee object from the controller; the form posts to /hr/employees/save -->
+    <form th:action="@{/hr/employees/save}" th:object="${employee}" method="post">
+
+      <!-- Hidden ID: empty when adding, filled when editing, so the save knows to UPDATE instead of INSERT -->
+      <input type="hidden" th:field="*{employeeId}">
+
+      <div class="hr-form-grid">   <!-- 2-column layout from the CSS -->
+
+        <div>
+          <label class="form-label">Employee Code</label>
+          <!-- th:field="*{employeeCode}" connects this input to the employeeCode field of the Employee object -->
+          <input class="form-control" th:field="*{employeeCode}" placeholder="EMP-001" required>
+          <small class="hr-help">Use a readable code: EMP-001, EMP-002...</small>
+        </div>
+
+        <div>
+          <label class="form-label">Full Name</label>
+          <input class="form-control" th:field="*{fullName}" required>
+        </div>
+
+        <div>
+          <label class="form-label">NIC Number</label>
+          <input class="form-control" th:field="*{nicNo}" required>
+        </div>
+
+        <div>
+          <label class="form-label">Department ID</label>
+          <!-- type="number" min="1": only whole numbers 1 or higher; optional field -->
+          <input class="form-control" type="number" min="1" th:field="*{departmentId}" placeholder="Optional">
+          <small class="hr-help">Optional reference until the department table is integrated.</small>
+        </div>
+
+        <div>
+          <label class="form-label">Designation</label>
+          <input class="form-control" th:field="*{designation}" placeholder="HR Officer" required>
+        </div>
+
+        <div>
+          <label class="form-label">Employment Type</label>
+          <!-- Dropdown: value = what is saved in the DB, text = what the user sees -->
+          <select class="form-select" th:field="*{employmentType}" required>
+            <option value="">Select Type</option>
+            <option value="FULL_TIME">FULL TIME</option>
+            <option value="PART_TIME">PART TIME</option>
+            <option value="CONTRACT">CONTRACT</option>
+            <option value="INTERN">INTERN</option>
+          </select>
+        </div>
+
+        <div>
+          <label class="form-label">Status</label>
+          <select class="form-select" th:field="*{status}">
+            <option value="ACTIVE">ACTIVE</option>
+            <option value="INACTIVE">INACTIVE</option>
+            <option value="ARCHIVED">ARCHIVED</option>
+          </select>
+        </div>
+      </div>
+
+      <!-- Buttons: Save submits the form, Clear reloads the page with an empty form -->
+      <div class="mt-3 d-flex gap-2 flex-wrap">
+        <button class="hr-button hr-button-primary" type="submit">Save Employee</button>
+        <a class="hr-button hr-button-secondary" th:href="@{/hr/employees}">Clear</a>
+      </div>
+    </form>
+  </section>
+
+  <!-- ================= EMPLOYEE LIST PANEL ================= -->
+  <section class="hr-panel">
+    <div class="hr-panel-header"><h2>Employee List</h2></div>
+
+    <div class="hr-table-wrap">
+      <table class="hr-table">
+        <thead>
+        <tr>
+          <th>Code</th><th>Name</th><th>NIC</th><th>Designation</th>
+          <th>Type</th><th>Status</th><th>Actions</th>
+        </tr>
+        </thead>
         <tbody>
-        <tr th:each="row : ${employeesList}">
-          <td th:text="${row.employeeId}"></td><td th:text="${row.employeeCode}"></td><td
-                th:text="${row.fullName}"></td><td th:text="${row.nicNo}"></td><td th:text="${row.departmentId}"></td><td
-                th:text="${row.designation}"></td><td th:text="${row.employmentType}"></td><td th:text="${row.status}"></td>
-          <td class="text-nowrap"><a class="btn btn-warning btn-sm"
-                                     th:href="@{/hr/employees(editId=${row.employeeId})}">Edit</a> <a class="btn btn-outline-danger btn-sm"
-                                                                                                      th:href="@{/hr/employees/archive/{id}(id=${row.employeeId})}" onclick="return confirm('Archive this record?')">Archive</a></td>
+        <!-- th:each repeats this <tr> once per employee in employeesList ("row" = the current employee).
+             th:classappend adds the fade-out CSS class when the employee is ARCHIVED. -->
+        <tr th:each="row : ${employeesList}"
+            th:classappend="${row.status == 'ARCHIVED' ? 'hr-row-archived' : ''}">
+
+          <td><strong th:text="${row.employeeCode}">EMP-001</strong></td>
+          <td th:text="${row.fullName}">Employee Name</td>
+          <td th:text="${row.nicNo}">NIC</td>
+          <td th:text="${row.designation}">Designation</td>
+          <td th:text="${row.employmentType}">FULL_TIME</td>
+
+          <!-- Status badge: grey if ARCHIVED, green otherwise -->
+          <td>
+                        <span class="hr-status"
+                              th:classappend="${row.status == 'ARCHIVED' ? ' hr-status-archived' : ' hr-status-active'}"
+                              th:text="${row.status}">ACTIVE</span>
+          </td>
+
+          <td>
+            <div class="hr-actions">
+
+              <!-- Edit: reloads this page with ?editId=<id>, which fills the form above -->
+              <a class="hr-button hr-button-warning"
+                 th:href="@{/hr/employees(editId=${row.employeeId})}">Edit</a>
+
+              <!-- Archive button: shown only if NOT archived. confirm() asks "Are you sure?" -->
+              <form th:if="${row.status != 'ARCHIVED'}" method="post"
+                    th:action="@{/hr/employees/archive/{id}(id=${row.employeeId})}">
+                <button class="hr-button hr-button-secondary" type="submit"
+                        onclick="return confirm('Archive this employee?')">Archive</button>
+              </form>
+
+              <!-- Restore button: shown only if ARCHIVED -->
+              <form th:if="${row.status == 'ARCHIVED'}" method="post"
+                    th:action="@{/hr/employees/restore/{id}(id=${row.employeeId})}">
+                <button class="hr-button hr-button-success" type="submit">Restore</button>
+              </form>
+
+              <!-- Delete button: the service blocks it if the employee has attendance/leave history -->
+              <form method="post"
+                    th:action="@{/hr/employees/delete/{id}(id=${row.employeeId})}">
+                <button class="hr-button hr-button-danger" type="submit"
+                        onclick="return confirm('Permanently delete this employee?')">Delete</button>
+              </form>
+            </div>
+          </td>
+        </tr>
+
+        <!-- Shown only when the list is empty. colspan="7" = spans all 7 columns -->
+        <tr th:if="${#lists.isEmpty(employeesList)}">
+          <td colspan="7" class="text-center text-muted py-4">No employees found.</td>
         </tr>
         </tbody>
       </table>
     </div>
-  </div>
-</div>
+  </section>
+</main>
 </body>
 </html>

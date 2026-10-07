@@ -1,0 +1,252 @@
+/* Employee & Attendance Management - LankaTex */
+
+/* ---------- PAGE BACKGROUND ---------- */
+.hr-page {
+    min-height: 100vh;                                  /* page is at least as tall as the screen */
+    background:
+        linear-gradient(rgba(245, 250, 250, 0.86), rgba(245, 250, 250, 0.92)), /* light white overlay so text stays readable */
+        url('/images/hr-ui.jpg') center / cover fixed;  /* background image, centered, fills the screen, stays fixed while scrolling */
+    color: #15384a;                                     /* default dark-blue text color */
+}
+
+/* ---------- MAIN CONTENT WIDTH ---------- */
+.hr-container {
+    width: min(1400px, calc(100% - 48px));              /* up to 1400px wide, with 24px gap on each side on small screens */
+    margin: 34px auto 60px;                             /* top 34px, centered left/right, bottom 60px */
+}
+
+/* ---------- HERO BANNER (big title at the top) ---------- */
+.hr-hero {
+    display: flex;                                      /* put children side by side */
+    justify-content: space-between;                     /* push them to opposite ends */
+    align-items: center;                                /* center them vertically */
+    gap: 24px;                                          /* space between children */
+    padding: 34px 38px;                                 /* inner spacing */
+    border-radius: 26px;                                /* rounded corners */
+    background: linear-gradient(120deg, rgba(11, 67, 82, .94), rgba(22, 153, 151, .78)); /* dark teal to light teal */
+    color: white;
+    box-shadow: 0 18px 50px rgba(7, 48, 60, .20);       /* soft shadow under the banner */
+}
+
+.hr-eyebrow {                                           /* small "LANKATEX HR" label above the title */
+    display: block;
+    margin-bottom: 10px;
+    font-size: .78rem;
+    letter-spacing: .16em;                              /* spaced-out letters */
+    text-transform: uppercase;
+    color: #b9f2ef;
+    font-weight: 800;
+}
+
+.hr-hero h1 {                                           /* main title */
+    margin: 0 0 10px;
+    font-size: clamp(2rem, 4vw, 3.1rem);                /* scales with screen width between 2rem and 3.1rem */
+    font-weight: 800;
+}
+
+.hr-hero p {                                            /* description under the title */
+    max-width: 760px;
+    margin: 0;
+    color: rgba(255,255,255,.88);                       /* slightly transparent white */
+}
+
+/* ---------- PANELS (white cards that hold forms and tables) ---------- */
+.hr-panel {
+    margin-top: 24px;
+    padding: 26px;
+    border-radius: 24px;
+    background: rgba(255,255,255,.96);
+    box-shadow: 0 18px 44px rgba(16, 59, 76, .14);
+}
+
+.hr-panel-header {                                      /* title row inside a panel */
+    display: flex;
+    justify-content: space-between;
+    gap: 16px;
+    align-items: center;
+    margin-bottom: 20px;
+}
+
+.hr-panel h2,
+.hr-card h3 {                                           /* headings inside panels */
+    color: #103b4c;
+    font-weight: 800;
+}
+
+/* ---------- TOP NAV LINKS (Dashboard / Employees / ...) ---------- */
+.hr-nav {
+    display: flex;
+    flex-wrap: wrap;                                    /* wrap to the next line on small screens */
+    gap: 10px;
+    margin: 18px 0;
+}
+
+/* ---------- BUTTONS (shared base style) ---------- */
+.hr-nav a,
+.hr-button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border: 0;
+    border-radius: 11px;
+    padding: 10px 15px;
+    text-decoration: none;                              /* remove link underline */
+    font-weight: 700;
+    cursor: pointer;                                    /* hand cursor on hover */
+}
+
+/* ---------- BUTTON COLOR VARIANTS ---------- */
+.hr-nav a,
+.hr-button-secondary {                                  /* light grey-blue */
+    background: #edf5f6;
+    color: #103b4c;
+}
+
+.hr-button-primary {                                    /* main action (Save) */
+    background: #0f8f95;
+    color: white;
+}
+
+.hr-button-danger {                                     /* red (Delete, Reject) */
+    background: #fee2e2;
+    color: #991b1b;
+}
+
+.hr-button-warning {                                    /* yellow (Edit) */
+    background: #fef3c7;
+    color: #92400e;
+}
+
+.hr-button-success {                                    /* green (Restore, Approve) */
+    background: #dcfce7;
+    color: #166534;
+}
+
+/* ---------- DASHBOARD STAT CARDS ---------- */
+.hr-grid {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));   /* 4 equal columns */
+    gap: 16px;
+}
+
+.hr-stat {                                              /* one stat card */
+    background: white;
+    border: 1px solid #dce8ea;
+    border-radius: 18px;
+    padding: 22px;
+}
+
+.hr-stat strong {                                       /* the big number */
+    display: block;
+    font-size: 2rem;
+    color: #0f8f95;
+}
+
+/* ---------- FORM LAYOUT ---------- */
+.hr-form-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));   /* 2 equal columns of fields */
+    gap: 14px 18px;                                     /* 14px between rows, 18px between columns */
+}
+
+/* ---------- TABLES ---------- */
+.hr-table-wrap {
+    overflow-x: auto;                                   /* horizontal scroll if the table is too wide */
+    border: 1px solid #dbe7ea;
+    border-radius: 16px;
+}
+
+.hr-table {
+    width: 100%;
+    border-collapse: collapse;                          /* remove gaps between cells */
+    min-width: 900px;                                   /* keeps columns readable; wrapper scrolls on small screens */
+}
+
+.hr-table th {                                          /* header cells */
+    padding: 13px 12px;
+    background: #103b4c;
+    color: white;
+    text-align: left;
+    white-space: nowrap;                                /* keep header text on one line */
+}
+
+.hr-table td {                                          /* body cells */
+    padding: 13px 12px;
+    border-bottom: 1px solid #e5ecee;
+    vertical-align: middle;
+}
+
+/* ---------- ACTION BUTTONS IN TABLE ROWS ---------- */
+.hr-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 7px;
+}
+
+.hr-actions form {                                      /* forms inside the actions cell */
+    margin: 0;                                          /* remove default form margin */
+}
+
+/* ---------- STATUS BADGES ---------- */
+.hr-status {                                            /* base pill shape */
+    display: inline-flex;
+    padding: 6px 10px;
+    border-radius: 999px;                               /* fully rounded */
+    font-size: .74rem;
+    font-weight: 800;
+}
+
+.hr-status-active,
+.hr-status-present,
+.hr-status-approved {                                   /* green: good states */
+    background: #dcfce7;
+    color: #166534;
+}
+
+.hr-status-pending,
+.hr-status-incomplete {                                 /* yellow: waiting states */
+    background: #fef3c7;
+    color: #92400e;
+}
+
+.hr-status-late,
+.hr-status-rejected,
+.hr-status-absent {                                     /* red: problem states */
+    background: #fee2e2;
+    color: #991b1b;
+}
+
+.hr-status-archived {                                   /* grey: archived */
+    background: #e5e7eb;
+    color: #4b5563;
+}
+
+.hr-row-archived {                                      /* fades archived table rows */
+    opacity: .62;
+}
+
+/* ---------- SMALL HELP TEXT UNDER FORM FIELDS ---------- */
+.hr-help {
+    display: block;
+    margin-top: 5px;
+    color: #6b7f89;
+    font-size: .82rem;
+}
+
+/* ---------- MOBILE / SMALL SCREENS ---------- */
+@media (max-width: 900px) {                             /* applies only when the screen is 900px wide or less */
+    .hr-grid,
+    .hr-form-grid {
+        grid-template-columns: 1fr;                     /* stack everything in one column */
+    }
+
+    .hr-hero,
+    .hr-panel-header {
+        align-items: flex-start;
+        flex-direction: column;                         /* stack title and content vertically */
+    }
+
+    .hr-container {
+        width: min(100% - 24px, 1400px);                /* smaller side gaps on phones */
+    }
+}

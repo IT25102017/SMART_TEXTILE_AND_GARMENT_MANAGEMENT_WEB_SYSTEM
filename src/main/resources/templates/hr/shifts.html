@@ -1,80 +1,164 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Shift - Employee and Attendance Management</title>
+  <title>Shifts | LankaTex</title>
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link rel="stylesheet" th:href="@{/css/common-navbar.css}">   <!-- Shared navbar styles (don't edit) -->
+  <link rel="stylesheet" th:href="@{/css/hr/hr-ui.css}">        <!-- Your HR styles -->
 </head>
-<body class="bg-light">
-<div class="container py-4">
-  <div class="d-flex justify-content-between align-items-center mb-3">
-    <h2>Employee and Attendance Management</h2>
-    <a class="btn btn-dark btn-sm" th:href="@{/hr}">Dashboard</a>
-  </div>
-  <div class="mb-3">
-    <a class="btn btn-outline-primary btn-sm me-2 mb-2" th:href="@{/hr/employees}">Employee</a>
-    <a class="btn btn-outline-primary btn-sm me-2 mb-2" th:href="@{/hr/shifts}">Shift</a>
-    <a class="btn btn-outline-primary btn-sm me-2 mb-2" th:href="@{/hr/attendance}">Attendance Record</a>
-    <a class="btn btn-outline-primary btn-sm me-2 mb-2" th:href="@{/hr/leaves}">Leave Request</a>
-  </div>
+<body class="hr-page">
+
+<!-- Shared navbar from dev -->
+<div th:replace="~{fragments/common-navbar :: navbar}"></div>
+
+<main class="hr-container">
+
+  <!-- Banner -->
+  <section class="hr-hero">
+    <div>
+      <span class="hr-eyebrow">LankaTex HR</span>
+      <h1>Shift Management</h1>
+      <p>Maintain work schedules and shift timing used by daily attendance.</p>
+    </div>
+  </section>
+
+  <!-- Links to the other HR pages -->
+  <nav class="hr-nav">
+    <a th:href="@{/hr}">Dashboard</a>
+    <a th:href="@{/hr/employees}">Employees</a>
+    <a th:href="@{/hr/attendance}">Attendance</a>
+    <a th:href="@{/hr/leaves}">Leave Requests</a>
+  </nav>
+
+  <!-- Success / error messages (only shown when the controller sets them) -->
   <div th:if="${message}" class="alert alert-success" th:text="${message}"></div>
   <div th:if="${error}" class="alert alert-danger" th:text="${error}"></div>
-  <div class="card shadow-sm mb-4">
-    <div class="card-header"><strong>Add / Edit Shift</strong></div>
-    <div class="card-body">
-      <form th:action="@{/hr/shifts/save}" th:object="${shift}" method="post">
-        <input type="hidden" th:field="*{shiftId}">
-        <div class="row">
-          <div class="col-md-6 mb-3">
-            <label class="form-label">Shift Name</label>
-            <input class="form-control" type="text" th:field="*{shiftName}" required>
-          </div>
-          <div class="col-md-6 mb-3">
-            <label class="form-label">Start Time</label>
-            <input class="form-control" type="time" th:field="*{startTime}" required>
-          </div>
-          <div class="col-md-6 mb-3">
-            <label class="form-label">End Time</label>
-            <input class="form-control" type="time" th:field="*{endTime}" required>
-          </div>
-          <div class="col-md-6 mb-3">
-            <label class="form-label">Break Duration (minutes)</label>
-            <input class="form-control" type="number" th:field="*{breakDuration}">
-          </div>
-          <div class="col-md-6 mb-3">
-            <label class="form-label">Working Days</label>
-            <input class="form-control" type="text" th:field="*{workingDays}">
-          </div>
-          <div class="col-md-6 mb-3">
-            <label class="form-label">Status</label>
-            <input class="form-control" type="text" th:field="*{status}">
-          </div>
+
+  <!-- ================= FORM PANEL ================= -->
+  <section class="hr-panel">
+    <!-- Title: no shiftId = adding, has shiftId = editing -->
+    <h2 th:text="${shift.shiftId == null ? 'Add Shift' : 'Edit Shift'}">Add Shift</h2>
+
+    <!-- Form is bound to the Shift object from the controller and posts to /hr/shifts/save -->
+    <form th:action="@{/hr/shifts/save}" th:object="${shift}" method="post">
+
+      <!-- Hidden ID so the save knows whether to INSERT or UPDATE -->
+      <input type="hidden" th:field="*{shiftId}">
+
+      <div class="hr-form-grid">
+
+        <div>
+          <label class="form-label">Shift Name</label>
+          <input class="form-control" th:field="*{shiftName}" placeholder="Morning Shift" required>
         </div>
-        <button class="btn btn-success" type="submit">Save</button>
-        <a class="btn btn-secondary" th:href="@{/hr/shifts}">Clear</a>
-      </form>
-    </div>
-  </div>
-  <div class="card shadow-sm">
-    <div class="card-header"><strong>Shift List</strong></div>
-    <div class="card-body table-responsive">
-      <table class="table table-striped table-bordered align-middle">
-        <thead class="table-dark"><tr><th>ID</th><th>Shift Name</th><th>Start Time</th><th>End Time</th><th>Break
-          Duration (minutes)</th><th>Working Days</th><th>Status</th><th>Actions</th></tr></thead>
+
+        <div>
+          <label class="form-label">Start Time</label>
+          <!-- type="time" gives a time picker; the value maps to LocalTime startTime -->
+          <input class="form-control" type="time" th:field="*{startTime}" required>
+        </div>
+
+        <div>
+          <label class="form-label">End Time</label>
+          <input class="form-control" type="time" th:field="*{endTime}" required>
+        </div>
+
+        <div>
+          <label class="form-label">Break Duration (minutes)</label>
+          <!-- min="0": no negative break. This is subtracted from working hours -->
+          <input class="form-control" type="number" min="0" th:field="*{breakDuration}">
+        </div>
+
+        <div>
+          <label class="form-label">Working Days</label>
+          <input class="form-control" th:field="*{workingDays}" placeholder="MON,TUE,WED,THU,FRI">
+        </div>
+
+        <div>
+          <label class="form-label">Status</label>
+          <select class="form-select" th:field="*{status}">
+            <option value="ACTIVE">ACTIVE</option>
+            <option value="INACTIVE">INACTIVE</option>
+            <option value="ARCHIVED">ARCHIVED</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="mt-3 d-flex gap-2">
+        <button class="hr-button hr-button-primary" type="submit">Save Shift</button>
+        <a class="hr-button hr-button-secondary" th:href="@{/hr/shifts}">Clear</a>
+      </div>
+    </form>
+  </section>
+
+  <!-- ================= SHIFT LIST PANEL ================= -->
+  <section class="hr-panel">
+    <h2>Shift List</h2>
+    <div class="hr-table-wrap">
+      <table class="hr-table">
+        <thead>
+        <tr>
+          <th>Shift Code</th><th>Name</th><th>Start</th><th>End</th>
+          <th>Break</th><th>Working Days</th><th>Status</th><th>Actions</th>
+        </tr>
+        </thead>
         <tbody>
-        <tr th:each="row : ${shiftsList}">
-          <td th:text="${row.shiftId}"></td><td th:text="${row.shiftName}"></td><td
-                th:text="${row.startTime}"></td><td th:text="${row.endTime}"></td><td th:text="${row.breakDuration}"></td><td
-                th:text="${row.workingDays}"></td><td th:text="${row.status}"></td>
-          <td class="text-nowrap"><a class="btn btn-warning btn-sm"
-                                     th:href="@{/hr/shifts(editId=${row.shiftId})}">Edit</a> <a class="btn btn-outline-danger btn-sm"
-                                                                                                th:href="@{/hr/shifts/archive/{id}(id=${row.shiftId})}" onclick="return confirm('Archive this record?')">Archive</a></td>
+        <!-- One row per shift; archived rows are faded -->
+        <tr th:each="row : ${shiftsList}"
+            th:classappend="${row.status == 'ARCHIVED' ? 'hr-row-archived' : ''}">
+
+          <!-- Builds a readable code from the ID: 1 -> SHIFT-001 (formatInteger pads to 3 digits) -->
+          <td><strong th:text="${'SHIFT-' + #numbers.formatInteger(row.shiftId, 3)}">SHIFT-001</strong></td>
+          <td th:text="${row.shiftName}"></td>
+          <td th:text="${row.startTime}"></td>
+          <td th:text="${row.endTime}"></td>
+          <td th:text="${row.breakDuration}"></td>
+          <td th:text="${row.workingDays}"></td>
+
+          <!-- Status badge: grey if ARCHIVED, green otherwise -->
+          <td>
+                        <span class="hr-status"
+                              th:classappend="${row.status == 'ARCHIVED' ? ' hr-status-archived' : ' hr-status-active'}"
+                              th:text="${row.status}"></span>
+          </td>
+
+          <td>
+            <div class="hr-actions">
+              <!-- Edit: reloads the page with ?editId=<id> -->
+              <a class="hr-button hr-button-warning"
+                 th:href="@{/hr/shifts(editId=${row.shiftId})}">Edit</a>
+
+              <!-- Archive: only when not archived -->
+              <form th:if="${row.status != 'ARCHIVED'}" method="post"
+                    th:action="@{/hr/shifts/archive/{id}(id=${row.shiftId})}">
+                <button class="hr-button hr-button-secondary" type="submit">Archive</button>
+              </form>
+
+              <!-- Restore: only when archived -->
+              <form th:if="${row.status == 'ARCHIVED'}" method="post"
+                    th:action="@{/hr/shifts/restore/{id}(id=${row.shiftId})}">
+                <button class="hr-button hr-button-success" type="submit">Restore</button>
+              </form>
+
+              <!-- Delete: the service blocks it if attendance records use this shift -->
+              <form method="post" th:action="@{/hr/shifts/delete/{id}(id=${row.shiftId})}">
+                <button class="hr-button hr-button-danger" type="submit"
+                        onclick="return confirm('Permanently delete this shift?')">Delete</button>
+              </form>
+            </div>
+          </td>
+        </tr>
+
+        <!-- Empty-list message spanning all 8 columns -->
+        <tr th:if="${#lists.isEmpty(shiftsList)}">
+          <td colspan="8" class="text-center text-muted py-4">No shifts found.</td>
         </tr>
         </tbody>
       </table>
     </div>
-  </div>
-</div>
+  </section>
+</main>
 </body>
 </html>
