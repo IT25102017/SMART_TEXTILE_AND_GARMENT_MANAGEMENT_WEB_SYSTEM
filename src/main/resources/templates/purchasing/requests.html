@@ -1,4 +1,5 @@
 <!DOCTYPE html>
+
 <html lang="en"
       xmlns:th="http://www.thymeleaf.org">
 
@@ -9,336 +10,527 @@
   <meta name="viewport"
         content="width=device-width, initial-scale=1">
 
-  <title>
-    Purchase Request - LankaTex
-  </title>
+  <title>Purchase Requests | LankaTex</title>
+
 
   <!-- Bootstrap CSS -->
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
         rel="stylesheet">
 
+
   <!-- Common LankaTex Navigation CSS -->
   <link rel="stylesheet"
         th:href="@{/css/common-navbar.css}">
 
+
+  <!-- Purchasing Module Theme -->
+  <link rel="stylesheet"
+        th:href="@{/css/purchasing/purchasing-ui.css}">
+
 </head>
 
 
-<body class="bg-light">
+<body class="purchasing-page">
 
 
-<!-- Common LankaTex Navigation Bar -->
-<div th:replace="~{fragments/common-navbar :: navbar}"></div>
+<!-- =====================================================
+     COMMON NAVIGATION BAR
+     ===================================================== -->
+
+<div th:replace="~{fragments/common-navbar :: navbar}">
+</div>
 
 
-<div class="container py-4">
+
+<!-- =====================================================
+     MAIN CONTENT
+     ===================================================== -->
+
+<main class="purchasing-main">
 
 
-  <!-- Page Header -->
-  <div class="d-flex justify-content-between align-items-center mb-3">
+  <!-- =================================================
+       HERO SECTION
+       ================================================= -->
 
-    <h2>
-      Purchase Request Management
-    </h2>
-
-    <a class="btn btn-dark btn-sm"
-       th:href="@{/purchasing}">
-      Dashboard
-    </a>
-
-  </div>
+  <section class="purchasing-hero">
 
 
-  <!-- Purchasing Module Navigation -->
-  <div class="mb-3">
+    <div class="purchasing-hero-content">
 
-    <a class="btn btn-outline-primary btn-sm me-2 mb-2"
-       th:href="@{/purchasing/suppliers}">
-      Supplier
-    </a>
+      <p class="purchasing-eyebrow">
+        LankaTex Purchasing
+      </p>
 
-    <a class="btn btn-primary btn-sm me-2 mb-2"
-       th:href="@{/purchasing/requests}">
-      Purchase Request
-    </a>
+      <h1 class="purchasing-title">
+        Purchase Request Management
+      </h1>
 
-    <a class="btn btn-outline-primary btn-sm me-2 mb-2"
-       th:href="@{/purchasing/orders}">
-      Purchase Order
-    </a>
+      <p class="purchasing-subtitle">
 
-    <a class="btn btn-outline-primary btn-sm me-2 mb-2"
-       th:href="@{/purchasing/items}">
-      Purchase Order Item
-    </a>
+        Create and manage material purchase requests
+        required for LankaTex inventory and production
+        operations.
 
-  </div>
-
-
-  <!-- Success Message -->
-  <div th:if="${message}"
-       class="alert alert-success"
-       th:text="${message}">
-  </div>
-
-
-  <!-- Error Message -->
-  <div th:if="${error}"
-       class="alert alert-danger"
-       th:text="${error}">
-  </div>
-
-
-  <!-- Purchase Request Form -->
-  <div class="card shadow-sm mb-4">
-
-    <div class="card-header">
-
-      <strong>
-        Add / Edit Purchase Request
-      </strong>
+      </p>
 
     </div>
 
 
-    <div class="card-body">
+    <div class="purchasing-hero-actions">
 
-      <form th:action="@{/purchasing/requests/save}"
-            th:object="${purchaseRequest}"
-            method="post">
+      <a class="purchasing-btn purchasing-btn-secondary"
+         th:href="@{/purchasing}">
+        Dashboard
+      </a>
 
+      <a class="purchasing-btn purchasing-btn-primary"
+         th:href="@{/purchasing/requests/new}">
+        + New Purchase Request
+      </a>
 
-        <input type="hidden"
-               th:field="*{requestId}">
-
-
-        <div class="row">
-
-
-          <!-- Requested By -->
-          <div class="col-md-6 mb-3">
-
-            <label class="form-label">
-              Requested By User ID
-            </label>
-
-            <input class="form-control"
-                   type="number"
-                   th:field="*{requestedBy}"
-                   required>
-
-          </div>
+    </div>
 
 
-          <!-- Request Date -->
-          <div class="col-md-6 mb-3">
-
-            <label class="form-label">
-              Request Date
-            </label>
-
-            <input class="form-control"
-                   type="date"
-                   th:field="*{requestDate}"
-                   required>
-
-          </div>
+  </section>
 
 
-          <!-- Reason -->
-          <div class="col-md-6 mb-3">
 
-            <label class="form-label">
-              Reason
-            </label>
+  <!-- =================================================
+       QUICK NAVIGATION
+       ================================================= -->
 
-            <input class="form-control"
-                   type="text"
-                   th:field="*{reason}"
-                   required>
+  <div class="purchasing-quick-nav">
 
-          </div>
+    <a class="purchasing-nav-chip"
+       th:href="@{/purchasing/suppliers}">
+      Suppliers
+    </a>
 
+    <a class="purchasing-nav-chip"
+       th:href="@{/purchasing/requests}">
+      Purchase Requests
+    </a>
 
-          <!-- Status -->
-          <div class="col-md-6 mb-3">
+    <a class="purchasing-nav-chip"
+       th:href="@{/purchasing/orders}">
+      Purchase Orders
+    </a>
 
-            <label class="form-label">
-              Status
-            </label>
+    <a class="purchasing-nav-chip"
+       th:href="@{/purchasing/items}">
+      Purchase Order Items
+    </a>
 
-            <input class="form-control"
-                   type="text"
-                   th:field="*{status}">
-
-          </div>
-
-
-          <!-- Approved By -->
-          <div class="col-md-6 mb-3">
-
-            <label class="form-label">
-              Approved By User ID
-            </label>
-
-            <input class="form-control"
-                   type="number"
-                   th:field="*{approvedBy}">
-
-          </div>
+  </div>
 
 
+
+  <!-- =================================================
+       PURCHASE REQUEST PANEL
+       ================================================= -->
+
+  <section class="purchasing-panel">
+
+
+    <!-- =============================================
+         PANEL HEADER
+         ============================================= -->
+
+    <div class="purchasing-panel-header">
+
+
+      <div class="purchasing-heading-group">
+
+        <div class="purchasing-heading-icon">
+          PR
         </div>
 
 
-        <button class="btn btn-success"
-                type="submit">
-          Save
-        </button>
+        <div>
+
+          <h2 class="purchasing-panel-title">
+            Purchase Requests
+          </h2>
+
+          <p class="purchasing-panel-subtitle">
+
+            Review purchase requests,
+            update request information,
+            archive completed records and
+            restore archived requests.
+
+          </p>
+
+        </div>
+
+      </div>
 
 
-        <a class="btn btn-secondary"
-           th:href="@{/purchasing/requests}">
-          Clear
+      <div class="purchasing-top-actions">
+
+        <a class="purchasing-btn purchasing-btn-secondary"
+           th:href="@{/purchasing}">
+          Back to Dashboard
         </a>
 
+        <a class="purchasing-btn purchasing-btn-primary"
+           th:href="@{/purchasing/requests/new}">
+          + Add Request
+        </a>
 
-      </form>
+      </div>
 
-    </div>
-
-  </div>
-
-
-  <!-- Purchase Request List -->
-  <div class="card shadow-sm">
-
-    <div class="card-header">
-
-      <strong>
-        Purchase Request List
-      </strong>
 
     </div>
 
 
-    <div class="card-body table-responsive">
 
-      <table class="table table-striped table-bordered align-middle">
+    <!-- =============================================
+         SUCCESS MESSAGE
+         ============================================= -->
 
-        <thead class="table-dark">
+    <div th:if="${message}"
+         class="purchasing-alert purchasing-alert-success"
+         th:text="${message}">
+    </div>
+
+
+
+    <!-- =============================================
+         ERROR MESSAGE
+         ============================================= -->
+
+    <div th:if="${error}"
+         class="purchasing-alert purchasing-alert-error"
+         th:text="${error}">
+    </div>
+
+
+
+    <!-- =============================================
+         SEARCH
+         ============================================= -->
+
+    <div class="purchasing-search-wrapper">
+
+      <input type="text"
+             id="requestSearch"
+             class="purchasing-search"
+             placeholder="Search requests by code, reason or status">
+
+    </div>
+
+
+
+    <!-- =============================================
+         PURCHASE REQUEST TABLE
+         ============================================= -->
+
+    <div class="purchasing-table-wrapper">
+
+
+      <table class="purchasing-table"
+             id="purchaseRequestTable">
+
+
+        <thead>
 
         <tr>
 
-          <th>ID</th>
-          <th>Requested By</th>
-          <th>Request Date</th>
-          <th>Reason</th>
-          <th>Status</th>
-          <th>Approved By</th>
-          <th>Actions</th>
+          <th>
+            Request Code
+          </th>
+
+          <th>
+            Request Date
+          </th>
+
+          <th>
+            Requested By
+          </th>
+
+          <th>
+            Reason
+          </th>
+
+          <th>
+            Approved By
+          </th>
+
+          <th>
+            Status
+          </th>
+
+          <th>
+            Actions
+          </th>
 
         </tr>
 
         </thead>
 
 
+
         <tbody>
 
 
-        <tr th:each="row : ${requestsList}">
+        <!-- =====================================
+             PURCHASE REQUEST RECORDS
+             ===================================== -->
+
+        <tr th:each="request : ${purchaseRequests}"
+            class="purchase-request-row"
+            th:classappend="${request.status == 'Archived'}
+                                    ? ' purchasing-row-archived'
+                                    : ''">
 
 
-          <td th:text="${row.requestId}">
+          <!-- Request Code -->
+
+          <td class="purchasing-record-code"
+              th:text="${request.requestCode}">
+
+            PR-001
+
           </td>
 
 
-          <td th:text="${row.requestedBy}">
+
+          <!-- Request Date -->
+
+          <td th:text="${request.requestDate}">
+
+            2026-10-02
+
           </td>
 
 
-          <td th:text="${row.requestDate}">
+
+          <!-- Requested By -->
+
+          <td th:text="${request.requestedBy != null
+                                 ? request.requestedBy
+                                 : '-'}">
+
+            -
+
           </td>
 
 
-          <td th:text="${row.reason}">
+
+          <!-- Reason -->
+
+          <td>
+
+                        <span class="purchasing-record-name"
+                              th:text="${request.reason}">
+
+                            Material replenishment
+
+                        </span>
+
           </td>
+
+
+
+          <!-- Approved By -->
+
+          <td th:text="${request.approvedBy != null
+                                 ? request.approvedBy
+                                 : '-'}">
+
+            -
+
+          </td>
+
 
 
           <!-- Status -->
+
           <td>
 
-                        <span th:if="${row.status == 'Archived'}"
-                              class="badge bg-secondary">
+
+            <!-- Pending -->
+
+            <span th:if="${request.status == 'Pending'}"
+                  class="purchasing-status
+                                     purchasing-status-pending">
+
+                            Pending
+
+                        </span>
+
+
+            <!-- Approved -->
+
+            <span th:if="${request.status == 'Approved'}"
+                  class="purchasing-status
+                                     purchasing-status-approved">
+
+                            Approved
+
+                        </span>
+
+
+            <!-- Rejected -->
+
+            <span th:if="${request.status == 'Rejected'}"
+                  class="purchasing-status
+                                     purchasing-status-rejected">
+
+                            Rejected
+
+                        </span>
+
+
+            <!-- Archived -->
+
+            <span th:if="${request.status == 'Archived'}"
+                  class="purchasing-status
+                                     purchasing-status-archived">
+
                             Archived
+
                         </span>
 
-            <span th:unless="${row.status == 'Archived'}"
-                  class="badge bg-success"
-                  th:text="${row.status}">
+
+            <!-- Other Status -->
+
+            <span th:if="${request.status != 'Pending'
+                                      and request.status != 'Approved'
+                                      and request.status != 'Rejected'
+                                      and request.status != 'Archived'}"
+                  class="purchasing-status
+                                     purchasing-status-other"
+                  th:text="${request.status}">
+
+                            Other
+
                         </span>
+
 
           </td>
 
 
-          <td th:text="${row.approvedBy}">
+
+          <!-- =================================
+               ACTIONS
+               ================================= -->
+
+          <td>
+
+
+            <div class="purchasing-actions">
+
+
+              <!-- EDIT -->
+
+              <a class="purchasing-btn
+                                      purchasing-btn-edit
+                                      purchasing-btn-small"
+                 th:href="@{/purchasing/requests/edit/{id}
+                               (id=${request.requestId})}">
+
+                Edit
+
+              </a>
+
+
+
+              <!-- ARCHIVE -->
+
+              <form th:if="${request.status != 'Archived'}"
+                    method="post"
+                    th:action="@{/purchasing/requests/archive/{id}
+                                  (id=${request.requestId})}">
+
+
+                <button type="submit"
+                        class="purchasing-btn
+                                               purchasing-btn-archive
+                                               purchasing-btn-small"
+                        onclick="return confirm(
+                                        'Are you sure you want to archive this purchase request?'
+                                        );">
+
+                  Archive
+
+                </button>
+
+
+              </form>
+
+
+
+              <!-- RESTORE -->
+
+              <form th:if="${request.status == 'Archived'}"
+                    method="post"
+                    th:action="@{/purchasing/requests/restore/{id}
+                                  (id=${request.requestId})}">
+
+
+                <button type="submit"
+                        class="purchasing-btn
+                                               purchasing-btn-restore
+                                               purchasing-btn-small"
+                        onclick="return confirm(
+                                        'Restore this purchase request back to Pending status?'
+                                        );">
+
+                  Restore
+
+                </button>
+
+
+              </form>
+
+
+
+              <!-- DELETE -->
+
+              <form method="post"
+                    th:action="@{/purchasing/requests/delete/{id}
+                                  (id=${request.requestId})}">
+
+
+                <button type="submit"
+                        class="purchasing-btn
+                                               purchasing-btn-delete
+                                               purchasing-btn-small"
+                        onclick="return confirm(
+                                        'Permanently delete this purchase request? This action cannot be undone.'
+                                        );">
+
+                  Delete
+
+                </button>
+
+
+              </form>
+
+
+            </div>
+
+
           </td>
 
 
-          <!-- Actions -->
-          <td class="text-nowrap">
+        </tr>
 
 
-            <!-- Edit -->
-            <a class="btn btn-warning btn-sm"
-               th:href="@{/purchasing/requests(editId=${row.requestId})}">
-              Edit
-            </a>
 
+        <!-- =====================================
+             EMPTY STATE
+             ===================================== -->
 
-            <!-- Archive -->
-            <form th:if="${row.status != 'Archived'}"
-                  method="post"
-                  class="d-inline"
-                  th:action="@{/purchasing/requests/archive/{id}(id=${row.requestId})}">
+        <tr th:if="${#lists.isEmpty(purchaseRequests)}">
 
-              <button type="submit"
-                      class="btn btn-secondary btn-sm"
-                      onclick="return confirm('Archive this Purchase Request?');">
-                Archive
-              </button>
+          <td colspan="7"
+              class="purchasing-empty">
 
-            </form>
-
-
-            <!-- Restore -->
-            <form th:if="${row.status == 'Archived'}"
-                  method="post"
-                  class="d-inline"
-                  th:action="@{/purchasing/requests/restore/{id}(id=${row.requestId})}">
-
-              <button type="submit"
-                      class="btn btn-success btn-sm"
-                      onclick="return confirm('Restore this Purchase Request to Pending status?');">
-                Restore
-              </button>
-
-            </form>
-
-
-            <!-- Delete -->
-            <form method="post"
-                  class="d-inline"
-                  th:action="@{/purchasing/requests/delete/{id}(id=${row.requestId})}">
-
-              <button type="submit"
-                      class="btn btn-danger btn-sm"
-                      onclick="return confirm('WARNING: Permanently delete this Purchase Request?');">
-                Delete
-              </button>
-
-            </form>
-
+            No purchase requests have been recorded yet.
 
           </td>
 
@@ -347,14 +539,60 @@
 
         </tbody>
 
+
       </table>
+
 
     </div>
 
-  </div>
+
+  </section>
 
 
-</div>
+</main>
+
+
+
+<!-- =====================================================
+     CLIENT-SIDE SEARCH
+     ===================================================== -->
+
+<script>
+
+  const requestSearch =
+      document.getElementById("requestSearch");
+
+  if (requestSearch) {
+
+      requestSearch.addEventListener(
+          "input",
+          function () {
+
+              const searchValue =
+                  this.value
+                      .toLowerCase()
+                      .trim();
+
+              const rows =
+                  document.querySelectorAll(
+                      ".purchase-request-row"
+                  );
+
+              rows.forEach(function (row) {
+
+                  const rowText =
+                      row.innerText.toLowerCase();
+
+                  row.style.display =
+                      rowText.includes(searchValue)
+                          ? ""
+                          : "none";
+              });
+          }
+      );
+  }
+
+</script>
 
 
 </body>

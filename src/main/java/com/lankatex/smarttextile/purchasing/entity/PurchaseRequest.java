@@ -1,16 +1,15 @@
 package com.lankatex.smarttextile.purchasing.entity;
 
 import jakarta.persistence.*;
-import java.time.LocalDate;
 import lombok.Getter;
-import lombok.NoArgsConstructor;
 import lombok.Setter;
+
+import java.time.LocalDate;
 
 @Entity
 @Table(name = "purchase_requests")
 @Getter
 @Setter
-@NoArgsConstructor
 public class PurchaseRequest {
 
     @Id
@@ -18,11 +17,14 @@ public class PurchaseRequest {
     @Column(name = "request_id")
     private Long requestId;
 
+    @Column(name = "request_date", nullable = false)
+    private LocalDate requestDate;
+
     @Column(name = "requested_by", nullable = false)
     private Long requestedBy;
 
-    @Column(name = "request_date", nullable = false)
-    private LocalDate requestDate;
+    @Column(name = "approved_by")
+    private Long approvedBy;
 
     @Column(name = "reason", nullable = false, length = 1000)
     private String reason;
@@ -30,6 +32,18 @@ public class PurchaseRequest {
     @Column(name = "status")
     private String status;
 
-    @Column(name = "approved_by")
-    private Long approvedBy;
+    // User-friendly display code.
+    // This value is calculated from requestId and is not stored in the database.
+    @Transient
+    public String getRequestCode() {
+
+        if (requestId == null) {
+            return "PR-NEW";
+        }
+
+        return String.format(
+                "PR-%03d",
+                requestId
+        );
+    }
 }

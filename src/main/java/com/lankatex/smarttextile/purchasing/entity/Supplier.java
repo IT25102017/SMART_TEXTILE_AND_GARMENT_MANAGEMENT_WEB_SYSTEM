@@ -2,14 +2,12 @@ package com.lankatex.smarttextile.purchasing.entity;
 
 import jakarta.persistence.*;
 import lombok.Getter;
-import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 @Entity
 @Table(name = "suppliers")
 @Getter
 @Setter
-@NoArgsConstructor
 public class Supplier {
 
     @Id
@@ -34,4 +32,19 @@ public class Supplier {
 
     @Column(name = "status")
     private String status;
+
+    // User-friendly display code.
+    // This value is calculated from supplierId and is not stored in the database.
+    @Transient
+    public String getSupplierCode() {
+
+        if (supplierId == null) {
+            return "SUP-NEW";
+        }
+
+        return String.format(
+                "SUP-%03d",
+                supplierId
+        );
+    }
 }

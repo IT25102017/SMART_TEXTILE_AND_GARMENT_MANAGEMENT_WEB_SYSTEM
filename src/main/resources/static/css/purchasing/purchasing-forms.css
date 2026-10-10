@@ -1,0 +1,1593 @@
+ /* =========================================================
+    LANKATEX - PURCHASING MODULE FORM STYLES
+    Used by Supplier, Purchase Request,
+    Purchase Order and Purchase Order Item forms
+    ========================================================= */
+
+
+ /* =========================================================
+    FORM PAGE WRAPPER
+    ========================================================= */
+
+ .purchasing-form-page {
+     width: min(94%, 1100px);
+     margin: 0 auto;
+     padding: 34px 0 60px;
+ }
+
+
+ /* =========================================================
+    FORM CARD
+    ========================================================= */
+
+ .purchasing-form-card {
+     overflow: hidden;
+
+     border: 1px solid #dce3eb;
+     border-radius: 18px;
+
+     background: rgba(255, 255, 255, 0.97);
+
+     box-shadow:
+             0 14px 40px rgba(15, 35, 55, 0.12);
+ }
+
+
+ /* =========================================================
+    FORM CARD HEADER
+    ========================================================= */
+
+ .purchasing-form-card-header {
+     display: flex;
+     align-items: center;
+     justify-content: space-between;
+
+     gap: 20px;
+
+     padding: 28px 32px;
+
+     color: #ffffff;
+
+     background:
+             linear-gradient(
+                     135deg,
+                     #0b1f33,
+                     #0f766e
+             );
+ }
+
+ .purchasing-form-heading {
+     display: flex;
+     align-items: center;
+     gap: 16px;
+ }
+
+ .purchasing-form-heading-icon {
+     display: flex;
+     align-items: center;
+     justify-content: center;
+
+     width: 50px;
+     height: 50px;
+
+     flex-shrink: 0;
+
+     border-radius: 13px;
+
+     color: #0b1f33;
+
+     background: #ffffff;
+
+     font-size: 18px;
+     font-weight: 800;
+
+     box-shadow:
+             0 6px 18px rgba(0, 0, 0, 0.16);
+ }
+
+ .purchasing-form-heading-text h1 {
+     margin: 0;
+
+     font-size: 26px;
+     font-weight: 750;
+ }
+
+ .purchasing-form-heading-text p {
+     margin: 7px 0 0;
+
+     color: rgba(255, 255, 255, 0.80);
+
+     font-size: 13px;
+     line-height: 1.6;
+ }
+
+
+ /* =========================================================
+    FORM BODY
+    ========================================================= */
+
+ .purchasing-form-body {
+     padding: 30px 32px 34px;
+ }
+
+
+ /* =========================================================
+    FORM SECTIONS
+    ========================================================= */
+
+ .purchasing-form-section {
+     margin-bottom: 28px;
+     padding-bottom: 26px;
+
+     border-bottom: 1px solid #e6ebf0;
+ }
+
+ .purchasing-form-section:last-child {
+     margin-bottom: 0;
+     padding-bottom: 0;
+
+     border-bottom: none;
+ }
+
+ .purchasing-form-section-header {
+     display: flex;
+     align-items: center;
+     gap: 12px;
+
+     margin-bottom: 20px;
+ }
+
+ .purchasing-form-section-icon {
+     display: flex;
+     align-items: center;
+     justify-content: center;
+
+     width: 34px;
+     height: 34px;
+
+     flex-shrink: 0;
+
+     border-radius: 9px;
+
+     color: #0f766e;
+
+     background: #dff5f2;
+
+     font-size: 13px;
+     font-weight: 800;
+ }
+
+ .purchasing-form-section-title {
+     margin: 0;
+
+     color: #0b1f33;
+
+     font-size: 17px;
+     font-weight: 750;
+ }
+
+ .purchasing-form-section-description {
+     margin: 5px 0 0;
+
+     color: #667085;
+
+     font-size: 12px;
+ }
+
+
+ /* =========================================================
+    GRID LAYOUT
+    ========================================================= */
+
+ .purchasing-form-grid {
+     display: grid;
+
+     grid-template-columns:
+             repeat(2, minmax(0, 1fr));
+
+     gap: 20px 22px;
+ }
+
+ .purchasing-form-field {
+     display: flex;
+     flex-direction: column;
+
+     gap: 7px;
+ }
+
+ .purchasing-form-field-full {
+     grid-column: 1 / -1;
+ }
+
+
+ /* =========================================================
+    LABELS
+    ========================================================= */
+
+ .purchasing-form-label {
+     color: #344054;
+
+     font-size: 13px;
+     font-weight: 650;
+ }
+
+ .purchasing-required {
+     margin-left: 2px;
+
+     color: #c62828;
+ }
+
+
+ /* =========================================================
+    INPUTS
+    ========================================================= */
+
+ .purchasing-form-input,
+ .purchasing-form-select,
+ .purchasing-form-textarea {
+     width: 100%;
+
+     border: 1px solid #d0d7df;
+     border-radius: 9px;
+
+     color: #172033;
+
+     background: #ffffff;
+
+     outline: none;
+
+     font-size: 14px;
+
+     transition:
+             border-color 0.18s ease,
+             box-shadow 0.18s ease,
+             background-color 0.18s ease;
+ }
+
+ .purchasing-form-input,
+ .purchasing-form-select {
+     min-height: 45px;
+
+     padding: 10px 13px;
+ }
+
+ .purchasing-form-textarea {
+     min-height: 115px;
+
+     padding: 12px 13px;
+
+     resize: vertical;
+ }
+
+ .purchasing-form-input:focus,
+ .purchasing-form-select:focus,
+ .purchasing-form-textarea:focus {
+     border-color: #0f766e;
+
+     box-shadow:
+             0 0 0 3px rgba(15, 118, 110, 0.10);
+ }
+
+ .purchasing-form-input::placeholder,
+ .purchasing-form-textarea::placeholder {
+     color: #98a2b3;
+ }
+
+
+ /* =========================================================
+    READ ONLY / DISABLED FIELDS
+    ========================================================= */
+
+ .purchasing-form-input[readonly],
+ .purchasing-form-input:disabled,
+ .purchasing-form-select:disabled,
+ .purchasing-form-textarea:disabled {
+     color: #667085;
+
+     border-color: #e2e8f0;
+
+     background: #f2f4f7;
+
+     cursor: not-allowed;
+ }
+
+
+ /* =========================================================
+    FIELD HELP TEXT
+    ========================================================= */
+
+ .purchasing-form-help {
+     margin: 0;
+
+     color: #667085;
+
+     font-size: 11px;
+     line-height: 1.5;
+ }
+
+ .purchasing-form-help-important {
+     color: #b45309;
+ }
+
+
+ /* =========================================================
+    FIELD ERROR
+    ========================================================= */
+
+ .purchasing-form-error {
+     margin: 0;
+
+     color: #b42318;
+
+     font-size: 11px;
+     font-weight: 600;
+ }
+
+ .purchasing-form-input-error {
+     border-color: #f04438;
+ }
+
+ .purchasing-form-input-error:focus {
+     border-color: #f04438;
+
+     box-shadow:
+             0 0 0 3px rgba(240, 68, 56, 0.10);
+ }
+
+
+ /* =========================================================
+    INFORMATION BOX
+    ========================================================= */
+
+ .purchasing-form-info {
+     display: flex;
+     align-items: flex-start;
+
+     gap: 12px;
+
+     margin-bottom: 24px;
+
+     padding: 14px 16px;
+
+     border: 1px solid #b9e6e2;
+     border-radius: 10px;
+
+     color: #0b5f59;
+
+     background: #effcf9;
+
+     font-size: 13px;
+     line-height: 1.6;
+ }
+
+ .purchasing-form-info-icon {
+     display: flex;
+     align-items: center;
+     justify-content: center;
+
+     width: 25px;
+     height: 25px;
+
+     flex-shrink: 0;
+
+     border-radius: 50%;
+
+     color: #ffffff;
+
+     background: #0f766e;
+
+     font-size: 12px;
+     font-weight: 800;
+ }
+
+
+ /* =========================================================
+    WARNING BOX
+    ========================================================= */
+
+ .purchasing-form-warning {
+     display: flex;
+     align-items: flex-start;
+
+     gap: 12px;
+
+     margin-bottom: 24px;
+
+     padding: 14px 16px;
+
+     border: 1px solid #fed7aa;
+     border-radius: 10px;
+
+     color: #9a3412;
+
+     background: #fff7ed;
+
+     font-size: 13px;
+     line-height: 1.6;
+ }
+
+
+ /* =========================================================
+    FORM ACTION AREA
+    ========================================================= */
+
+ .purchasing-form-actions {
+     display: flex;
+     align-items: center;
+     justify-content: flex-end;
+
+     gap: 10px;
+     flex-wrap: wrap;
+
+     margin-top: 30px;
+     padding-top: 24px;
+
+     border-top: 1px solid #e6ebf0;
+ }
+
+ .purchasing-form-action {
+     display: inline-flex;
+     align-items: center;
+     justify-content: center;
+
+     min-width: 120px;
+     min-height: 43px;
+
+     padding: 10px 18px;
+
+     border: none;
+     border-radius: 9px;
+
+     font-size: 13px;
+     font-weight: 700;
+
+     cursor: pointer;
+
+     transition:
+             transform 0.18s ease,
+             background-color 0.18s ease,
+             box-shadow 0.18s ease;
+ }
+
+ .purchasing-form-action:hover {
+     transform: translateY(-1px);
+ }
+
+
+ /* =========================================================
+    PRIMARY SAVE BUTTON
+    ========================================================= */
+
+ .purchasing-form-save {
+     color: #ffffff;
+
+     background: #0f766e;
+
+     box-shadow:
+             0 6px 18px rgba(15, 118, 110, 0.22);
+ }
+
+ .purchasing-form-save:hover {
+     color: #ffffff;
+
+     background: #0b5f59;
+ }
+
+
+ /* =========================================================
+    CANCEL BUTTON
+    ========================================================= */
+
+ .purchasing-form-cancel {
+     color: #344054;
+
+     border: 1px solid #d0d7df;
+
+     background: #ffffff;
+ }
+
+ .purchasing-form-cancel:hover {
+     color: #0b1f33;
+
+     background: #f8fafc;
+ }
+
+
+ /* =========================================================
+    DELETE BUTTON
+    ========================================================= */
+
+ .purchasing-form-delete {
+     color: #ffffff;
+
+     background: #c62828;
+ }
+
+ .purchasing-form-delete:hover {
+     color: #ffffff;
+
+     background: #a91d1d;
+ }
+
+
+ /* =========================================================
+    FORM RECORD CODE
+    ========================================================= */
+
+ .purchasing-form-code-box {
+     display: flex;
+     align-items: center;
+     justify-content: space-between;
+
+     gap: 12px;
+
+     padding: 13px 15px;
+
+     border: 1px solid #b9e6e2;
+     border-radius: 10px;
+
+     background: #f0fdfa;
+ }
+
+ .purchasing-form-code-label {
+     color: #667085;
+
+     font-size: 12px;
+     font-weight: 600;
+ }
+
+ .purchasing-form-code {
+     color: #0b5f59;
+
+     font-size: 15px;
+     font-weight: 800;
+ }
+
+
+ /* =========================================================
+    STATUS SELECT AREA
+    ========================================================= */
+
+ .purchasing-status-field {
+     position: relative;
+ }
+
+ .purchasing-status-note {
+     margin-top: 7px;
+
+     color: #667085;
+
+     font-size: 11px;
+ }
+
+
+ /* =========================================================
+    MONEY / QUANTITY FIELDS
+    ========================================================= */
+
+ .purchasing-number-field {
+     position: relative;
+ }
+
+ .purchasing-input-prefix,
+ .purchasing-input-suffix {
+     position: absolute;
+
+     top: 50%;
+
+     transform: translateY(-50%);
+
+     color: #667085;
+
+     font-size: 12px;
+     font-weight: 600;
+
+     pointer-events: none;
+ }
+
+ .purchasing-input-prefix {
+     left: 13px;
+ }
+
+ .purchasing-input-suffix {
+     right: 13px;
+ }
+
+ .purchasing-input-with-prefix {
+     padding-left: 48px;
+ }
+
+ .purchasing-input-with-suffix {
+     padding-right: 48px;
+ }
+
+
+ /* =========================================================
+    OPTIONAL SUMMARY PANEL
+    ========================================================= */
+
+ .purchasing-form-summary {
+     margin-top: 24px;
+
+     padding: 20px;
+
+     border: 1px solid #dce3eb;
+     border-radius: 12px;
+
+     background:
+             linear-gradient(
+                     180deg,
+                     #fbfcfd,
+                     #f5f8fa
+             );
+ }
+
+ .purchasing-form-summary-title {
+     margin: 0 0 15px;
+
+     color: #0b1f33;
+
+     font-size: 15px;
+     font-weight: 750;
+ }
+
+ .purchasing-form-summary-row {
+     display: flex;
+     justify-content: space-between;
+
+     gap: 20px;
+
+     padding: 8px 0;
+
+     border-bottom: 1px solid #e6ebf0;
+
+     font-size: 13px;
+ }
+
+ .purchasing-form-summary-row:last-child {
+     border-bottom: none;
+ }
+
+ .purchasing-form-summary-label {
+     color: #667085;
+ }
+
+ .purchasing-form-summary-value {
+     color: #0b1f33;
+
+     font-weight: 700;
+ }
+
+
+ /* =========================================================
+    PURCHASE ORDER ITEM SECTION
+    ========================================================= */
+
+ .purchasing-item-box {
+     margin-bottom: 18px;
+
+     padding: 20px;
+
+     border: 1px solid #dce3eb;
+     border-radius: 12px;
+
+     background: #fbfcfd;
+ }
+
+ .purchasing-item-box:last-child {
+     margin-bottom: 0;
+ }
+
+ .purchasing-item-box-header {
+     display: flex;
+     align-items: center;
+     justify-content: space-between;
+
+     gap: 15px;
+
+     margin-bottom: 18px;
+ }
+
+ .purchasing-item-box-title {
+     margin: 0;
+
+     color: #0b1f33;
+
+     font-size: 15px;
+     font-weight: 700;
+ }
+
+
+ /* =========================================================
+    FORM ALERTS
+    ========================================================= */
+
+ .purchasing-form-alert {
+     margin-bottom: 22px;
+
+     padding: 13px 16px;
+
+     border-radius: 9px;
+
+     font-size: 13px;
+     font-weight: 600;
+ }
+
+ .purchasing-form-alert-success {
+     color: #166534;
+
+     border: 1px solid #bbf7d0;
+
+     background: #f0fdf4;
+ }
+
+ .purchasing-form-alert-error {
+     color: #991b1b;
+
+     border: 1px solid #fecaca;
+
+     background: #fef2f2;
+ }
+
+
+ /* =========================================================
+    MOBILE / TABLET
+    ========================================================= */
+
+ @media (max-width: 800px) {
+
+     .purchasing-form-page {
+         width: 94%;
+
+         padding-top: 22px;
+     }
+
+     .purchasing-form-card-header {
+         flex-direction: column;
+         align-items: flex-start;
+
+         padding: 24px;
+     }
+
+     .purchasing-form-grid {
+         grid-template-columns: 1fr;
+     }
+
+     .purchasing-form-field-full {
+         grid-column: auto;
+     }
+
+     .purchasing-form-body {
+         padding: 24px;
+     }
+ }
+
+
+ @media (max-width: 550px) {
+
+     .purchasing-form-card {
+         border-radius: 13px;
+     }
+
+     .purchasing-form-card-header {
+         padding: 20px;
+     }
+
+     .purchasing-form-heading-text h1 {
+         font-size: 22px;
+     }
+
+     .purchasing-form-body {
+         padding: 20px 16px 24px;
+     }
+
+     .purchasing-form-actions {
+         flex-direction: column;
+     }
+
+     .purchasing-form-action {
+         width: 100%;
+     }
+
+     .purchasing-form-summary-row {
+         flex-direction: column;
+
+         gap: 4px;
+     }
+ }/* =========================================================
+     LANKATEX - PURCHASING MODULE FORM STYLES
+     Used by Supplier, Purchase Request,
+     Purchase Order and Purchase Order Item forms
+     ========================================================= */
+
+
+  /* =========================================================
+     FORM PAGE WRAPPER
+     ========================================================= */
+
+  .purchasing-form-page {
+      width: min(94%, 1100px);
+      margin: 0 auto;
+      padding: 34px 0 60px;
+  }
+
+
+  /* =========================================================
+     FORM CARD
+     ========================================================= */
+
+  .purchasing-form-card {
+      overflow: hidden;
+
+      border: 1px solid #dce3eb;
+      border-radius: 18px;
+
+      background: rgba(255, 255, 255, 0.97);
+
+      box-shadow:
+              0 14px 40px rgba(15, 35, 55, 0.12);
+  }
+
+
+  /* =========================================================
+     FORM CARD HEADER
+     ========================================================= */
+
+  .purchasing-form-card-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+
+      gap: 20px;
+
+      padding: 28px 32px;
+
+      color: #ffffff;
+
+      background:
+              linear-gradient(
+                      135deg,
+                      #0b1f33,
+                      #0f766e
+              );
+  }
+
+  .purchasing-form-heading {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+  }
+
+  .purchasing-form-heading-icon {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+
+      width: 50px;
+      height: 50px;
+
+      flex-shrink: 0;
+
+      border-radius: 13px;
+
+      color: #0b1f33;
+
+      background: #ffffff;
+
+      font-size: 18px;
+      font-weight: 800;
+
+      box-shadow:
+              0 6px 18px rgba(0, 0, 0, 0.16);
+  }
+
+  .purchasing-form-heading-text h1 {
+      margin: 0;
+
+      font-size: 26px;
+      font-weight: 750;
+  }
+
+  .purchasing-form-heading-text p {
+      margin: 7px 0 0;
+
+      color: rgba(255, 255, 255, 0.80);
+
+      font-size: 13px;
+      line-height: 1.6;
+  }
+
+
+  /* =========================================================
+     FORM BODY
+     ========================================================= */
+
+  .purchasing-form-body {
+      padding: 30px 32px 34px;
+  }
+
+
+  /* =========================================================
+     FORM SECTIONS
+     ========================================================= */
+
+  .purchasing-form-section {
+      margin-bottom: 28px;
+      padding-bottom: 26px;
+
+      border-bottom: 1px solid #e6ebf0;
+  }
+
+  .purchasing-form-section:last-child {
+      margin-bottom: 0;
+      padding-bottom: 0;
+
+      border-bottom: none;
+  }
+
+  .purchasing-form-section-header {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+
+      margin-bottom: 20px;
+  }
+
+  .purchasing-form-section-icon {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+
+      width: 34px;
+      height: 34px;
+
+      flex-shrink: 0;
+
+      border-radius: 9px;
+
+      color: #0f766e;
+
+      background: #dff5f2;
+
+      font-size: 13px;
+      font-weight: 800;
+  }
+
+  .purchasing-form-section-title {
+      margin: 0;
+
+      color: #0b1f33;
+
+      font-size: 17px;
+      font-weight: 750;
+  }
+
+  .purchasing-form-section-description {
+      margin: 5px 0 0;
+
+      color: #667085;
+
+      font-size: 12px;
+  }
+
+
+  /* =========================================================
+     GRID LAYOUT
+     ========================================================= */
+
+  .purchasing-form-grid {
+      display: grid;
+
+      grid-template-columns:
+              repeat(2, minmax(0, 1fr));
+
+      gap: 20px 22px;
+  }
+
+  .purchasing-form-field {
+      display: flex;
+      flex-direction: column;
+
+      gap: 7px;
+  }
+
+  .purchasing-form-field-full {
+      grid-column: 1 / -1;
+  }
+
+
+  /* =========================================================
+     LABELS
+     ========================================================= */
+
+  .purchasing-form-label {
+      color: #344054;
+
+      font-size: 13px;
+      font-weight: 650;
+  }
+
+  .purchasing-required {
+      margin-left: 2px;
+
+      color: #c62828;
+  }
+
+
+  /* =========================================================
+     INPUTS
+     ========================================================= */
+
+  .purchasing-form-input,
+  .purchasing-form-select,
+  .purchasing-form-textarea {
+      width: 100%;
+
+      border: 1px solid #d0d7df;
+      border-radius: 9px;
+
+      color: #172033;
+
+      background: #ffffff;
+
+      outline: none;
+
+      font-size: 14px;
+
+      transition:
+              border-color 0.18s ease,
+              box-shadow 0.18s ease,
+              background-color 0.18s ease;
+  }
+
+  .purchasing-form-input,
+  .purchasing-form-select {
+      min-height: 45px;
+
+      padding: 10px 13px;
+  }
+
+  .purchasing-form-textarea {
+      min-height: 115px;
+
+      padding: 12px 13px;
+
+      resize: vertical;
+  }
+
+  .purchasing-form-input:focus,
+  .purchasing-form-select:focus,
+  .purchasing-form-textarea:focus {
+      border-color: #0f766e;
+
+      box-shadow:
+              0 0 0 3px rgba(15, 118, 110, 0.10);
+  }
+
+  .purchasing-form-input::placeholder,
+  .purchasing-form-textarea::placeholder {
+      color: #98a2b3;
+  }
+
+
+  /* =========================================================
+     READ ONLY / DISABLED FIELDS
+     ========================================================= */
+
+  .purchasing-form-input[readonly],
+  .purchasing-form-input:disabled,
+  .purchasing-form-select:disabled,
+  .purchasing-form-textarea:disabled {
+      color: #667085;
+
+      border-color: #e2e8f0;
+
+      background: #f2f4f7;
+
+      cursor: not-allowed;
+  }
+
+
+  /* =========================================================
+     FIELD HELP TEXT
+     ========================================================= */
+
+  .purchasing-form-help {
+      margin: 0;
+
+      color: #667085;
+
+      font-size: 11px;
+      line-height: 1.5;
+  }
+
+  .purchasing-form-help-important {
+      color: #b45309;
+  }
+
+
+  /* =========================================================
+     FIELD ERROR
+     ========================================================= */
+
+  .purchasing-form-error {
+      margin: 0;
+
+      color: #b42318;
+
+      font-size: 11px;
+      font-weight: 600;
+  }
+
+  .purchasing-form-input-error {
+      border-color: #f04438;
+  }
+
+  .purchasing-form-input-error:focus {
+      border-color: #f04438;
+
+      box-shadow:
+              0 0 0 3px rgba(240, 68, 56, 0.10);
+  }
+
+
+  /* =========================================================
+     INFORMATION BOX
+     ========================================================= */
+
+  .purchasing-form-info {
+      display: flex;
+      align-items: flex-start;
+
+      gap: 12px;
+
+      margin-bottom: 24px;
+
+      padding: 14px 16px;
+
+      border: 1px solid #b9e6e2;
+      border-radius: 10px;
+
+      color: #0b5f59;
+
+      background: #effcf9;
+
+      font-size: 13px;
+      line-height: 1.6;
+  }
+
+  .purchasing-form-info-icon {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+
+      width: 25px;
+      height: 25px;
+
+      flex-shrink: 0;
+
+      border-radius: 50%;
+
+      color: #ffffff;
+
+      background: #0f766e;
+
+      font-size: 12px;
+      font-weight: 800;
+  }
+
+
+  /* =========================================================
+     WARNING BOX
+     ========================================================= */
+
+  .purchasing-form-warning {
+      display: flex;
+      align-items: flex-start;
+
+      gap: 12px;
+
+      margin-bottom: 24px;
+
+      padding: 14px 16px;
+
+      border: 1px solid #fed7aa;
+      border-radius: 10px;
+
+      color: #9a3412;
+
+      background: #fff7ed;
+
+      font-size: 13px;
+      line-height: 1.6;
+  }
+
+
+  /* =========================================================
+     FORM ACTION AREA
+     ========================================================= */
+
+  .purchasing-form-actions {
+      display: flex;
+      align-items: center;
+      justify-content: flex-end;
+
+      gap: 10px;
+      flex-wrap: wrap;
+
+      margin-top: 30px;
+      padding-top: 24px;
+
+      border-top: 1px solid #e6ebf0;
+  }
+
+  .purchasing-form-action {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+
+      min-width: 120px;
+      min-height: 43px;
+
+      padding: 10px 18px;
+
+      border: none;
+      border-radius: 9px;
+
+      font-size: 13px;
+      font-weight: 700;
+
+      cursor: pointer;
+
+      transition:
+              transform 0.18s ease,
+              background-color 0.18s ease,
+              box-shadow 0.18s ease;
+  }
+
+  .purchasing-form-action:hover {
+      transform: translateY(-1px);
+  }
+
+
+  /* =========================================================
+     PRIMARY SAVE BUTTON
+     ========================================================= */
+
+  .purchasing-form-save {
+      color: #ffffff;
+
+      background: #0f766e;
+
+      box-shadow:
+              0 6px 18px rgba(15, 118, 110, 0.22);
+  }
+
+  .purchasing-form-save:hover {
+      color: #ffffff;
+
+      background: #0b5f59;
+  }
+
+
+  /* =========================================================
+     CANCEL BUTTON
+     ========================================================= */
+
+  .purchasing-form-cancel {
+      color: #344054;
+
+      border: 1px solid #d0d7df;
+
+      background: #ffffff;
+  }
+
+  .purchasing-form-cancel:hover {
+      color: #0b1f33;
+
+      background: #f8fafc;
+  }
+
+
+  /* =========================================================
+     DELETE BUTTON
+     ========================================================= */
+
+  .purchasing-form-delete {
+      color: #ffffff;
+
+      background: #c62828;
+  }
+
+  .purchasing-form-delete:hover {
+      color: #ffffff;
+
+      background: #a91d1d;
+  }
+
+
+  /* =========================================================
+     FORM RECORD CODE
+     ========================================================= */
+
+  .purchasing-form-code-box {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+
+      gap: 12px;
+
+      padding: 13px 15px;
+
+      border: 1px solid #b9e6e2;
+      border-radius: 10px;
+
+      background: #f0fdfa;
+  }
+
+  .purchasing-form-code-label {
+      color: #667085;
+
+      font-size: 12px;
+      font-weight: 600;
+  }
+
+  .purchasing-form-code {
+      color: #0b5f59;
+
+      font-size: 15px;
+      font-weight: 800;
+  }
+
+
+  /* =========================================================
+     STATUS SELECT AREA
+     ========================================================= */
+
+  .purchasing-status-field {
+      position: relative;
+  }
+
+  .purchasing-status-note {
+      margin-top: 7px;
+
+      color: #667085;
+
+      font-size: 11px;
+  }
+
+
+  /* =========================================================
+     MONEY / QUANTITY FIELDS
+     ========================================================= */
+
+  .purchasing-number-field {
+      position: relative;
+  }
+
+  .purchasing-input-prefix,
+  .purchasing-input-suffix {
+      position: absolute;
+
+      top: 50%;
+
+      transform: translateY(-50%);
+
+      color: #667085;
+
+      font-size: 12px;
+      font-weight: 600;
+
+      pointer-events: none;
+  }
+
+  .purchasing-input-prefix {
+      left: 13px;
+  }
+
+  .purchasing-input-suffix {
+      right: 13px;
+  }
+
+  .purchasing-input-with-prefix {
+      padding-left: 48px;
+  }
+
+  .purchasing-input-with-suffix {
+      padding-right: 48px;
+  }
+
+
+  /* =========================================================
+     OPTIONAL SUMMARY PANEL
+     ========================================================= */
+
+  .purchasing-form-summary {
+      margin-top: 24px;
+
+      padding: 20px;
+
+      border: 1px solid #dce3eb;
+      border-radius: 12px;
+
+      background:
+              linear-gradient(
+                      180deg,
+                      #fbfcfd,
+                      #f5f8fa
+              );
+  }
+
+  .purchasing-form-summary-title {
+      margin: 0 0 15px;
+
+      color: #0b1f33;
+
+      font-size: 15px;
+      font-weight: 750;
+  }
+
+  .purchasing-form-summary-row {
+      display: flex;
+      justify-content: space-between;
+
+      gap: 20px;
+
+      padding: 8px 0;
+
+      border-bottom: 1px solid #e6ebf0;
+
+      font-size: 13px;
+  }
+
+  .purchasing-form-summary-row:last-child {
+      border-bottom: none;
+  }
+
+  .purchasing-form-summary-label {
+      color: #667085;
+  }
+
+  .purchasing-form-summary-value {
+      color: #0b1f33;
+
+      font-weight: 700;
+  }
+
+
+  /* =========================================================
+     PURCHASE ORDER ITEM SECTION
+     ========================================================= */
+
+  .purchasing-item-box {
+      margin-bottom: 18px;
+
+      padding: 20px;
+
+      border: 1px solid #dce3eb;
+      border-radius: 12px;
+
+      background: #fbfcfd;
+  }
+
+  .purchasing-item-box:last-child {
+      margin-bottom: 0;
+  }
+
+  .purchasing-item-box-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+
+      gap: 15px;
+
+      margin-bottom: 18px;
+  }
+
+  .purchasing-item-box-title {
+      margin: 0;
+
+      color: #0b1f33;
+
+      font-size: 15px;
+      font-weight: 700;
+  }
+
+
+  /* =========================================================
+     FORM ALERTS
+     ========================================================= */
+
+  .purchasing-form-alert {
+      margin-bottom: 22px;
+
+      padding: 13px 16px;
+
+      border-radius: 9px;
+
+      font-size: 13px;
+      font-weight: 600;
+  }
+
+  .purchasing-form-alert-success {
+      color: #166534;
+
+      border: 1px solid #bbf7d0;
+
+      background: #f0fdf4;
+  }
+
+  .purchasing-form-alert-error {
+      color: #991b1b;
+
+      border: 1px solid #fecaca;
+
+      background: #fef2f2;
+  }
+
+
+  /* =========================================================
+     MOBILE / TABLET
+     ========================================================= */
+
+  @media (max-width: 800px) {
+
+      .purchasing-form-page {
+          width: 94%;
+
+          padding-top: 22px;
+      }
+
+      .purchasing-form-card-header {
+          flex-direction: column;
+          align-items: flex-start;
+
+          padding: 24px;
+      }
+
+      .purchasing-form-grid {
+          grid-template-columns: 1fr;
+      }
+
+      .purchasing-form-field-full {
+          grid-column: auto;
+      }
+
+      .purchasing-form-body {
+          padding: 24px;
+      }
+  }
+
+
+  @media (max-width: 550px) {
+
+      .purchasing-form-card {
+          border-radius: 13px;
+      }
+
+      .purchasing-form-card-header {
+          padding: 20px;
+      }
+
+      .purchasing-form-heading-text h1 {
+          font-size: 22px;
+      }
+
+      .purchasing-form-body {
+          padding: 20px 16px 24px;
+      }
+
+      .purchasing-form-actions {
+          flex-direction: column;
+      }
+
+      .purchasing-form-action {
+          width: 100%;
+      }
+
+      .purchasing-form-summary-row {
+          flex-direction: column;
+
+          gap: 4px;
+      }
+  }

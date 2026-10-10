@@ -1,5 +1,7 @@
 package com.lankatex.smarttextile.purchasing.controller;
 
+import com.lankatex.smarttextile.inventory.entity.Material;
+import com.lankatex.smarttextile.inventory.service.MaterialService;
 import com.lankatex.smarttextile.purchasing.entity.PurchaseOrder;
 import com.lankatex.smarttextile.purchasing.entity.PurchaseOrderItem;
 import com.lankatex.smarttextile.purchasing.entity.PurchaseRequest;
@@ -11,19 +13,24 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
 @Controller
 @RequestMapping("/purchasing")
 public class PurchasingController {
 
     private final PurchasingService service;
-
+    private final MaterialService materialService;
 
     public PurchasingController(
-            PurchasingService service) {
+            PurchasingService service,
+            MaterialService materialService) {
 
         this.service = service;
+        this.materialService = materialService;
     }
-
 
     // =====================================================
     // DASHBOARD
@@ -40,15 +47,13 @@ public class PurchasingController {
         return "purchasing/dashboard";
     }
 
-
     // =====================================================
     // SUPPLIER
     // =====================================================
 
     @GetMapping("/suppliers")
     public String suppliers(
-            @RequestParam(required = false)
-            Long editId,
+            @RequestParam(required = false) Long editId,
             Model model) {
 
         model.addAttribute(
@@ -66,6 +71,39 @@ public class PurchasingController {
         return "purchasing/suppliers";
     }
 
+    @GetMapping("/suppliers/new")
+    public String newSupplier(Model model) {
+
+        model.addAttribute(
+                "supplier",
+                new Supplier()
+        );
+
+        model.addAttribute(
+                "isEdit",
+                false
+        );
+
+        return "purchasing/supplier-form";
+    }
+
+    @GetMapping("/suppliers/edit/{id}")
+    public String editSupplier(
+            @PathVariable Long id,
+            Model model) {
+
+        model.addAttribute(
+                "supplier",
+                service.getSupplier(id)
+        );
+
+        model.addAttribute(
+                "isEdit",
+                true
+        );
+
+        return "purchasing/supplier-form";
+    }
 
     @PostMapping("/suppliers/save")
     public String saveSupplier(
@@ -92,8 +130,6 @@ public class PurchasingController {
         return "redirect:/purchasing/suppliers";
     }
 
-
-    // ARCHIVE
     @PostMapping("/suppliers/archive/{id}")
     public String archiveSupplier(
             @PathVariable Long id,
@@ -119,8 +155,6 @@ public class PurchasingController {
         return "redirect:/purchasing/suppliers";
     }
 
-
-    // RESTORE
     @PostMapping("/suppliers/restore/{id}")
     public String restoreSupplier(
             @PathVariable Long id,
@@ -146,8 +180,6 @@ public class PurchasingController {
         return "redirect:/purchasing/suppliers";
     }
 
-
-    // HARD DELETE
     @PostMapping("/suppliers/delete/{id}")
     public String deleteSupplier(
             @PathVariable Long id,
@@ -173,15 +205,13 @@ public class PurchasingController {
         return "redirect:/purchasing/suppliers";
     }
 
-
     // =====================================================
     // PURCHASE REQUEST
     // =====================================================
 
     @GetMapping("/requests")
     public String requests(
-            @RequestParam(required = false)
-            Long editId,
+            @RequestParam(required = false) Long editId,
             Model model) {
 
         model.addAttribute(
@@ -199,11 +229,43 @@ public class PurchasingController {
         return "purchasing/requests";
     }
 
+    @GetMapping("/requests/new")
+    public String newPurchaseRequest(Model model) {
+
+        model.addAttribute(
+                "purchaseRequest",
+                new PurchaseRequest()
+        );
+
+        model.addAttribute(
+                "isEdit",
+                false
+        );
+
+        return "purchasing/request-form";
+    }
+
+    @GetMapping("/requests/edit/{id}")
+    public String editPurchaseRequest(
+            @PathVariable Long id,
+            Model model) {
+
+        model.addAttribute(
+                "purchaseRequest",
+                service.getPurchaseRequest(id)
+        );
+
+        model.addAttribute(
+                "isEdit",
+                true
+        );
+
+        return "purchasing/request-form";
+    }
 
     @PostMapping("/requests/save")
     public String savePurchaseRequest(
-            @ModelAttribute
-            PurchaseRequest purchaseRequest,
+            @ModelAttribute PurchaseRequest purchaseRequest,
             RedirectAttributes redirectAttributes) {
 
         try {
@@ -228,8 +290,6 @@ public class PurchasingController {
         return "redirect:/purchasing/requests";
     }
 
-
-    // ARCHIVE
     @PostMapping("/requests/archive/{id}")
     public String archivePurchaseRequest(
             @PathVariable Long id,
@@ -255,8 +315,6 @@ public class PurchasingController {
         return "redirect:/purchasing/requests";
     }
 
-
-    // RESTORE
     @PostMapping("/requests/restore/{id}")
     public String restorePurchaseRequest(
             @PathVariable Long id,
@@ -282,8 +340,6 @@ public class PurchasingController {
         return "redirect:/purchasing/requests";
     }
 
-
-    // HARD DELETE
     @PostMapping("/requests/delete/{id}")
     public String deletePurchaseRequest(
             @PathVariable Long id,
@@ -309,15 +365,13 @@ public class PurchasingController {
         return "redirect:/purchasing/requests";
     }
 
-
     // =====================================================
     // PURCHASE ORDER
     // =====================================================
 
     @GetMapping("/orders")
     public String orders(
-            @RequestParam(required = false)
-            Long editId,
+            @RequestParam(required = false) Long editId,
             Model model) {
 
         model.addAttribute(
@@ -335,11 +389,63 @@ public class PurchasingController {
         return "purchasing/orders";
     }
 
+    @GetMapping("/orders/new")
+    public String newPurchaseOrder(Model model) {
+
+        model.addAttribute(
+                "purchaseOrder",
+                new PurchaseOrder()
+        );
+
+        model.addAttribute(
+                "suppliersList",
+                service.getAllSuppliers()
+        );
+
+        model.addAttribute(
+                "requestsList",
+                service.getAllPurchaseRequests()
+        );
+
+        model.addAttribute(
+                "isEdit",
+                false
+        );
+
+        return "purchasing/order-form";
+    }
+
+    @GetMapping("/orders/edit/{id}")
+    public String editPurchaseOrder(
+            @PathVariable Long id,
+            Model model) {
+
+        model.addAttribute(
+                "purchaseOrder",
+                service.getPurchaseOrder(id)
+        );
+
+        model.addAttribute(
+                "suppliersList",
+                service.getAllSuppliers()
+        );
+
+        model.addAttribute(
+                "requestsList",
+                service.getAllPurchaseRequests()
+        );
+
+        model.addAttribute(
+                "isEdit",
+                true
+        );
+
+        return "purchasing/order-form";
+    }
 
     @PostMapping("/orders/save")
     public String savePurchaseOrder(
-            @ModelAttribute
-            PurchaseOrder purchaseOrder,
+            @ModelAttribute PurchaseOrder purchaseOrder,
             RedirectAttributes redirectAttributes) {
 
         try {
@@ -364,8 +470,6 @@ public class PurchasingController {
         return "redirect:/purchasing/orders";
     }
 
-
-    // ARCHIVE
     @PostMapping("/orders/archive/{id}")
     public String archivePurchaseOrder(
             @PathVariable Long id,
@@ -391,8 +495,6 @@ public class PurchasingController {
         return "redirect:/purchasing/orders";
     }
 
-
-    // RESTORE
     @PostMapping("/orders/restore/{id}")
     public String restorePurchaseOrder(
             @PathVariable Long id,
@@ -418,8 +520,6 @@ public class PurchasingController {
         return "redirect:/purchasing/orders";
     }
 
-
-    // HARD DELETE
     @PostMapping("/orders/delete/{id}")
     public String deletePurchaseOrder(
             @PathVariable Long id,
@@ -445,16 +545,40 @@ public class PurchasingController {
         return "redirect:/purchasing/orders";
     }
 
-
     // =====================================================
     // PURCHASE ORDER ITEM
     // =====================================================
 
     @GetMapping("/items")
     public String items(
-            @RequestParam(required = false)
-            Long editId,
+            @RequestParam(required = false) Long editId,
             Model model) {
+
+        List<PurchaseOrder> purchaseOrders =
+                service.getAllPurchaseOrders();
+
+        List<Material> materials =
+                materialService.getActiveMaterials(null);
+
+        Map<Long, PurchaseOrder> orderMap =
+                new HashMap<>();
+
+        for (PurchaseOrder order : purchaseOrders) {
+            orderMap.put(
+                    order.getPoId(),
+                    order
+            );
+        }
+
+        Map<Long, Material> materialMap =
+                new HashMap<>();
+
+        for (Material material : materials) {
+            materialMap.put(
+                    material.getMaterialId(),
+                    material
+            );
+        }
 
         model.addAttribute(
                 "purchaseOrderItem",
@@ -468,14 +592,76 @@ public class PurchasingController {
                 service.getAllPurchaseOrderItems()
         );
 
+        model.addAttribute(
+                "orderMap",
+                orderMap
+        );
+
+        model.addAttribute(
+                "materialMap",
+                materialMap
+        );
+
         return "purchasing/items";
     }
 
+    @GetMapping("/items/new")
+    public String newPurchaseOrderItem(Model model) {
+
+        model.addAttribute(
+                "purchaseOrderItem",
+                new PurchaseOrderItem()
+        );
+
+        model.addAttribute(
+                "purchaseOrders",
+                service.getAllPurchaseOrders()
+        );
+
+        model.addAttribute(
+                "materials",
+                materialService.getActiveMaterials(null)
+        );
+
+        model.addAttribute(
+                "isEdit",
+                false
+        );
+
+        return "purchasing/item-form";
+    }
+
+    @GetMapping("/items/edit/{id}")
+    public String editPurchaseOrderItem(
+            @PathVariable Long id,
+            Model model) {
+
+        model.addAttribute(
+                "purchaseOrderItem",
+                service.getPurchaseOrderItem(id)
+        );
+
+        model.addAttribute(
+                "purchaseOrders",
+                service.getAllPurchaseOrders()
+        );
+
+        model.addAttribute(
+                "materials",
+                materialService.getActiveMaterials(null)
+        );
+
+        model.addAttribute(
+                "isEdit",
+                true
+        );
+
+        return "purchasing/item-form";
+    }
 
     @PostMapping("/items/save")
     public String savePurchaseOrderItem(
-            @ModelAttribute
-            PurchaseOrderItem purchaseOrderItem,
+            @ModelAttribute PurchaseOrderItem purchaseOrderItem,
             RedirectAttributes redirectAttributes) {
 
         try {
@@ -500,8 +686,6 @@ public class PurchasingController {
         return "redirect:/purchasing/items";
     }
 
-
-    // HARD DELETE
     @PostMapping("/items/delete/{id}")
     public String deletePurchaseOrderItem(
             @PathVariable Long id,

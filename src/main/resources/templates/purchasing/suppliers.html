@@ -1,372 +1,132 @@
 <!DOCTYPE html>
-<html lang="en"
-      xmlns:th="http://www.thymeleaf.org">
-
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
-
   <meta charset="UTF-8">
-
-  <meta name="viewport"
-        content="width=device-width, initial-scale=1">
-
-  <title>
-    Suppliers - LankaTex
-  </title>
-
-  <!-- Bootstrap CSS -->
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Suppliers | LankaTex</title>
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
         rel="stylesheet">
-
-  <!-- Common LankaTex Navigation CSS -->
-  <link rel="stylesheet"
-        th:href="@{/css/common-navbar.css}">
-
+  <link rel="stylesheet" th:href="@{/css/common-navbar.css}">
+  <link rel="stylesheet" th:href="@{/css/purchasing/purchasing-ui.css}">
+  <script defer th:src="@{/js/purchasing/purchasing-ui.js}"></script>
 </head>
-
-
-<body class="bg-light">
-
-
-<!-- Common LankaTex Navigation Bar -->
+<body class="purchasing-page">
 <div th:replace="~{fragments/common-navbar :: navbar}"></div>
-
-
-<div class="container py-4">
-
-
-  <!-- Page Header -->
-  <div class="d-flex justify-content-between align-items-center mb-3">
-
-    <h2>
-      Supplier Management
-    </h2>
-
-    <a class="btn btn-dark btn-sm"
-       th:href="@{/purchasing}">
-      Dashboard
-    </a>
-
-  </div>
-
-
-  <!-- Purchasing Module Navigation -->
-  <div class="mb-3">
-
-    <a class="btn btn-primary btn-sm me-2 mb-2"
-       th:href="@{/purchasing/suppliers}">
-      Supplier
-    </a>
-
-    <a class="btn btn-outline-primary btn-sm me-2 mb-2"
-       th:href="@{/purchasing/requests}">
-      Purchase Request
-    </a>
-
-    <a class="btn btn-outline-primary btn-sm me-2 mb-2"
-       th:href="@{/purchasing/orders}">
-      Purchase Order
-    </a>
-
-    <a class="btn btn-outline-primary btn-sm me-2 mb-2"
-       th:href="@{/purchasing/items}">
-      Purchase Order Item
-    </a>
-
-  </div>
-
-
-  <!-- Success Message -->
-  <div th:if="${message}"
-       class="alert alert-success"
-       th:text="${message}">
-  </div>
-
-
-  <!-- Error Message -->
-  <div th:if="${error}"
-       class="alert alert-danger"
-       th:text="${error}">
-  </div>
-
-
-  <!-- Supplier Form -->
-  <div class="card shadow-sm mb-4">
-
-    <div class="card-header">
-
-      <strong>
-        Add / Edit Supplier
-      </strong>
-
+<main class="purchasing-container">
+  <section class="purchasing-hero">
+    <div class="purchasing-hero-left">
+      <span class="purchasing-eyebrow">LankaTex Purchasing</span>
+      <h1>Suppliers</h1>
+      <p>
+      </p>
     </div>
-
-
-    <div class="card-body">
-
-      <form th:action="@{/purchasing/suppliers/save}"
-            th:object="${supplier}"
-            method="post">
-
-        <input type="hidden"
-               th:field="*{supplierId}">
-
-
-        <div class="row">
-
-
-          <!-- Supplier Name -->
-          <div class="col-md-6 mb-3">
-
-            <label class="form-label">
-              Supplier Name
-            </label>
-
-            <input class="form-control"
-                   type="text"
-                   th:field="*{supplierName}"
-                   required>
-
-          </div>
-
-
-          <!-- Contact Person -->
-          <div class="col-md-6 mb-3">
-
-            <label class="form-label">
-              Contact Person
-            </label>
-
-            <input class="form-control"
-                   type="text"
-                   th:field="*{contactPerson}">
-
-          </div>
-
-
-          <!-- Phone -->
-          <div class="col-md-6 mb-3">
-
-            <label class="form-label">
-              Phone
-            </label>
-
-            <input class="form-control"
-                   type="text"
-                   th:field="*{phone}">
-
-          </div>
-
-
-          <!-- Email -->
-          <div class="col-md-6 mb-3">
-
-            <label class="form-label">
-              Email
-            </label>
-
-            <input class="form-control"
-                   type="email"
-                   th:field="*{email}">
-
-          </div>
-
-
-          <!-- Address -->
-          <div class="col-md-6 mb-3">
-
-            <label class="form-label">
-              Address
-            </label>
-
-            <input class="form-control"
-                   type="text"
-                   th:field="*{address}">
-
-          </div>
-
-
-          <!-- Status -->
-          <div class="col-md-6 mb-3">
-
-            <label class="form-label">
-              Status
-            </label>
-
-            <input class="form-control"
-                   type="text"
-                   th:field="*{status}">
-
-          </div>
-
-
+    Maintain supplier records used by LankaTex
+    purchase orders and procurement operations.
+    <div class="purchasing-hero-badge">
+      <div class="purchasing-hero-badge-line"></div>
+      <span>Purchasing Workspace</span>
+      <strong>Supplier Management</strong>
+    </div>
+  </section>
+  <section class="purchasing-panel">
+    <div class="purchasing-panel-header">
+      <div class="purchasing-heading-group">
+        <div class="purchasing-heading-icon">S</div>
+        <div>
+          <h2 class="purchasing-panel-title">Supplier List</h2>
+          <p class="purchasing-panel-subtitle">
+            Readable supplier codes use SUP-001 format.
+          </p>
         </div>
-
-
-        <button class="btn btn-success"
-                type="submit">
-          Save
-        </button>
-
-
-        <a class="btn btn-secondary"
-           th:href="@{/purchasing/suppliers}">
-          Clear
-        </a>
-
-
-      </form>
-
+      </div>
+      <div class="purchasing-top-actions">
+        <a class="purchasing-btn purchasing-btn-secondary"
+           th:href="@{/purchasing}">Back to Dashboard</a>
+        <a class="purchasing-btn purchasing-btn-primary"
+           th:href="@{/purchasing/suppliers/new}">+ Add Supplier</a>
+      </div>
     </div>
-
-  </div>
-
-
-  <!-- Supplier List -->
-  <div class="card shadow-sm">
-
-    <div class="card-header">
-
-      <strong>
-        Supplier List
-      </strong>
-
+    <div th:if="${message}"
+         class="alert alert-success purchasing-alert"
+         th:text="${message}"></div>
+    <div th:if="${error}"
+         class="alert alert-danger purchasing-alert"
+         th:text="${error}"></div>
+    <div class="purchasing-toolbar">
+      <input class="purchasing-search"
+             type="text"
+             placeholder="Search suppliers..."
+             data-table-search="suppliersTable">
     </div>
-
-
-    <div class="card-body table-responsive">
-
-      <table class="table table-striped table-bordered align-middle">
-
-        <thead class="table-dark">
-
+    <div class="purchasing-table-wrapper">
+      <table id="suppliersTable" class="purchasing-table">
+        <thead>
         <tr>
-
-          <th>ID</th>
+          <th>Supplier Code</th>
           <th>Supplier Name</th>
           <th>Contact Person</th>
           <th>Phone</th>
           <th>Email</th>
-          <th>Address</th>
           <th>Status</th>
           <th>Actions</th>
-
         </tr>
-
         </thead>
-
-
         <tbody>
-
-
         <tr th:each="row : ${suppliersList}">
-
-          <td th:text="${row.supplierId}">
-          </td>
-
-          <td th:text="${row.supplierName}">
-          </td>
-
-          <td th:text="${row.contactPerson}">
-          </td>
-
-          <td th:text="${row.phone}">
-          </td>
-
-          <td th:text="${row.email}">
-          </td>
-
-          <td th:text="${row.address}">
-          </td>
-
-
-          <!-- Status -->
+          <td class="code-value" th:text="${row.supplierCode}"></td>
+          <td class="name-value" th:text="${row.supplierName}"></td>
+          <td th:text="${row.contactPerson != null ? row.contactPerson : '-'}"></td>
+          <td th:text="${row.phone != null ? row.phone : '-'}"></td>
+          <td th:text="${row.email != null ? row.email : '-'}"></td>
           <td>
-
-                        <span th:if="${row.status == 'Archived'}"
-                              class="badge bg-secondary">
-                            Archived
-                        </span>
-
-            <span th:unless="${row.status == 'Archived'}"
-                  class="badge bg-success"
-                  th:text="${row.status}">
-                        </span>
-
+<span class="status-badge"
+      th:classappend="${row.status == 'Archived'} ? ' status-archived' : ' status-active'"
+      th:text="${row.status}"></span>
           </td>
-
-
-          <!-- Actions -->
-          <td class="text-nowrap">
-
-
-            <!-- Edit -->
-            <a class="btn btn-warning btn-sm"
-               th:href="@{/purchasing/suppliers(editId=${row.supplierId})}">
-              Edit
-            </a>
-
-
-            <!-- Archive -->
-            <form th:if="${row.status != 'Archived'}"
-                  method="post"
-                  class="d-inline"
-                  th:action="@{/purchasing/suppliers/archive/{id}(id=${row.supplierId})}">
-
-              <button type="submit"
-                      class="btn btn-secondary btn-sm"
-                      onclick="return confirm('Archive this Supplier?');">
+          <td>
+            <div class="purchasing-actions">
+              <a class="purchasing-action-button action-edit"
+                 th:href="@{/purchasing/suppliers/edit/{id}(id=${row.supplierId})}"
+                 Edit>
+              </a>
+              <form th:if="${row.status != 'Archived'}"
+                    method="post"
+                    th:action="@{/purchasing/suppliers/archive/{id}(id=${row.supplierId})}">
+              <button class="purchasing-action-button action-archive"
+                      type="submit"
+                      onclick="return confirm('Archive this supplier?');">
                 Archive
               </button>
-
-            </form>
-
-
-            <!-- Restore -->
-            <form th:if="${row.status == 'Archived'}"
-                  method="post"
-                  class="d-inline"
-                  th:action="@{/purchasing/suppliers/restore/{id}(id=${row.supplierId})}">
-
-              <button type="submit"
-                      class="btn btn-success btn-sm"
-                      onclick="return confirm('Restore this Supplier?');">
+              </form>
+              <form th:if="${row.status == 'Archived'}"
+                    method="post"
+                    th:action="@{/purchasing/suppliers/restore/{id}(id=${row.supplierId})}">
+              <button class="purchasing-action-button action-restore"
+                      type="submit">
                 Restore
               </button>
-
-            </form>
-
-
-            <!-- Delete -->
-            <form method="post"
-                  class="d-inline"
-                  th:action="@{/purchasing/suppliers/delete/{id}(id=${row.supplierId})}">
-
-              <button type="submit"
-                      class="btn btn-danger btn-sm"
-                      onclick="return confirm('WARNING: Permanently delete this Supplier?');">
-                Delete
+              </form>
+              <form method="post"
+                    th:action="@{/purchasing/suppliers/delete/{id}(id=${row.supplierId})}">
+              <button class="purchasing-action-button action-delete"
+                      type="submit"
+                      onclick="return confirm('Permanently delete this supplier?');"
+                      Delete>
               </button>
-
-            </form>
-
-
+              </form>
+            </div>
           </td>
-
         </tr>
-
-
+        <tr th:if="${#lists.isEmpty(suppliersList)}"
+            class="purchasing-empty-row">
+          <td colspan="7" class="purchasing-empty">
+            No suppliers found.
+          </td>
+        </tr>
         </tbody>
-
       </table>
-
     </div>
-
-  </div>
-
-
-</div>
-
-
+  </section>
+</main>
 </body>
-
 </html>

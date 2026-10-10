@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title th:text="${isEdit} ? 'Edit Purchase Order | LankaTex' : 'New Purchase Order | LankaTex'"
+           Purchase Order | LankaTex>
+    </title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
+          rel="stylesheet">
+    <link rel="stylesheet" th:href="@{/css/common-navbar.css}">
+    <link rel="stylesheet" th:href="@{/css/purchasing/purchasing-ui.css}">
+    <link rel="stylesheet" th:href="@{/css/purchasing/purchasing-forms.css}">
+</head>
+<body class="purchasing-page">
+<div th:replace="~{fragments/common-navbar :: navbar}"></div>
+<main class="purchasing-container purchasing-form-workspace">
+    <section class="purchasing-form-card">
+        <div class="purchasing-form-heading">
+            <span class="purchasing-eyebrow">LankaTex Purchasing</span>
+            <h1 th:text="${isEdit} ? 'Edit Purchase Order' : 'New Purchase Order'">
+                Purchase Order
+            </h1>
+            <p>
+                Select a valid active supplier and optionally
+                link a Purchase Request before saving the order.
+            </p>
+        </div>
+        <form method="post"
+              th:action="@{/purchasing/orders/save}"
+              th:object="${purchaseOrder}">
+            <input type="hidden" th:field="*{poId}">
+            <div class="purchasing-form-section">
+                <h2 class="purchasing-form-section-title">Supplier &amp; Request</h2>
+                <div class="mb-3">
+                    <label class="form-label">Supplier</label>
+                    <select class="form-select"
+                            th:field="*{supplierId}"
+                            required>
+                        <option value="">Select Active Supplier</option>
+                        <option th:each="supplier : ${suppliers}"
+                                th:value="${supplier.supplierId}"
+                                th:text="${supplier.supplierCode + '- ' + supplier.supplierName}"></option>
+                    </select>
+                    <small class="purchasing-field-help">
+                        Archived suppliers are not available for selection.
+                    </small>
+                </div>
+                <div class="mb-3">
+                    <label class="form-label">Purchase Request</label>
+                    <select class="form-select" th:field="*{requestId}">
+                        <option value="">No Purchase Request</option>
+                        <option th:each="request : ${purchaseRequests}"
+                                th:value="${request.requestId}"
+                                th:text="${request.requestCode + '- ' + request.reason}">
+                    </select>
+                </div>
+            </div>
+            <div class="purchasing-form-section">
+                <h2 class="purchasing-form-section-title">Order Information</h2>
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        <label class="form-label">Order Date</label>
+                        <input class="form-control"
+                               type="date"
+                               th:field="*{orderDate}"
+                               required>
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <label class="form-label">Expected Delivery Date</label>
+                        <input class="form-control"
+                               type="date"
+                               th:field="*{expectedDeliveryDate}"
+                               required>
+                    </div>
+                </div>
+                <div class="mb-3">
+                    <label class="form-label">Total Amount</label>
+                    <input class="form-control"
+                           type="number"
+                           step="0.01"
+                           min="0"
+                           th:field="*{totalAmount}"
+                           required>
+                </div>
+            </div>
+            <div class="purchasing-form-section">
+                <h2 class="purchasing-form-section-title">Approval</h2>
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        <label class="form-label">Status</label>
+                        <select class="form-select" th:field="*{status}">
+                            <option value="Pending">Pending</option>
+                            <option value="Approved">Approved</option>
+                            <option value="Rejected">Rejected</option>
+                            <option th:if="${isEdit and purchaseOrder.status == 'Archived'}"
+                                    value="Archived">Archived</option>
+                        </select>
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <label class="form-label">Approved By User ID</label>
+                        <input class="form-control"
+                               type="number"
+                               min="1"
+                               th:field="*{approvedBy}">
+                    </div>
+                </div>
+            </div>
+            <div th:if="${isEdit}" class="line-total-box">
+                Purchase Order Code:
+                <strong th:text="${purchaseOrder.poCode}">PO-001</strong>
+            </div>
+            <div class="purchasing-form-actions">
+                <button class="purchasing-form-button purchasing-form-button-primary"
+                        type="submit"
+                        th:text="${isEdit} ? 'Update Purchase Order' : 'Save Purchase Order'"
+                        Save Purchase Order>
+                </button>
+                <a class="purchasing-form-button purchasing-form-button-secondary"
+                   th:href="@{/purchasing/orders}">
+                    Cancel
+                </a>
+            </div>
+        </form>
+    </section>
+</main>
+</body>
+</html>

@@ -1,16 +1,15 @@
 package com.lankatex.smarttextile.purchasing.entity;
 
 import jakarta.persistence.*;
-import java.math.BigDecimal;
 import lombok.Getter;
-import lombok.NoArgsConstructor;
 import lombok.Setter;
+
+import java.math.BigDecimal;
 
 @Entity
 @Table(name = "purchase_order_items")
 @Getter
 @Setter
-@NoArgsConstructor
 public class PurchaseOrderItem {
 
     @Id
@@ -23,6 +22,7 @@ public class PurchaseOrderItem {
 
     @Column(name = "material_id", nullable = false)
     private Long materialId;
+
     @Column(name = "quantity", nullable = false)
     private BigDecimal quantity;
 
@@ -31,4 +31,19 @@ public class PurchaseOrderItem {
 
     @Column(name = "received_qty")
     private BigDecimal receivedQty;
+
+    // User-friendly display code.
+    // This value is calculated from poItemId and is not stored in the database.
+    @Transient
+    public String getPoItemCode() {
+
+        if (poItemId == null) {
+            return "POI-NEW";
+        }
+
+        return String.format(
+                "POI-%03d",
+                poItemId
+        );
+    }
 }

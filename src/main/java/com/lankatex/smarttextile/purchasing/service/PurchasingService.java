@@ -26,7 +26,6 @@ public class PurchasingService {
     private final PurchaseOrderRepository purchaseOrderRepository;
     private final PurchaseOrderItemRepository purchaseOrderItemRepository;
 
-
     public PurchasingService(
             SupplierRepository supplierRepository,
             PurchaseRequestRepository purchaseRequestRepository,
@@ -38,7 +37,6 @@ public class PurchasingService {
         this.purchaseOrderRepository = purchaseOrderRepository;
         this.purchaseOrderItemRepository = purchaseOrderItemRepository;
     }
-
 
     // =====================================================
     // DASHBOARD
@@ -54,15 +52,12 @@ public class PurchasingService {
         );
     }
 
-
     // =====================================================
     // SUPPLIER CRUD
     // =====================================================
 
     public List<Supplier> getAllSuppliers() {
 
-        // Active + Archived suppliers දෙකම show කරනවා.
-        // Archived record Restore කරන්න ඒක අවශ්‍යයි.
         return supplierRepository.findAll(
                 Sort.by(
                         Sort.Direction.DESC,
@@ -70,7 +65,6 @@ public class PurchasingService {
                 )
         );
     }
-
 
     public Supplier getSupplier(Long id) {
 
@@ -81,7 +75,6 @@ public class PurchasingService {
                         )
                 );
     }
-
 
     // CREATE / UPDATE
     public Supplier saveSupplier(Supplier supplier) {
@@ -103,9 +96,7 @@ public class PurchasingService {
         return supplierRepository.save(supplier);
     }
 
-
     // ARCHIVE
-    // Active -> Archived
     public void archiveSupplier(Long id) {
 
         Supplier supplier = getSupplier(id);
@@ -115,9 +106,7 @@ public class PurchasingService {
         supplierRepository.save(supplier);
     }
 
-
     // RESTORE
-    // Archived -> Active
     public void restoreSupplier(Long id) {
 
         Supplier supplier = getSupplier(id);
@@ -126,7 +115,6 @@ public class PurchasingService {
 
         supplierRepository.save(supplier);
     }
-
 
     // HARD DELETE
     public void deleteSupplier(Long id) {
@@ -137,7 +125,6 @@ public class PurchasingService {
 
             supplierRepository.delete(supplier);
 
-            // Execute DELETE immediately
             supplierRepository.flush();
 
         } catch (DataIntegrityViolationException ex) {
@@ -147,7 +134,6 @@ public class PurchasingService {
             );
         }
     }
-
 
     // =====================================================
     // PURCHASE REQUEST CRUD
@@ -163,7 +149,6 @@ public class PurchasingService {
         );
     }
 
-
     public PurchaseRequest getPurchaseRequest(Long id) {
 
         return purchaseRequestRepository.findById(id)
@@ -173,7 +158,6 @@ public class PurchasingService {
                         )
                 );
     }
-
 
     // CREATE / UPDATE
     public PurchaseRequest savePurchaseRequest(
@@ -198,7 +182,6 @@ public class PurchasingService {
         );
     }
 
-
     // ARCHIVE
     public void archivePurchaseRequest(Long id) {
 
@@ -212,12 +195,7 @@ public class PurchasingService {
         );
     }
 
-
     // RESTORE
-    //
-    // Current database එකේ previous status save කරන
-    // වෙනම field එකක් නැති නිසා Archived record එක
-    // Pending status එකට restore කරනවා.
     public void restorePurchaseRequest(Long id) {
 
         PurchaseRequest purchaseRequest =
@@ -229,7 +207,6 @@ public class PurchasingService {
                 purchaseRequest
         );
     }
-
 
     // HARD DELETE
     public void deletePurchaseRequest(Long id) {
@@ -253,7 +230,6 @@ public class PurchasingService {
         }
     }
 
-
     // =====================================================
     // PURCHASE ORDER CRUD
     // =====================================================
@@ -268,7 +244,6 @@ public class PurchasingService {
         );
     }
 
-
     public PurchaseOrder getPurchaseOrder(Long id) {
 
         return purchaseOrderRepository.findById(id)
@@ -278,7 +253,6 @@ public class PurchasingService {
                         )
                 );
     }
-
 
     // CREATE / UPDATE
     public PurchaseOrder savePurchaseOrder(
@@ -302,7 +276,6 @@ public class PurchasingService {
         );
     }
 
-
     // ARCHIVE
     public void archivePurchaseOrder(Long id) {
 
@@ -316,7 +289,6 @@ public class PurchasingService {
         );
     }
 
-
     // RESTORE
     public void restorePurchaseOrder(Long id) {
 
@@ -329,7 +301,6 @@ public class PurchasingService {
                 purchaseOrder
         );
     }
-
 
     // HARD DELETE
     public void deletePurchaseOrder(Long id) {
@@ -353,7 +324,6 @@ public class PurchasingService {
         }
     }
 
-
     // =====================================================
     // PURCHASE ORDER ITEM CRUD
     // =====================================================
@@ -368,7 +338,6 @@ public class PurchasingService {
         );
     }
 
-
     public PurchaseOrderItem getPurchaseOrderItem(
             Long id) {
 
@@ -379,7 +348,6 @@ public class PurchasingService {
                         )
                 );
     }
-
 
     // CREATE / UPDATE
     public PurchaseOrderItem savePurchaseOrderItem(
@@ -420,11 +388,7 @@ public class PurchasingService {
         );
     }
 
-
     // HARD DELETE
-    //
-    // PurchaseOrderItem entity එකේ status field එකක් නැහැ.
-    // ඒ නිසා Archive / Restore apply වෙන්නේ නැහැ.
     public void deletePurchaseOrderItem(Long id) {
 
         PurchaseOrderItem purchaseOrderItem =

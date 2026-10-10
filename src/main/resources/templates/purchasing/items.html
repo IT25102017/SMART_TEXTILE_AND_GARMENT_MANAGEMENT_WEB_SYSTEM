@@ -1,247 +1,151 @@
 <!DOCTYPE html>
-<html lang="en"
-      xmlns:th="http://www.thymeleaf.org">
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
 
 <head>
-
   <meta charset="UTF-8">
 
   <meta name="viewport"
         content="width=device-width, initial-scale=1">
 
-  <title>
-    Purchase Order Item - LankaTex
-  </title>
+  <title>Purchase Order Items | LankaTex</title>
 
-  <!-- Bootstrap CSS -->
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
         rel="stylesheet">
 
-  <!-- Common LankaTex Navigation CSS -->
   <link rel="stylesheet"
         th:href="@{/css/common-navbar.css}">
 
+  <link rel="stylesheet"
+        th:href="@{/css/purchasing/purchasing-ui.css}">
+
+  <script defer
+          th:src="@{/js/purchasing/purchasing-ui.js}">
+  </script>
 </head>
 
 
-<body class="bg-light">
+<body class="purchasing-page">
 
-
-<!-- Common LankaTex Navigation Bar -->
 <div th:replace="~{fragments/common-navbar :: navbar}"></div>
 
 
-<div class="container py-4">
+<main class="purchasing-container">
 
+  <section class="purchasing-hero">
 
-  <!-- Page Header -->
-  <div class="d-flex justify-content-between align-items-center mb-3">
+    <div class="purchasing-hero-left">
 
-    <h2>
-      Purchase Order Item Management
-    </h2>
+            <span class="purchasing-eyebrow">
+                LankaTex Purchasing
+            </span>
 
-    <a class="btn btn-dark btn-sm"
-       th:href="@{/purchasing}">
-      Dashboard
-    </a>
+      <h1>Purchase Order Items</h1>
 
-  </div>
-
-
-  <!-- Purchasing Module Navigation -->
-  <div class="mb-3">
-
-    <a class="btn btn-outline-primary btn-sm me-2 mb-2"
-       th:href="@{/purchasing/suppliers}">
-      Supplier
-    </a>
-
-    <a class="btn btn-outline-primary btn-sm me-2 mb-2"
-       th:href="@{/purchasing/requests}">
-      Purchase Request
-    </a>
-
-    <a class="btn btn-outline-primary btn-sm me-2 mb-2"
-       th:href="@{/purchasing/orders}">
-      Purchase Order
-    </a>
-
-    <a class="btn btn-primary btn-sm me-2 mb-2"
-       th:href="@{/purchasing/items}">
-      Purchase Order Item
-    </a>
-
-  </div>
-
-
-  <!-- Success Message -->
-  <div th:if="${message}"
-       class="alert alert-success"
-       th:text="${message}">
-  </div>
-
-
-  <!-- Error Message -->
-  <div th:if="${error}"
-       class="alert alert-danger"
-       th:text="${error}">
-  </div>
-
-
-  <!-- Purchase Order Item Form -->
-  <div class="card shadow-sm mb-4">
-
-    <div class="card-header">
-
-      <strong>
-        Add / Edit Purchase Order Item
-      </strong>
+      <p>
+        Connect Purchase Orders with valid Inventory
+        materials and manage ordered and received quantities.
+      </p>
 
     </div>
 
 
-    <div class="card-body">
+    <div class="purchasing-hero-badge">
 
-      <form th:action="@{/purchasing/items/save}"
-            th:object="${purchaseOrderItem}"
-            method="post">
+      <div class="purchasing-hero-badge-line"></div>
 
+      <span>
+                Cross-Module Relationship
+            </span>
 
-        <input type="hidden"
-               th:field="*{poItemId}">
+      <strong>
+        Purchasing + Inventory
+      </strong>
 
+    </div>
 
-        <div class="row">
-
-
-          <!-- Purchase Order ID -->
-          <div class="col-md-6 mb-3">
-
-            <label class="form-label">
-              PO ID
-            </label>
-
-            <input class="form-control"
-                   type="number"
-                   th:field="*{poId}"
-                   required>
-
-          </div>
+  </section>
 
 
-          <!-- Material ID -->
-          <div class="col-md-6 mb-3">
+  <section class="purchasing-panel">
 
-            <label class="form-label">
-              Material ID
-            </label>
+    <div class="purchasing-panel-header">
 
-            <input class="form-control"
-                   type="number"
-                   th:field="*{materialId}"
-                   required>
+      <div class="purchasing-heading-group">
 
-          </div>
+        <div class="purchasing-heading-icon">
+          I
+        </div>
 
+        <div>
 
-          <!-- Quantity -->
-          <div class="col-md-6 mb-3">
+          <h2 class="purchasing-panel-title">
+            Purchase Order Item List
+          </h2>
 
-            <label class="form-label">
-              Quantity
-            </label>
-
-            <input class="form-control"
-                   type="number"
-                   step="0.01"
-                   th:field="*{quantity}"
-                   required>
-
-          </div>
-
-
-          <!-- Unit Price -->
-          <div class="col-md-6 mb-3">
-
-            <label class="form-label">
-              Unit Price
-            </label>
-
-            <input class="form-control"
-                   type="number"
-                   step="0.01"
-                   th:field="*{unitPrice}"
-                   required>
-
-          </div>
-
-
-          <!-- Received Quantity -->
-          <div class="col-md-6 mb-3">
-
-            <label class="form-label">
-              Received Quantity
-            </label>
-
-            <input class="form-control"
-                   type="number"
-                   step="0.01"
-                   th:field="*{receivedQty}">
-
-          </div>
-
+          <p class="purchasing-panel-subtitle">
+            Each item must use a valid Purchase Order
+            and a valid Inventory Material.
+          </p>
 
         </div>
 
-
-        <button class="btn btn-success"
-                type="submit">
-          Save
-        </button>
+      </div>
 
 
-        <a class="btn btn-secondary"
-           th:href="@{/purchasing/items}">
-          Clear
+      <div class="purchasing-top-actions">
+
+        <a class="purchasing-btn purchasing-btn-secondary"
+           th:href="@{/purchasing}">
+          Back to Dashboard
         </a>
 
+        <a class="purchasing-btn purchasing-btn-primary"
+           th:href="@{/purchasing/items/new}">
+          + Add Order Item
+        </a>
 
-      </form>
-
-    </div>
-
-  </div>
-
-
-  <!-- Purchase Order Item List -->
-  <div class="card shadow-sm">
-
-    <div class="card-header">
-
-      <strong>
-        Purchase Order Item List
-      </strong>
+      </div>
 
     </div>
 
 
-    <div class="card-body table-responsive">
+    <div th:if="${message}"
+         class="alert alert-success purchasing-alert"
+         th:text="${message}">
+    </div>
 
-      <table class="table table-striped table-bordered align-middle">
 
-        <thead class="table-dark">
+    <div th:if="${error}"
+         class="alert alert-danger purchasing-alert"
+         th:text="${error}">
+    </div>
+
+
+    <div class="purchasing-toolbar">
+
+      <input class="purchasing-search"
+             type="text"
+             placeholder="Search purchase order items..."
+             data-table-search="itemsTable">
+
+    </div>
+
+
+    <div class="purchasing-table-wrapper">
+
+      <table id="itemsTable"
+             class="purchasing-table">
+
+        <thead>
 
         <tr>
-
-          <th>ID</th>
-          <th>PO ID</th>
-          <th>Material ID</th>
+          <th>Item Code</th>
+          <th>Purchase Order</th>
+          <th>Inventory Material</th>
           <th>Quantity</th>
           <th>Unit Price</th>
-          <th>Received Quantity</th>
+          <th>Received Qty</th>
           <th>Actions</th>
-
         </tr>
 
         </thead>
@@ -249,17 +153,42 @@
 
         <tbody>
 
+        <tr th:each="row : ${itemsList}"
+            th:with="
+                        order=${orderMap.get(row.poId)},
+                        material=${materialMap.get(row.materialId)}
+                    ">
 
-        <tr th:each="row : ${itemsList}">
-
-          <td th:text="${row.poItemId}">
+          <td class="code-value"
+              th:text="${row.poItemCode}">
           </td>
 
-          <td th:text="${row.poId}">
+
+          <td>
+
+                        <span th:if="${order != null}"
+                              th:text="${order.poCode}">
+                        </span>
+
+            <span th:if="${order == null}"
+                  th:text="${'PO ID ' + row.poId}">
+                        </span>
+
           </td>
 
-          <td th:text="${row.materialId}">
+
+          <td>
+
+                        <span th:if="${material != null}"
+                              th:text="${material.materialCode + ' - ' + material.materialName}">
+                        </span>
+
+            <span th:if="${material == null}"
+                  th:text="${'Material ID ' + row.materialId}">
+                        </span>
+
           </td>
+
 
           <td th:text="${row.quantity}">
           </td>
@@ -271,35 +200,43 @@
           </td>
 
 
-          <!-- Actions -->
-          <td class="text-nowrap">
+          <td>
+
+            <div class="purchasing-actions">
+
+              <a class="purchasing-action-button action-edit"
+                 th:href="@{/purchasing/items/edit/{id}(id=${row.poItemId})}">
+                Edit
+              </a>
 
 
-            <!-- Edit -->
-            <a class="btn btn-warning btn-sm"
-               th:href="@{/purchasing/items(editId=${row.poItemId})}">
-              Edit
-            </a>
+              <form method="post"
+                    th:action="@{/purchasing/items/delete/{id}(id=${row.poItemId})}">
 
+                <button class="purchasing-action-button action-delete"
+                        type="submit"
+                        onclick="return confirm('Delete this Purchase Order Item?');">
+                  Delete
+                </button>
 
-            <!-- Delete -->
-            <form method="post"
-                  class="d-inline"
-                  th:action="@{/purchasing/items/delete/{id}(id=${row.poItemId})}">
+              </form>
 
-              <button type="submit"
-                      class="btn btn-danger btn-sm"
-                      onclick="return confirm('WARNING: Permanently delete this Purchase Order Item?');">
-                Delete
-              </button>
-
-            </form>
-
+            </div>
 
           </td>
 
         </tr>
 
+
+        <tr th:if="${#lists.isEmpty(itemsList)}"
+            class="purchasing-empty-row">
+
+          <td colspan="7"
+              class="purchasing-empty">
+            No Purchase Order Items found.
+          </td>
+
+        </tr>
 
         </tbody>
 
@@ -307,11 +244,9 @@
 
     </div>
 
-  </div>
+  </section>
 
-
-</div>
-
+</main>
 
 </body>
 
