@@ -1,0 +1,715 @@
+/* =========================================================
+   LANKATEX - PURCHASING DASHBOARD
+   Inventory-aligned visual style
+   ========================================================= */
+
+
+/* =========================================================
+   PAGE BACKGROUND
+   ========================================================= */
+
+body.purchasing-page {
+    min-height: 100vh;
+    margin: 0;
+    position: relative;
+
+    color: #123047;
+    background: #eef6f6;
+}
+
+body.purchasing-page::before {
+    content: "";
+
+    position: fixed;
+    inset: -8px;
+
+    background-image: url('/images/purchasing-ui.jpg');
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+
+    filter:
+            blur(2px)
+            brightness(0.88)
+            saturate(0.92);
+
+    transform: scale(1.025);
+
+    z-index: -2;
+}
+
+body.purchasing-page::after {
+    content: "";
+
+    position: fixed;
+    inset: 0;
+
+    background:
+            linear-gradient(
+                    135deg,
+                    rgba(235, 248, 248, 0.36),
+                    rgba(7, 63, 78, 0.22)
+            );
+
+    z-index: -1;
+}
+
+
+/* =========================================================
+   MAIN CONTAINER
+   ========================================================= */
+
+.purchasing-dashboard-container {
+    max-width: 1250px;
+
+    margin: 0 auto;
+
+    padding: 34px 24px 55px;
+}
+
+
+/* =========================================================
+   HERO
+   ========================================================= */
+
+.purchasing-dashboard-hero {
+    min-height: 225px;
+
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+
+    gap: 30px;
+
+    padding: 38px 42px;
+
+    margin-bottom: 22px;
+
+    border-radius: 24px;
+
+    background:
+            linear-gradient(
+                    120deg,
+                    rgba(5, 55, 72, 0.72),
+                    rgba(15, 139, 141, 0.54)
+            );
+
+    border: 1px solid rgba(255, 255, 255, 0.40);
+
+    box-shadow:
+            0 15px 36px rgba(24, 62, 74, 0.20);
+
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+}
+
+.purchasing-dashboard-hero-content {
+    max-width: 660px;
+}
+
+.purchasing-dashboard-eyebrow {
+    display: inline-block;
+
+    margin-bottom: 12px;
+
+    color: #a7f2ee;
+
+    font-size: 0.82rem;
+    font-weight: 700;
+
+    letter-spacing: 2px;
+    text-transform: uppercase;
+}
+
+.purchasing-dashboard-title {
+    margin: 0 0 13px;
+
+    color: #ffffff;
+
+    font-size: clamp(2rem, 4vw, 3rem);
+    font-weight: 750;
+
+    line-height: 1.1;
+
+    text-shadow:
+            0 2px 10px rgba(0, 0, 0, 0.12);
+}
+
+.purchasing-dashboard-subtitle {
+    margin: 0;
+
+    max-width: 600px;
+
+    color: rgba(255, 255, 255, 0.92);
+
+    font-size: 1rem;
+    line-height: 1.7;
+}
+
+
+/* =========================================================
+   HERO WORKSPACE CARD
+   ========================================================= */
+
+.purchasing-dashboard-workspace {
+    min-width: 255px;
+    max-width: 315px;
+
+    padding: 25px;
+
+    border-radius: 18px;
+
+    background: rgba(255, 255, 255, 0.17);
+
+    border: 1px solid rgba(255, 255, 255, 0.38);
+
+    color: #ffffff;
+
+    box-shadow:
+            0 8px 22px rgba(0, 0, 0, 0.08);
+
+    backdrop-filter: blur(14px);
+    -webkit-backdrop-filter: blur(14px);
+}
+
+.purchasing-dashboard-workspace-line {
+    width: 42px;
+    height: 3px;
+
+    margin-bottom: 15px;
+
+    border-radius: 5px;
+
+    background: #82ebe5;
+}
+
+.purchasing-dashboard-workspace span {
+    display: block;
+
+    color: rgba(255, 255, 255, 0.76);
+
+    font-size: 0.82rem;
+}
+
+.purchasing-dashboard-workspace strong {
+    display: block;
+
+    margin-top: 5px;
+
+    font-size: 1.08rem;
+}
+
+
+/* =========================================================
+   QUICK NAVIGATION
+   ========================================================= */
+
+.purchasing-dashboard-nav {
+    display: flex;
+
+    gap: 8px;
+
+    flex-wrap: wrap;
+
+    margin-bottom: 24px;
+}
+
+.purchasing-dashboard-nav-chip {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+
+    min-height: 36px;
+
+    padding: 7px 13px;
+
+    border-radius: 999px;
+
+    color: #244b5d;
+
+    background: rgba(255, 255, 255, 0.88);
+
+    border: 1px solid rgba(210, 229, 232, 0.95);
+
+    text-decoration: none;
+
+    font-size: 0.79rem;
+    font-weight: 700;
+
+    box-shadow:
+            0 5px 13px rgba(23, 64, 76, 0.07);
+
+    backdrop-filter: blur(8px);
+
+    transition:
+            transform 0.16s ease,
+            background 0.16s ease,
+            box-shadow 0.16s ease;
+}
+
+.purchasing-dashboard-nav-chip:hover {
+    color: #0b5663;
+
+    background: #ffffff;
+
+    transform: translateY(-1px);
+
+    box-shadow:
+            0 7px 15px rgba(15, 108, 115, 0.12);
+}
+
+
+/* =========================================================
+   MAIN GLASS PANEL
+   ========================================================= */
+
+.purchasing-dashboard-panel {
+    padding: 28px;
+
+    margin-bottom: 24px;
+
+    border-radius: 22px;
+
+    background: rgba(250, 253, 253, 0.88);
+
+    border: 1px solid rgba(255, 255, 255, 0.80);
+
+    box-shadow:
+            0 16px 38px rgba(24, 66, 78, 0.18);
+
+    backdrop-filter: blur(14px);
+    -webkit-backdrop-filter: blur(14px);
+}
+
+
+/* =========================================================
+   SECTION HEADING
+   ========================================================= */
+
+.purchasing-dashboard-section-heading {
+    margin-bottom: 5px;
+
+    color: #073047;
+
+    font-size: 1.35rem;
+    font-weight: 750;
+}
+
+.purchasing-dashboard-section-text {
+    margin-bottom: 22px;
+
+    color: #6f8290;
+
+    font-size: 0.93rem;
+}
+
+
+/* =========================================================
+   STATISTICS GRID
+   ========================================================= */
+
+.purchasing-dashboard-stats {
+    display: grid;
+
+    grid-template-columns:
+            repeat(4, minmax(0, 1fr));
+
+    gap: 16px;
+}
+
+.purchasing-dashboard-stat-card {
+    min-height: 180px;
+
+    padding: 23px;
+
+    position: relative;
+    overflow: hidden;
+
+    border: 1px solid rgba(15, 139, 141, 0.10);
+    border-radius: 18px;
+
+    background: rgba(255, 255, 255, 0.88);
+
+    box-shadow:
+            0 8px 22px rgba(25, 62, 77, 0.09);
+
+    backdrop-filter: blur(8px);
+
+    transition:
+            transform 0.25s ease,
+            box-shadow 0.25s ease;
+}
+
+.purchasing-dashboard-stat-card:hover {
+    transform: translateY(-5px);
+
+    box-shadow:
+            0 14px 30px rgba(15, 108, 115, 0.17);
+}
+
+.purchasing-dashboard-stat-card::before {
+    content: "";
+
+    position: absolute;
+
+    left: 0;
+    top: 0;
+
+    width: 5px;
+    height: 100%;
+
+    background:
+            linear-gradient(
+                    to bottom,
+                    #0f8b8d,
+                    #38b9b6
+            );
+}
+
+.purchasing-dashboard-stat-icon {
+    width: 42px;
+    height: 42px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    margin-bottom: 16px;
+
+    border-radius: 12px;
+
+    color: #ffffff;
+
+    background:
+            linear-gradient(
+                    145deg,
+                    #07506b,
+                    #0c9799
+            );
+
+    font-size: 0.9rem;
+    font-weight: 800;
+
+    box-shadow:
+            0 5px 14px rgba(10, 109, 119, 0.20);
+}
+
+.purchasing-dashboard-stat-label {
+    margin-bottom: 6px;
+
+    color: #667d88;
+
+    font-size: 0.78rem;
+    font-weight: 700;
+
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
+}
+
+.purchasing-dashboard-stat-value {
+    margin: 0;
+
+    color: #073047;
+
+    font-size: 2rem;
+    font-weight: 800;
+}
+
+
+/* =========================================================
+   OVERVIEW CARDS
+   ========================================================= */
+
+.purchasing-dashboard-overview-grid {
+    display: grid;
+
+    grid-template-columns:
+            repeat(2, minmax(0, 1fr));
+
+    gap: 16px;
+}
+
+.purchasing-dashboard-overview-card {
+    padding: 22px;
+
+    border-radius: 16px;
+
+    background: rgba(255, 255, 255, 0.86);
+
+    border: 1px solid rgba(15, 139, 141, 0.12);
+
+    box-shadow:
+            0 7px 17px rgba(23, 62, 74, 0.08);
+}
+
+.purchasing-dashboard-overview-card h3 {
+    margin: 0 0 9px;
+
+    color: #073047;
+
+    font-size: 1.05rem;
+    font-weight: 750;
+}
+
+.purchasing-dashboard-overview-card p {
+    margin: 0;
+
+    color: #70848f;
+
+    font-size: 0.86rem;
+    line-height: 1.65;
+}
+
+
+/* =========================================================
+   MANAGEMENT GRID
+   ========================================================= */
+
+.purchasing-dashboard-action-grid {
+    display: grid;
+
+    grid-template-columns:
+            repeat(
+                    auto-fit,
+                    minmax(230px, 1fr)
+            );
+
+    gap: 14px;
+}
+
+.purchasing-dashboard-action-card {
+    display: flex;
+    align-items: center;
+
+    min-height: 96px;
+
+    padding: 18px 20px;
+
+    border-radius: 16px;
+
+    color: inherit;
+
+    background: rgba(255, 255, 255, 0.85);
+
+    border: 1px solid rgba(15, 139, 141, 0.12);
+
+    text-decoration: none;
+
+    box-shadow:
+            0 7px 17px rgba(23, 62, 74, 0.08);
+
+    backdrop-filter: blur(8px);
+
+    transition:
+            transform 0.20s ease,
+            border-color 0.20s ease,
+            box-shadow 0.20s ease,
+            background 0.20s ease;
+}
+
+.purchasing-dashboard-action-card:hover {
+    color: inherit;
+
+    transform: translateY(-4px);
+
+    background: rgba(255, 255, 255, 0.98);
+
+    border-color: rgba(15, 139, 141, 0.45);
+
+    box-shadow:
+            0 11px 24px rgba(15, 108, 115, 0.16);
+}
+
+.purchasing-dashboard-action-icon {
+    width: 44px;
+    height: 44px;
+
+    flex-shrink: 0;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    margin-right: 13px;
+
+    border-radius: 12px;
+
+    color: #ffffff;
+
+    background:
+            linear-gradient(
+                    145deg,
+                    #07506b,
+                    #0c9799
+            );
+
+    font-size: 0.95rem;
+    font-weight: 800;
+
+    box-shadow:
+            0 5px 14px rgba(10, 109, 119, 0.20);
+}
+
+.purchasing-dashboard-action-title {
+    display: block;
+
+    color: #073047;
+
+    font-size: 0.96rem;
+    font-weight: 700;
+}
+
+.purchasing-dashboard-action-description {
+    display: block;
+
+    margin-top: 3px;
+
+    color: #7b8e98;
+
+    font-size: 0.78rem;
+}
+
+
+/* =========================================================
+   PRIMARY ACTIONS
+   ========================================================= */
+
+.purchasing-dashboard-top-actions {
+    display: flex;
+
+    gap: 9px;
+
+    flex-wrap: wrap;
+
+    margin-top: 20px;
+}
+
+.purchasing-dashboard-button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+
+    min-height: 40px;
+
+    padding: 9px 16px;
+
+    border-radius: 10px;
+
+    text-decoration: none;
+
+    font-size: 0.86rem;
+    font-weight: 700;
+
+    transition:
+            transform 0.18s ease,
+            box-shadow 0.18s ease;
+}
+
+.purchasing-dashboard-button:hover {
+    transform: translateY(-2px);
+}
+
+.purchasing-dashboard-button-primary {
+    color: #ffffff;
+
+    background:
+            linear-gradient(
+                    135deg,
+                    #08758a,
+                    #0c9b9c
+            );
+
+    box-shadow:
+            0 7px 16px rgba(10, 122, 132, 0.20);
+}
+
+.purchasing-dashboard-button-primary:hover {
+    color: #ffffff;
+
+    box-shadow:
+            0 10px 20px rgba(10, 122, 132, 0.27);
+}
+
+.purchasing-dashboard-button-secondary {
+    color: #214153;
+
+    background: #edf3f5;
+
+    border: 1px solid #d8e4e8;
+}
+
+.purchasing-dashboard-button-secondary:hover {
+    color: #17384a;
+
+    box-shadow:
+            0 6px 14px rgba(30, 72, 87, 0.10);
+}
+
+
+/* =========================================================
+   RESPONSIVE
+   ========================================================= */
+
+@media (max-width: 1000px) {
+
+    .purchasing-dashboard-stats {
+        grid-template-columns:
+                repeat(2, minmax(0, 1fr));
+    }
+}
+
+@media (max-width: 900px) {
+
+    .purchasing-dashboard-hero {
+        flex-direction: column;
+        align-items: flex-start;
+
+        padding: 30px;
+    }
+
+    .purchasing-dashboard-workspace {
+        width: 100%;
+        max-width: none;
+    }
+}
+
+@media (max-width: 650px) {
+
+    .purchasing-dashboard-stats,
+    .purchasing-dashboard-overview-grid {
+        grid-template-columns: 1fr;
+    }
+}
+
+@media (max-width: 576px) {
+
+    .purchasing-dashboard-container {
+        padding: 22px 14px 40px;
+    }
+
+    .purchasing-dashboard-hero {
+        min-height: auto;
+
+        padding: 25px 21px;
+
+        border-radius: 18px;
+    }
+
+    .purchasing-dashboard-panel {
+        padding: 19px;
+
+        border-radius: 18px;
+    }
+
+    .purchasing-dashboard-title {
+        font-size: 2rem;
+    }
+
+    .purchasing-dashboard-top-actions {
+        flex-direction: column;
+    }
+
+    .purchasing-dashboard-button {
+        width: 100%;
+    }
+}
