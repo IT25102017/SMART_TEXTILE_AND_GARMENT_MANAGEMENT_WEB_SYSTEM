@@ -15,15 +15,18 @@ import java.math.BigDecimal;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
+// Controller used to test the implemented design patterns
 @RestController
 @RequestMapping("/design-pattern-demo")
 public class DesignPatternDemoController {
 
+    // Tests Factory, Strategy and Singleton patterns together
     @GetMapping("/stock-status")
     public Map<String, Object> evaluateStockStatus(
             @RequestParam BigDecimal availableQty,
             @RequestParam BigDecimal reorderLevel) {
 
+        // Prevent negative available quantities
         if (availableQty.compareTo(BigDecimal.ZERO) < 0) {
             throw new ResponseStatusException(
                     HttpStatus.BAD_REQUEST,
@@ -31,6 +34,7 @@ public class DesignPatternDemoController {
             );
         }
 
+        // Prevent negative reorder levels
         if (reorderLevel.compareTo(BigDecimal.ZERO) < 0) {
             throw new ResponseStatusException(
                     HttpStatus.BAD_REQUEST,
@@ -38,23 +42,25 @@ public class DesignPatternDemoController {
             );
         }
 
-        // Factory Pattern
+        // Factory selects the correct strategy
         StockStatusStrategy strategy =
                 StockStatusStrategyFactory.createStrategy(
                         availableQty,
                         reorderLevel
                 );
 
-        // Strategy Pattern
+        // Context uses the selected strategy
         StockStatusContext context = new StockStatusContext();
         context.setStrategy(strategy);
 
+        // Execute the selected strategy
         String message =
                 context.evaluate(availableQty, reorderLevel);
 
-        // Singleton Pattern
+        // Get the single AuditLogger instance
         AuditLogger logger = AuditLogger.getInstance();
 
+        // Record the stock status result
         logger.log(
                 "Stock status evaluated as "
                         + context.getStatus()
@@ -64,20 +70,27 @@ public class DesignPatternDemoController {
                         + reorderLevel
         );
 
+        // Prepare the result shown in the browser
         Map<String, Object> response = new LinkedHashMap<>();
 
         response.put("availableQuantity", availableQty);
         response.put("reorderLevel", reorderLevel);
         response.put("stockStatus", context.getStatus());
+
+        // Shows which strategy was selected
         response.put(
                 "selectedStrategy",
                 strategy.getClass().getSimpleName()
         );
+
         response.put("message", message);
+
+        // Shows the Singleton logger instance
         response.put(
                 "singletonLoggerInstance",
                 System.identityHashCode(logger)
         );
+
         response.put(
                 "designPatternFlow",
                 "Factory -> Strategy -> Singleton"
@@ -86,6 +99,7 @@ public class DesignPatternDemoController {
         return response;
     }
 
+    // Checks whether AuditLogger returns the same instance
     @GetMapping("/singleton-check")
     public Map<String, Object> checkSingleton() {
 
@@ -107,6 +121,7 @@ public class DesignPatternDemoController {
                 System.identityHashCode(secondLogger)
         );
 
+        // True means both variables contain the same object
         response.put(
                 "sameInstance",
                 firstLogger == secondLogger
