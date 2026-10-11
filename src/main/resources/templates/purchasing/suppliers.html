@@ -1,66 +1,182 @@
 <!DOCTYPE html>
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
+
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
+
   <title>Suppliers | LankaTex</title>
+
+  <!-- Bootstrap -->
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
         rel="stylesheet">
-  <link rel="stylesheet" th:href="@{/css/common-navbar.css}">
-  <link rel="stylesheet" th:href="@{/css/purchasing/purchasing-ui.css}">
-  <script defer th:src="@{/js/purchasing/purchasing-ui.js}"></script>
+
+  <!-- Common Navbar -->
+  <link rel="stylesheet"
+        th:href="@{/css/common-navbar.css}">
+
+  <!-- Purchasing Main Theme -->
+  <link rel="stylesheet"
+        th:href="@{/css/purchasing/purchasing-ui.css}">
+
+  <!-- Supplier Page Theme -->
+  <link rel="stylesheet"
+        th:href="@{/css/purchasing/purchasing-suppliers.css}">
+
+  <!-- Purchasing JavaScript -->
+  <script defer
+          th:src="@{/js/purchasing/purchasing-ui.js}">
+  </script>
 </head>
+
+
 <body class="purchasing-page">
+
+<!-- =====================================================
+     COMMON NAVBAR
+     ===================================================== -->
+
 <div th:replace="~{fragments/common-navbar :: navbar}"></div>
+
+
 <main class="purchasing-container">
+
+  <!-- =====================================================
+       HERO SECTION
+       ===================================================== -->
+
   <section class="purchasing-hero">
+
     <div class="purchasing-hero-left">
-      <span class="purchasing-eyebrow">LankaTex Purchasing</span>
-      <h1>Suppliers</h1>
+
+            <span class="purchasing-eyebrow">
+                LankaTex Purchasing
+            </span>
+
+      <h1>
+        Supplier Management
+      </h1>
+
       <p>
+        Manage supplier records, maintain contact information
+        and support LankaTex purchasing and procurement operations.
       </p>
+
     </div>
-    Maintain supplier records used by LankaTex
-    purchase orders and procurement operations.
+
+
     <div class="purchasing-hero-badge">
+
       <div class="purchasing-hero-badge-line"></div>
-      <span>Purchasing Workspace</span>
-      <strong>Supplier Management</strong>
+
+      <span>
+                Purchasing Workspace
+            </span>
+
+      <strong>
+        Suppliers &amp; Procurement
+      </strong>
+
     </div>
+
   </section>
+
+
+  <!-- =====================================================
+       SUPPLIER PANEL
+       ===================================================== -->
+
   <section class="purchasing-panel">
+
+    <!-- =================================================
+         PANEL HEADER
+         ================================================= -->
+
     <div class="purchasing-panel-header">
+
       <div class="purchasing-heading-group">
-        <div class="purchasing-heading-icon">S</div>
-        <div>
-          <h2 class="purchasing-panel-title">Supplier List</h2>
-          <p class="purchasing-panel-subtitle">
-            Readable supplier codes use SUP-001 format.
-          </p>
+
+        <div class="purchasing-heading-icon">
+          S
         </div>
+
+        <div>
+
+          <h2 class="purchasing-panel-title">
+            Suppliers
+          </h2>
+
+          <p class="purchasing-panel-subtitle">
+            View and manage registered LankaTex suppliers.
+          </p>
+
+        </div>
+
       </div>
+
+
       <div class="purchasing-top-actions">
+
         <a class="purchasing-btn purchasing-btn-secondary"
-           th:href="@{/purchasing}">Back to Dashboard</a>
+           th:href="@{/purchasing}">
+          Back to Dashboard
+        </a>
+
         <a class="purchasing-btn purchasing-btn-primary"
-           th:href="@{/purchasing/suppliers/new}">+ Add Supplier</a>
+           th:href="@{/purchasing/suppliers/new}">
+          + Add Supplier
+        </a>
+
       </div>
+
     </div>
+
+
+    <!-- =================================================
+         SUCCESS MESSAGE
+         ================================================= -->
+
     <div th:if="${message}"
          class="alert alert-success purchasing-alert"
-         th:text="${message}"></div>
+         th:text="${message}">
+    </div>
+
+
+    <!-- =================================================
+         ERROR MESSAGE
+         ================================================= -->
+
     <div th:if="${error}"
          class="alert alert-danger purchasing-alert"
-         th:text="${error}"></div>
+         th:text="${error}">
+    </div>
+
+
+    <!-- =================================================
+         SEARCH TOOLBAR
+         ================================================= -->
+
     <div class="purchasing-toolbar">
+
       <input class="purchasing-search"
              type="text"
-             placeholder="Search suppliers..."
+             placeholder="Search by supplier code or name"
              data-table-search="suppliersTable">
+
     </div>
+
+
+    <!-- =================================================
+         SUPPLIER TABLE
+         ================================================= -->
+
     <div class="purchasing-table-wrapper">
-      <table id="suppliersTable" class="purchasing-table">
+
+      <table id="suppliersTable"
+             class="purchasing-table">
+
         <thead>
+
         <tr>
           <th>Supplier Code</th>
           <th>Supplier Name</th>
@@ -70,63 +186,177 @@
           <th>Status</th>
           <th>Actions</th>
         </tr>
+
         </thead>
+
+
         <tbody>
+
+        <!-- =================================================
+             SUPPLIER RECORDS
+             ================================================= -->
+
         <tr th:each="row : ${suppliersList}">
-          <td class="code-value" th:text="${row.supplierCode}"></td>
-          <td class="name-value" th:text="${row.supplierName}"></td>
-          <td th:text="${row.contactPerson != null ? row.contactPerson : '-'}"></td>
-          <td th:text="${row.phone != null ? row.phone : '-'}"></td>
-          <td th:text="${row.email != null ? row.email : '-'}"></td>
-          <td>
-<span class="status-badge"
-      th:classappend="${row.status == 'Archived'} ? ' status-archived' : ' status-active'"
-      th:text="${row.status}"></span>
+
+          <!-- Supplier Code -->
+          <td class="code-value"
+              th:text="${row.supplierCode}">
+            SUP-001
           </td>
+
+
+          <!-- Supplier Name -->
+          <td class="name-value"
+              th:text="${row.supplierName}">
+            Lanka Fabric Suppliers
+          </td>
+
+
+          <!-- Contact Person -->
+          <td th:text="${row.contactPerson != null
+                                  and !#strings.isEmpty(row.contactPerson)
+                                  ? row.contactPerson
+                                  : '-'}">
+            -
+          </td>
+
+
+          <!-- Phone -->
+          <td th:text="${row.phone != null
+                                  and !#strings.isEmpty(row.phone)
+                                  ? row.phone
+                                  : '-'}">
+            -
+          </td>
+
+
+          <!-- Email -->
+          <td th:text="${row.email != null
+                                  and !#strings.isEmpty(row.email)
+                                  ? row.email
+                                  : '-'}">
+            -
+          </td>
+
+
+          <!-- =================================================
+               STATUS
+               ================================================= -->
+
           <td>
+
+                        <span class="status-badge"
+                              th:classappend="${row.status == 'Archived'}
+                                              ? ' status-archived'
+                                              : ' status-active'"
+                              th:text="${row.status}">
+                            ACTIVE
+                        </span>
+
+          </td>
+
+
+          <!-- =================================================
+               ACTIONS
+               ================================================= -->
+
+          <td>
+
             <div class="purchasing-actions">
+
+
+              <!-- Edit -->
               <a class="purchasing-action-button action-edit"
-                 th:href="@{/purchasing/suppliers/edit/{id}(id=${row.supplierId})}"
-                 Edit>
+                 th:href="@{/purchasing/suppliers/edit/{id}
+                               (id=${row.supplierId})}">
+                Edit
               </a>
+
+
+              <!-- Archive -->
               <form th:if="${row.status != 'Archived'}"
                     method="post"
-                    th:action="@{/purchasing/suppliers/archive/{id}(id=${row.supplierId})}">
-              <button class="purchasing-action-button action-archive"
-                      type="submit"
-                      onclick="return confirm('Archive this supplier?');">
-                Archive
-              </button>
+                    class="d-inline"
+                    th:action="@{/purchasing/suppliers/archive/{id}
+                                  (id=${row.supplierId})}">
+
+                <button type="submit"
+                        class="purchasing-action-button action-archive"
+                        onclick="return confirm(
+                                        'Are you sure you want to archive this supplier?'
+                                        );">
+                  Archive
+                </button>
+
               </form>
+
+
+              <!-- Restore -->
               <form th:if="${row.status == 'Archived'}"
                     method="post"
-                    th:action="@{/purchasing/suppliers/restore/{id}(id=${row.supplierId})}">
-              <button class="purchasing-action-button action-restore"
-                      type="submit">
-                Restore
-              </button>
+                    class="d-inline"
+                    th:action="@{/purchasing/suppliers/restore/{id}
+                                  (id=${row.supplierId})}">
+
+                <button type="submit"
+                        class="purchasing-action-button action-restore"
+                        onclick="return confirm(
+                                        'Restore this supplier back to ACTIVE status?'
+                                        );">
+                  Restore
+                </button>
+
               </form>
+
+
+              <!-- Delete -->
               <form method="post"
-                    th:action="@{/purchasing/suppliers/delete/{id}(id=${row.supplierId})}">
-              <button class="purchasing-action-button action-delete"
-                      type="submit"
-                      onclick="return confirm('Permanently delete this supplier?');"
-                      Delete>
-              </button>
+                    class="d-inline"
+                    th:action="@{/purchasing/suppliers/delete/{id}
+                                  (id=${row.supplierId})}">
+
+                <button type="submit"
+                        class="purchasing-action-button action-delete"
+                        onclick="return confirm(
+                                        'WARNING: This will permanently delete the supplier. Are you sure?'
+                                        );">
+                  Delete
+                </button>
+
               </form>
+
             </div>
+
           </td>
+
         </tr>
-        <tr th:if="${#lists.isEmpty(suppliersList)}"
-            class="purchasing-empty-row">
-          <td colspan="7" class="purchasing-empty">
+
+
+        <!-- =================================================
+             EMPTY STATE
+             ================================================= -->
+
+        <tr th:if="${#lists.isEmpty(suppliersList)}">
+
+          <td colspan="7"
+              class="purchasing-empty">
+
             No suppliers found.
+
           </td>
+
         </tr>
+
         </tbody>
+
       </table>
+
     </div>
+
   </section>
+
 </main>
+
 </body>
+
 </html>

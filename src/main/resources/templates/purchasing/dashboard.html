@@ -1,7 +1,5 @@
 <!DOCTYPE html>
-
-<html lang="en"
-      xmlns:th="http://www.thymeleaf.org">
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
 
 <head>
 
@@ -13,12 +11,12 @@
     <title>Purchasing Management | LankaTex</title>
 
 
-    <!-- Bootstrap CSS -->
+    <!-- Bootstrap -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
           rel="stylesheet">
 
 
-    <!-- Common LankaTex Navigation CSS -->
+    <!-- Common Navbar -->
     <link rel="stylesheet"
           th:href="@{/css/common-navbar.css}">
 
@@ -27,6 +25,11 @@
     <link rel="stylesheet"
           th:href="@{/css/purchasing/purchasing-ui.css}">
 
+
+    <!-- Purchasing Dashboard Theme -->
+    <link rel="stylesheet"
+          th:href="@{/css/purchasing/purchasing-dashboard.css}">
+
 </head>
 
 
@@ -34,89 +37,104 @@
 
 
 <!-- =====================================================
-     COMMON LANKATEX NAVIGATION
+     COMMON NAVIGATION
      ===================================================== -->
 
 <div th:replace="~{fragments/common-navbar :: navbar}"></div>
 
 
-<!-- =====================================================
-     PURCHASING MAIN CONTENT
-     ===================================================== -->
-
-<main class="purchasing-main">
+<main class="purchasing-dashboard-container">
 
 
-    <!-- =================================================
-         HERO SECTION
-         ================================================= -->
+    <!-- =====================================================
+         HERO
+         ===================================================== -->
 
-    <section class="purchasing-hero">
+    <section class="purchasing-dashboard-hero">
 
 
-        <div class="purchasing-hero-content">
+        <div class="purchasing-dashboard-hero-content">
 
-            <p class="purchasing-eyebrow">
+            <span class="purchasing-dashboard-eyebrow">
                 LankaTex Apparel
-            </p>
+            </span>
 
-            <h1 class="purchasing-title">
+
+            <h1 class="purchasing-dashboard-title">
                 Supplier &amp; Purchase Order Management
             </h1>
 
-            <p class="purchasing-subtitle">
+
+            <p class="purchasing-dashboard-subtitle">
                 Manage suppliers, purchase requests, purchase orders
                 and material purchasing activities from one central workspace.
             </p>
 
+
+            <div class="purchasing-dashboard-top-actions">
+
+                <a class="purchasing-dashboard-button
+                          purchasing-dashboard-button-secondary"
+                   th:href="@{/purchasing/suppliers/new}">
+                    + New Supplier
+                </a>
+
+
+                <a class="purchasing-dashboard-button
+                          purchasing-dashboard-button-primary"
+                   th:href="@{/purchasing/orders/new}">
+                    + New Purchase Order
+                </a>
+
+            </div>
+
         </div>
 
 
-        <div class="purchasing-hero-actions">
+        <div class="purchasing-dashboard-workspace">
 
-            <a class="purchasing-btn purchasing-btn-secondary"
-               th:href="@{/purchasing/suppliers/new}">
-                + New Supplier
-            </a>
+            <div class="purchasing-dashboard-workspace-line"></div>
 
-            <a class="purchasing-btn purchasing-btn-primary"
-               th:href="@{/purchasing/orders/new}">
-                + New Purchase Order
-            </a>
+            <span>
+                Purchasing Workspace
+            </span>
+
+            <strong>
+                Suppliers &amp; Procurement
+            </strong>
 
         </div>
-
 
     </section>
 
 
-    <!-- =================================================
+    <!-- =====================================================
          QUICK NAVIGATION
-         ================================================= -->
+         ===================================================== -->
 
-    <nav class="purchasing-quick-nav">
+    <nav class="purchasing-dashboard-nav">
 
-        <a class="purchasing-nav-chip"
+        <a class="purchasing-dashboard-nav-chip"
            th:href="@{/purchasing}">
             Dashboard
         </a>
 
-        <a class="purchasing-nav-chip"
+        <a class="purchasing-dashboard-nav-chip"
            th:href="@{/purchasing/suppliers}">
             Suppliers
         </a>
 
-        <a class="purchasing-nav-chip"
+        <a class="purchasing-dashboard-nav-chip"
            th:href="@{/purchasing/requests}">
             Purchase Requests
         </a>
 
-        <a class="purchasing-nav-chip"
+        <a class="purchasing-dashboard-nav-chip"
            th:href="@{/purchasing/orders}">
             Purchase Orders
         </a>
 
-        <a class="purchasing-nav-chip"
+        <a class="purchasing-dashboard-nav-chip"
            th:href="@{/purchasing/items}">
             Purchase Order Items
         </a>
@@ -124,317 +142,282 @@
     </nav>
 
 
-    <!-- =================================================
+    <!-- =====================================================
          STATISTICS
-         ================================================= -->
+         ===================================================== -->
 
-    <section class="purchasing-stats-grid">
-
-
-        <!-- Supplier Card -->
-
-        <article class="purchasing-stat-card">
-
-            <div class="purchasing-stat-icon">
-                S
-            </div>
-
-            <p class="purchasing-stat-label">
-                Total Suppliers
-            </p>
-
-            <h2 class="purchasing-stat-value"
-                th:text="${stats.supplierCount}">
-                0
-            </h2>
-
-            <a class="purchasing-btn purchasing-btn-primary purchasing-btn-small"
-               th:href="@{/purchasing/suppliers}">
-                Manage Suppliers
-            </a>
-
-        </article>
+    <section class="purchasing-dashboard-panel">
 
 
-        <!-- Purchase Request Card -->
+        <h2 class="purchasing-dashboard-section-heading">
+            Purchasing Overview
+        </h2>
 
-        <article class="purchasing-stat-card">
-
-            <div class="purchasing-stat-icon">
-                PR
-            </div>
-
-            <p class="purchasing-stat-label">
-                Purchase Requests
-            </p>
-
-            <h2 class="purchasing-stat-value"
-                th:text="${stats.purchaseRequestCount}">
-                0
-            </h2>
-
-            <a class="purchasing-btn purchasing-btn-primary purchasing-btn-small"
-               th:href="@{/purchasing/requests}">
-                View Requests
-            </a>
-
-        </article>
+        <p class="purchasing-dashboard-section-text">
+            Current purchasing records available in LankaTex.
+        </p>
 
 
-        <!-- Purchase Order Card -->
-
-        <article class="purchasing-stat-card">
-
-            <div class="purchasing-stat-icon">
-                PO
-            </div>
-
-            <p class="purchasing-stat-label">
-                Purchase Orders
-            </p>
-
-            <h2 class="purchasing-stat-value"
-                th:text="${stats.purchaseOrderCount}">
-                0
-            </h2>
-
-            <a class="purchasing-btn purchasing-btn-primary purchasing-btn-small"
-               th:href="@{/purchasing/orders}">
-                View Orders
-            </a>
-
-        </article>
+        <div class="purchasing-dashboard-stats">
 
 
-        <!-- Purchase Order Item Card -->
+            <!-- Suppliers -->
+            <article class="purchasing-dashboard-stat-card">
 
-        <article class="purchasing-stat-card">
-
-            <div class="purchasing-stat-icon">
-                I
-            </div>
-
-            <p class="purchasing-stat-label">
-                Purchase Order Items
-            </p>
-
-            <h2 class="purchasing-stat-value"
-                th:text="${stats.purchaseOrderItemCount}">
-                0
-            </h2>
-
-            <a class="purchasing-btn purchasing-btn-primary purchasing-btn-small"
-               th:href="@{/purchasing/items}">
-                View Items
-            </a>
-
-        </article>
-
-
-    </section>
-
-
-    <!-- =================================================
-         MODULE OVERVIEW
-         ================================================= -->
-
-    <section class="purchasing-welcome-panel">
-
-
-        <!-- Main Information Card -->
-
-        <div class="purchasing-welcome-card">
-
-            <h2>
-                Purchasing Operations
-            </h2>
-
-            <p>
-                This module supports LankaTex purchasing operations by
-                maintaining supplier information, recording purchase
-                requests, creating purchase orders and managing individual
-                purchase order items.
-            </p>
-
-        </div>
-
-
-        <!-- Workflow Information Card -->
-
-        <div class="purchasing-welcome-card">
-
-            <h2>
-                Purchasing Workflow
-            </h2>
-
-            <p>
-                Purchase Request
-                &rarr;
-                Purchase Order
-                &rarr;
-                Purchase Order Items
-                &rarr;
-                Goods Receipt
-                &rarr;
-                Inventory.
-            </p>
-
-        </div>
-
-
-    </section>
-
-
-    <!-- =================================================
-         MANAGEMENT PANEL
-         ================================================= -->
-
-    <section class="purchasing-panel">
-
-
-        <!-- Panel Header -->
-
-        <div class="purchasing-panel-header">
-
-
-            <div class="purchasing-heading-group">
-
-                <div class="purchasing-heading-icon">
-                    P
+                <div class="purchasing-dashboard-stat-icon">
+                    S
                 </div>
 
+                <p class="purchasing-dashboard-stat-label">
+                    Total Suppliers
+                </p>
+
+                <h3 class="purchasing-dashboard-stat-value"
+                    th:text="${stats.supplierCount}">
+                    0
+                </h3>
+
+            </article>
+
+
+            <!-- Purchase Requests -->
+            <article class="purchasing-dashboard-stat-card">
+
+                <div class="purchasing-dashboard-stat-icon">
+                    PR
+                </div>
+
+                <p class="purchasing-dashboard-stat-label">
+                    Purchase Requests
+                </p>
+
+                <h3 class="purchasing-dashboard-stat-value"
+                    th:text="${stats.purchaseRequestCount}">
+                    0
+                </h3>
+
+            </article>
+
+
+            <!-- Purchase Orders -->
+            <article class="purchasing-dashboard-stat-card">
+
+                <div class="purchasing-dashboard-stat-icon">
+                    PO
+                </div>
+
+                <p class="purchasing-dashboard-stat-label">
+                    Purchase Orders
+                </p>
+
+                <h3 class="purchasing-dashboard-stat-value"
+                    th:text="${stats.purchaseOrderCount}">
+                    0
+                </h3>
+
+            </article>
+
+
+            <!-- Purchase Order Items -->
+            <article class="purchasing-dashboard-stat-card">
+
+                <div class="purchasing-dashboard-stat-icon">
+                    I
+                </div>
+
+                <p class="purchasing-dashboard-stat-label">
+                    Purchase Order Items
+                </p>
+
+                <h3 class="purchasing-dashboard-stat-value"
+                    th:text="${stats.purchaseOrderItemCount}">
+                    0
+                </h3>
+
+            </article>
+
+        </div>
+
+    </section>
+
+
+    <!-- =====================================================
+         MODULE INFORMATION
+         ===================================================== -->
+
+    <section class="purchasing-dashboard-panel">
+
+
+        <h2 class="purchasing-dashboard-section-heading">
+            Purchasing Operations
+        </h2>
+
+        <p class="purchasing-dashboard-section-text">
+            Purchasing activities connect supplier management
+            with Inventory and production material requirements.
+        </p>
+
+
+        <div class="purchasing-dashboard-overview-grid">
+
+
+            <!-- Module Overview -->
+            <div class="purchasing-dashboard-overview-card">
+
+                <h3>
+                    Module Overview
+                </h3>
+
+                <p>
+                    Maintain supplier information, record purchase requests,
+                    create purchase orders and manage individual purchase
+                    order items used by LankaTex operations.
+                </p>
+
+            </div>
+
+
+            <!-- Workflow -->
+            <div class="purchasing-dashboard-overview-card">
+
+                <h3>
+                    Purchasing Workflow
+                </h3>
+
+                <p>
+                    Purchase Request
+                    &rarr;
+                    Purchase Order
+                    &rarr;
+                    Purchase Order Items
+                    &rarr;
+                    Goods Receipt
+                    &rarr;
+                    Inventory.
+                </p>
+
+            </div>
+
+        </div>
+
+    </section>
+
+
+    <!-- =====================================================
+         MANAGEMENT OPTIONS
+         ===================================================== -->
+
+    <section class="purchasing-dashboard-panel">
+
+
+        <h2 class="purchasing-dashboard-section-heading">
+            Purchasing Management
+        </h2>
+
+        <p class="purchasing-dashboard-section-text">
+            Select an area below to manage purchasing records.
+        </p>
+
+
+        <div class="purchasing-dashboard-action-grid">
+
+
+            <!-- Supplier Management -->
+            <a class="purchasing-dashboard-action-card"
+               th:href="@{/purchasing/suppliers}">
+
+                <div class="purchasing-dashboard-action-icon">
+                    S
+                </div>
 
                 <div>
 
-                    <h2 class="purchasing-panel-title">
-                        Purchasing Management
-                    </h2>
-
-                    <p class="purchasing-panel-subtitle">
-                        Select an area below to manage purchasing records.
-                    </p>
-
-                </div>
-
-            </div>
-
-
-            <div class="purchasing-top-actions">
-
-                <a class="purchasing-btn purchasing-btn-primary"
-                   th:href="@{/purchasing/requests/new}">
-                    + New Purchase Request
-                </a>
-
-            </div>
-
-
-        </div>
-
-
-        <!-- Management Options -->
-
-        <div class="purchasing-table-wrapper">
-
-
-            <div class="purchasing-info-grid">
-
-
-                <!-- Supplier Management -->
-
-                <div class="purchasing-info-card">
-
-                    <p class="purchasing-info-label">
+                    <span class="purchasing-dashboard-action-title">
                         Supplier Management
-                    </p>
+                    </span>
 
-                    <h3 class="purchasing-info-value">
-                        Suppliers
-                    </h3>
-
-                    <p class="purchasing-panel-subtitle">
-                        Create, update, archive and restore supplier records.
-                    </p>
-
-                    <div style="margin-top: 15px;">
-
-                        <a class="purchasing-btn purchasing-btn-primary purchasing-btn-small"
-                           th:href="@{/purchasing/suppliers}">
-                            Open Suppliers
-                        </a>
-
-                    </div>
+                    <span class="purchasing-dashboard-action-description">
+                        Create, edit, archive and restore supplier records.
+                    </span>
 
                 </div>
 
+            </a>
 
-                <!-- Purchase Request Management -->
 
-                <div class="purchasing-info-card">
+            <!-- Purchase Requests -->
+            <a class="purchasing-dashboard-action-card"
+               th:href="@{/purchasing/requests}">
 
-                    <p class="purchasing-info-label">
-                        Request Management
-                    </p>
+                <div class="purchasing-dashboard-action-icon">
+                    PR
+                </div>
 
-                    <h3 class="purchasing-info-value">
+                <div>
+
+                    <span class="purchasing-dashboard-action-title">
                         Purchase Requests
-                    </h3>
+                    </span>
 
-                    <p class="purchasing-panel-subtitle">
+                    <span class="purchasing-dashboard-action-description">
                         Record and manage requests for required materials.
-                    </p>
-
-                    <div style="margin-top: 15px;">
-
-                        <a class="purchasing-btn purchasing-btn-primary purchasing-btn-small"
-                           th:href="@{/purchasing/requests}">
-                            Open Requests
-                        </a>
-
-                    </div>
+                    </span>
 
                 </div>
 
+            </a>
 
-                <!-- Purchase Order Management -->
 
-                <div class="purchasing-info-card">
+            <!-- Purchase Orders -->
+            <a class="purchasing-dashboard-action-card"
+               th:href="@{/purchasing/orders}">
 
-                    <p class="purchasing-info-label">
-                        Order Management
-                    </p>
+                <div class="purchasing-dashboard-action-icon">
+                    PO
+                </div>
 
-                    <h3 class="purchasing-info-value">
+                <div>
+
+                    <span class="purchasing-dashboard-action-title">
                         Purchase Orders
-                    </h3>
+                    </span>
 
-                    <p class="purchasing-panel-subtitle">
+                    <span class="purchasing-dashboard-action-description">
                         Create and manage supplier purchase orders.
-                    </p>
-
-                    <div style="margin-top: 15px;">
-
-                        <a class="purchasing-btn purchasing-btn-primary purchasing-btn-small"
-                           th:href="@{/purchasing/orders}">
-                            Open Orders
-                        </a>
-
-                    </div>
+                    </span>
 
                 </div>
 
+            </a>
 
-            </div>
 
+            <!-- Purchase Order Items -->
+            <a class="purchasing-dashboard-action-card"
+               th:href="@{/purchasing/items}">
+
+                <div class="purchasing-dashboard-action-icon">
+                    I
+                </div>
+
+                <div>
+
+                    <span class="purchasing-dashboard-action-title">
+                        Purchase Order Items
+                    </span>
+
+                    <span class="purchasing-dashboard-action-description">
+                        Link purchase orders with Inventory materials.
+                    </span>
+
+                </div>
+
+            </a>
 
         </div>
-
 
     </section>
 
-
 </main>
-
 
 </body>
 

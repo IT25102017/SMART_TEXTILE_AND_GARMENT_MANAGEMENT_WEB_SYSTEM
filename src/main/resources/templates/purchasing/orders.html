@@ -1,65 +1,56 @@
 <!DOCTYPE html>
-
-<html lang="en"
-      xmlns:th="http://www.thymeleaf.org">
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
 
 <head>
-
   <meta charset="UTF-8">
-
-  <meta name="viewport"
-        content="width=device-width, initial-scale=1">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
 
   <title>Purchase Orders | LankaTex</title>
 
-
-  <!-- Bootstrap CSS -->
+  <!-- Bootstrap -->
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
         rel="stylesheet">
 
-
-  <!-- Common LankaTex Navigation CSS -->
+  <!-- Common Navbar -->
   <link rel="stylesheet"
         th:href="@{/css/common-navbar.css}">
-
 
   <!-- Purchasing Main Theme -->
   <link rel="stylesheet"
         th:href="@{/css/purchasing/purchasing-ui.css}">
 
+  <!-- Purchase Order Page Theme -->
+  <link rel="stylesheet"
+        th:href="@{/css/purchasing/purchasing-orders.css}">
 </head>
 
 
 <body class="purchasing-page">
 
-
-<!-- =====================================================
-     COMMON NAVIGATION BAR
-     ===================================================== -->
-
+<!-- Common Navigation -->
 <div th:replace="~{fragments/common-navbar :: navbar}"></div>
 
 
-<main class="purchasing-main">
+<main class="purchasing-container">
 
 
   <!-- =====================================================
-       HERO SECTION
+       HERO
        ===================================================== -->
 
   <section class="purchasing-hero">
 
-    <div class="purchasing-hero-content">
+    <div class="purchasing-hero-left">
 
-      <p class="purchasing-eyebrow">
-        LankaTex Purchasing
-      </p>
+            <span class="purchasing-eyebrow">
+                LankaTex Purchasing
+            </span>
 
-      <h1 class="purchasing-title">
+      <h1>
         Purchase Order Management
       </h1>
 
-      <p class="purchasing-subtitle">
+      <p>
         Create and manage supplier purchase orders,
         track order status, expected delivery dates
         and purchasing values.
@@ -68,22 +59,21 @@
     </div>
 
 
-    <div class="purchasing-hero-actions">
+    <div class="purchasing-hero-badge">
 
-      <a class="purchasing-btn purchasing-btn-secondary"
-         th:href="@{/purchasing}">
-        Back to Dashboard
-      </a>
+      <div class="purchasing-hero-badge-line"></div>
 
-      <a class="purchasing-btn purchasing-btn-primary"
-         th:href="@{/purchasing/orders/new}">
-        + Create Purchase Order
-      </a>
+      <span>
+                Purchasing Workspace
+            </span>
+
+      <strong>
+        Orders &amp; Delivery
+      </strong>
 
     </div>
 
   </section>
-
 
 
   <!-- =====================================================
@@ -115,7 +105,6 @@
   </div>
 
 
-
   <!-- =====================================================
        PURCHASE ORDER PANEL
        ===================================================== -->
@@ -123,19 +112,14 @@
   <section class="purchasing-panel">
 
 
-    <!-- =================================================
-         PANEL HEADER
-         ================================================= -->
-
+    <!-- Panel Header -->
     <div class="purchasing-panel-header">
-
 
       <div class="purchasing-heading-group">
 
         <div class="purchasing-heading-icon">
           PO
         </div>
-
 
         <div>
 
@@ -144,8 +128,8 @@
           </h2>
 
           <p class="purchasing-panel-subtitle">
-            Review, update, archive and manage
-            purchase orders created for LankaTex suppliers.
+            Review, update, archive and manage purchase
+            orders created for LankaTex suppliers.
           </p>
 
         </div>
@@ -157,7 +141,7 @@
 
         <a class="purchasing-btn purchasing-btn-secondary"
            th:href="@{/purchasing}">
-          Dashboard
+          Back to Dashboard
         </a>
 
         <a class="purchasing-btn purchasing-btn-primary"
@@ -170,27 +154,18 @@
     </div>
 
 
-
-    <!-- =================================================
-         SUCCESS MESSAGE
-         ================================================= -->
-
+    <!-- Success Message -->
     <div th:if="${message}"
          class="purchasing-alert purchasing-alert-success"
          th:text="${message}">
     </div>
 
 
-
-    <!-- =================================================
-         ERROR MESSAGE
-         ================================================= -->
-
+    <!-- Error Message -->
     <div th:if="${error}"
          class="purchasing-alert purchasing-alert-error"
          th:text="${error}">
     </div>
-
 
 
     <!-- =================================================
@@ -199,32 +174,20 @@
 
     <div class="purchasing-table-wrapper">
 
-
       <table class="purchasing-table">
-
 
         <thead>
 
         <tr>
-
           <th>PO Code</th>
-
           <th>Supplier</th>
-
           <th>Request</th>
-
           <th>Order Date</th>
-
           <th>Expected Delivery</th>
-
           <th>Total Amount</th>
-
           <th>Approved By</th>
-
           <th>Status</th>
-
           <th>Actions</th>
-
         </tr>
 
         </thead>
@@ -233,26 +196,21 @@
         <tbody>
 
 
-        <!-- =================================================
-             PURCHASE ORDER RECORDS
-             ================================================= -->
-
+        <!-- Purchase Order Records -->
         <tr th:each="order : ${purchaseOrders}"
             th:classappend="${order.status == 'Archived'}
-                    ? 'purchasing-row-archived' : ''">
+                                    ? 'purchasing-row-archived'
+                                    : ''">
 
 
           <!-- PO Code -->
-
           <td class="purchasing-record-code"
               th:text="${order.poCode}">
             PO-001
           </td>
 
 
-
           <!-- Supplier -->
-
           <td>
 
                         <span th:if="${order.supplierId != null}"
@@ -267,9 +225,7 @@
           </td>
 
 
-
           <!-- Purchase Request -->
-
           <td>
 
                         <span th:if="${order.requestId != null}"
@@ -284,51 +240,42 @@
           </td>
 
 
-
           <!-- Order Date -->
-
           <td th:text="${order.orderDate != null
-                        ? order.orderDate
-                        : '-'}">
+                                  ? order.orderDate
+                                  : '-'}">
             2026-10-02
           </td>
 
 
-
-          <!-- Expected Delivery Date -->
-
+          <!-- Expected Delivery -->
           <td th:text="${order.expectedDeliveryDate != null
-                        ? order.expectedDeliveryDate
-                        : '-'}">
+                                  ? order.expectedDeliveryDate
+                                  : '-'}">
             2026-10-10
           </td>
 
 
-
           <!-- Total Amount -->
-
           <td>
 
             <span>LKR </span>
 
             <span th:text="${order.totalAmount != null
-                            ? order.totalAmount
-                            : '0.00'}">
+                                       ? order.totalAmount
+                                       : '0.00'}">
                             0.00
                         </span>
 
           </td>
 
 
-
           <!-- Approved By -->
-
           <td th:text="${order.approvedBy != null
-                        ? order.approvedBy
-                        : '-'}">
+                                  ? order.approvedBy
+                                  : '-'}">
             -
           </td>
-
 
 
           <!-- =================================================
@@ -339,7 +286,6 @@
 
 
             <!-- Draft -->
-
             <span th:if="${order.status == 'Draft'}"
                   class="purchasing-status purchasing-status-draft">
                             Draft
@@ -347,7 +293,6 @@
 
 
             <!-- Pending -->
-
             <span th:if="${order.status == 'Pending'}"
                   class="purchasing-status purchasing-status-pending">
                             Pending
@@ -355,7 +300,6 @@
 
 
             <!-- Approved -->
-
             <span th:if="${order.status == 'Approved'}"
                   class="purchasing-status purchasing-status-approved">
                             Approved
@@ -363,7 +307,6 @@
 
 
             <!-- Received -->
-
             <span th:if="${order.status == 'Received'}"
                   class="purchasing-status purchasing-status-received">
                             Received
@@ -371,7 +314,6 @@
 
 
             <!-- Closed -->
-
             <span th:if="${order.status == 'Closed'}"
                   class="purchasing-status purchasing-status-closed">
                             Closed
@@ -379,7 +321,6 @@
 
 
             <!-- Cancelled -->
-
             <span th:if="${order.status == 'Cancelled'}"
                   class="purchasing-status purchasing-status-cancelled">
                             Cancelled
@@ -387,15 +328,13 @@
 
 
             <!-- Archived -->
-
             <span th:if="${order.status == 'Archived'}"
                   class="purchasing-status purchasing-status-archived">
                             Archived
                         </span>
 
 
-            <!-- Other Status -->
-
+            <!-- Other -->
             <span th:if="${order.status != 'Draft'
                                       and order.status != 'Pending'
                                       and order.status != 'Approved'
@@ -407,9 +346,7 @@
                   th:text="${order.status}">
                         </span>
 
-
           </td>
-
 
 
           <!-- =================================================
@@ -418,132 +355,86 @@
 
           <td>
 
-
             <div class="purchasing-actions">
 
 
-              <!-- EDIT -->
-
+              <!-- Edit -->
               <a th:if="${order.status != 'Archived'}"
-                 class="purchasing-btn
-                                      purchasing-btn-edit
-                                      purchasing-btn-small"
-                 th:href="@{/purchasing/orders/edit/{id}
-                               (id=${order.poId})}">
-
+                 class="purchasing-action-button action-edit"
+                 th:href="@{/purchasing/orders/edit/{id}(id=${order.poId})}">
                 Edit
-
               </a>
 
 
-
-              <!-- ARCHIVE -->
-
+              <!-- Archive -->
               <form th:if="${order.status != 'Archived'}"
                     method="post"
-                    th:action="@{/purchasing/orders/archive/{id}
-                                  (id=${order.poId})}">
+                    class="d-inline"
+                    th:action="@{/purchasing/orders/archive/{id}(id=${order.poId})}">
 
                 <button type="submit"
-                        class="purchasing-btn
-                                               purchasing-btn-archive
-                                               purchasing-btn-small"
-                        onclick="return confirm(
-                                        'Are you sure you want to archive this Purchase Order?'
-                                        );">
-
+                        class="purchasing-action-button action-archive"
+                        onclick="return confirm('Are you sure you want to archive this Purchase Order?');">
                   Archive
-
                 </button>
 
               </form>
 
 
-
-              <!-- RESTORE -->
-
+              <!-- Restore -->
               <form th:if="${order.status == 'Archived'}"
                     method="post"
-                    th:action="@{/purchasing/orders/restore/{id}
-                                  (id=${order.poId})}">
+                    class="d-inline"
+                    th:action="@{/purchasing/orders/restore/{id}(id=${order.poId})}">
 
                 <button type="submit"
-                        class="purchasing-btn
-                                               purchasing-btn-restore
-                                               purchasing-btn-small"
-                        onclick="return confirm(
-                                        'Restore this Purchase Order to Pending status?'
-                                        );">
-
+                        class="purchasing-action-button action-restore"
+                        onclick="return confirm('Restore this Purchase Order to Pending status?');">
                   Restore
-
                 </button>
 
               </form>
 
 
-
-              <!-- DELETE -->
-
+              <!-- Delete -->
               <form method="post"
-                    th:action="@{/purchasing/orders/delete/{id}
-                                  (id=${order.poId})}">
+                    class="d-inline"
+                    th:action="@{/purchasing/orders/delete/{id}(id=${order.poId})}">
 
                 <button type="submit"
-                        class="purchasing-btn
-                                               purchasing-btn-delete
-                                               purchasing-btn-small"
-                        onclick="return confirm(
-                                        'Permanently delete this Purchase Order? This is allowed only when no Purchase Order Items depend on it.'
-                                        );">
-
+                        class="purchasing-action-button action-delete"
+                        onclick="return confirm('Permanently delete this Purchase Order? This is allowed only when no Purchase Order Items depend on it.');">
                   Delete
-
                 </button>
 
               </form>
-
 
             </div>
 
-
           </td>
-
 
         </tr>
 
 
-
-        <!-- =================================================
-             EMPTY STATE
-             ================================================= -->
-
+        <!-- Empty State -->
         <tr th:if="${#lists.isEmpty(purchaseOrders)}">
 
           <td colspan="9"
               class="purchasing-empty">
-
             No Purchase Orders have been recorded yet.
-
           </td>
 
         </tr>
 
-
         </tbody>
-
 
       </table>
 
-
     </div>
-
 
   </section>
 
-
 </main>
-
 
 </body>
 

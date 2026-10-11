@@ -1,0 +1,607 @@
+/* =========================================================
+   LANKATEX - PURCHASE REQUEST FORM
+   Inventory-aligned visual style
+   ========================================================= */
+
+
+/* =========================================================
+   PAGE BACKGROUND
+   ========================================================= */
+
+body.purchasing-page {
+    min-height: 100vh;
+    margin: 0;
+    position: relative;
+
+    color: #123047;
+    background: #eef6f6;
+}
+
+body.purchasing-page::before {
+    content: "";
+
+    position: fixed;
+    inset: -8px;
+
+    background-image: url('/images/purchasing-ui.jpg');
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+
+    filter:
+            blur(2px)
+            brightness(0.88)
+            saturate(0.92);
+
+    transform: scale(1.025);
+
+    z-index: -2;
+}
+
+body.purchasing-page::after {
+    content: "";
+
+    position: fixed;
+    inset: 0;
+
+    background:
+            linear-gradient(
+                    135deg,
+                    rgba(235, 248, 248, 0.36),
+                    rgba(7, 63, 78, 0.22)
+            );
+
+    z-index: -1;
+}
+
+
+/* =========================================================
+   PAGE WRAPPER
+   ========================================================= */
+
+.request-form-page {
+    width: min(94%, 1120px);
+
+    margin: 0 auto;
+
+    padding: 34px 0 60px;
+}
+
+
+/* =========================================================
+   FORM CARD
+   ========================================================= */
+
+.request-form-card {
+    overflow: hidden;
+
+    border-radius: 22px;
+
+    background: rgba(249, 253, 253, 0.94);
+
+    border: 1px solid rgba(255, 255, 255, 0.82);
+
+    box-shadow:
+            0 18px 40px rgba(24, 64, 76, 0.18);
+
+    backdrop-filter: blur(15px);
+    -webkit-backdrop-filter: blur(15px);
+}
+
+
+/* =========================================================
+   HEADER
+   ========================================================= */
+
+.request-form-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+
+    gap: 25px;
+
+    padding: 30px 34px;
+
+    color: #ffffff;
+
+    background:
+            linear-gradient(
+                    115deg,
+                    rgba(5, 57, 72, 0.96),
+                    rgba(15, 139, 141, 0.88)
+            );
+}
+
+.request-form-heading {
+    display: flex;
+    align-items: center;
+
+    gap: 16px;
+}
+
+.request-form-icon {
+    width: 52px;
+    height: 52px;
+
+    flex-shrink: 0;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    border-radius: 14px;
+
+    color: #ffffff;
+
+    background: rgba(255, 255, 255, 0.16);
+
+    border: 1px solid rgba(255, 255, 255, 0.30);
+
+    font-size: 0.95rem;
+    font-weight: 800;
+
+    backdrop-filter: blur(10px);
+}
+
+.request-form-heading-text h1 {
+    margin: 0;
+
+    font-size: 1.7rem;
+    font-weight: 780;
+}
+
+.request-form-heading-text p {
+    margin: 5px 0 0;
+
+    max-width: 650px;
+
+    color: rgba(255, 255, 255, 0.84);
+
+    font-size: 0.89rem;
+    line-height: 1.55;
+}
+
+.request-form-back {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+
+    min-height: 40px;
+
+    padding: 9px 16px;
+
+    border-radius: 10px;
+
+    color: #ffffff;
+
+    background: rgba(255, 255, 255, 0.14);
+
+    border: 1px solid rgba(255, 255, 255, 0.30);
+
+    text-decoration: none;
+
+    font-size: 0.86rem;
+    font-weight: 700;
+
+    transition:
+            transform 0.18s ease,
+            background 0.18s ease;
+}
+
+.request-form-back:hover {
+    color: #ffffff;
+
+    background: rgba(255, 255, 255, 0.22);
+
+    transform: translateY(-1px);
+}
+
+
+/* =========================================================
+   BODY
+   ========================================================= */
+
+.request-form-body {
+    padding: 30px 34px 34px;
+}
+
+
+/* =========================================================
+   INFORMATION BOX
+   ========================================================= */
+
+.request-form-info {
+    display: flex;
+    align-items: flex-start;
+
+    gap: 12px;
+
+    margin-bottom: 24px;
+
+    padding: 14px 16px;
+
+    border-radius: 13px;
+
+    color: #31566a;
+
+    background: #edf8f8;
+
+    border: 1px solid #cde8e8;
+
+    font-size: 0.87rem;
+    line-height: 1.55;
+}
+
+.request-form-info-icon {
+    width: 28px;
+    height: 28px;
+
+    flex-shrink: 0;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    border-radius: 50%;
+
+    color: #ffffff;
+
+    background: #0f8b8d;
+
+    font-size: 0.78rem;
+    font-weight: 800;
+}
+
+
+/* =========================================================
+   REQUEST CODE
+   ========================================================= */
+
+.request-form-code-box {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+
+    gap: 15px;
+
+    margin-bottom: 26px;
+
+    padding: 15px 17px;
+
+    border-radius: 13px;
+
+    color: #31566a;
+
+    background: #eef7f8;
+
+    border: 1px solid #d5e8ea;
+}
+
+.request-form-code-label {
+    font-size: 0.84rem;
+    font-weight: 700;
+}
+
+.request-form-code {
+    color: #087b84;
+
+    font-size: 0.95rem;
+    font-weight: 800;
+}
+
+
+/* =========================================================
+   SECTIONS
+   ========================================================= */
+
+.request-form-section {
+    margin-bottom: 26px;
+
+    padding: 22px;
+
+    border-radius: 16px;
+
+    background: rgba(255, 255, 255, 0.82);
+
+    border: 1px solid #e0eaed;
+
+    box-shadow:
+            0 6px 16px rgba(24, 65, 78, 0.06);
+}
+
+.request-form-section-header {
+    display: flex;
+    align-items: center;
+
+    gap: 12px;
+
+    margin-bottom: 18px;
+}
+
+.request-form-section-icon {
+    width: 36px;
+    height: 36px;
+
+    flex-shrink: 0;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    border-radius: 10px;
+
+    color: #ffffff;
+
+    background:
+            linear-gradient(
+                    145deg,
+                    #075069,
+                    #0d999b
+            );
+
+    font-size: 0.82rem;
+    font-weight: 800;
+}
+
+.request-form-section-title {
+    margin: 0;
+
+    color: #0a3045;
+
+    font-size: 1rem;
+    font-weight: 780;
+}
+
+.request-form-section-description {
+    margin: 3px 0 0;
+
+    color: #80919b;
+
+    font-size: 0.79rem;
+}
+
+
+/* =========================================================
+   GRID
+   ========================================================= */
+
+.request-form-grid {
+    display: grid;
+
+    grid-template-columns:
+            repeat(2, minmax(0, 1fr));
+
+    gap: 18px;
+}
+
+.request-form-field-full {
+    grid-column: 1 / -1;
+}
+
+
+/* =========================================================
+   FIELDS
+   ========================================================= */
+
+.request-form-field {
+    display: flex;
+    flex-direction: column;
+
+    gap: 7px;
+}
+
+.request-form-label {
+    color: #294757;
+
+    font-size: 0.84rem;
+    font-weight: 700;
+}
+
+.request-form-required {
+    color: #b42318;
+}
+
+.request-form-input,
+.request-form-select,
+.request-form-textarea {
+    width: 100%;
+
+    padding: 10px 12px;
+
+    border: 1px solid #d7e4e8;
+    border-radius: 10px;
+
+    color: #153b4e;
+
+    background: #ffffff;
+
+    font-size: 0.9rem;
+
+    outline: none;
+
+    transition:
+            border-color 0.18s ease,
+            box-shadow 0.18s ease;
+}
+
+.request-form-input,
+.request-form-select {
+    min-height: 44px;
+}
+
+.request-form-textarea {
+    min-height: 120px;
+
+    resize: vertical;
+}
+
+.request-form-input:focus,
+.request-form-select:focus,
+.request-form-textarea:focus {
+    border-color: #0f8b8d;
+
+    box-shadow:
+            0 0 0 3px rgba(15, 139, 141, 0.10);
+}
+
+.request-form-help {
+    margin: 0;
+
+    color: #80919b;
+
+    font-size: 0.76rem;
+    line-height: 1.45;
+}
+
+
+/* =========================================================
+   ACTION BUTTONS
+   ========================================================= */
+
+.request-form-actions {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+
+    gap: 10px;
+
+    margin-top: 28px;
+}
+
+.request-form-action {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+
+    min-height: 42px;
+
+    padding: 10px 18px;
+
+    border-radius: 10px;
+
+    border: none;
+
+    text-decoration: none;
+
+    font-size: 0.88rem;
+    font-weight: 700;
+
+    cursor: pointer;
+
+    transition:
+            transform 0.18s ease,
+            box-shadow 0.18s ease;
+}
+
+.request-form-action:hover {
+    transform: translateY(-1px);
+}
+
+.request-form-save {
+    color: #ffffff;
+
+    background:
+            linear-gradient(
+                    135deg,
+                    #08758a,
+                    #0c9b9c
+            );
+
+    box-shadow:
+            0 7px 16px rgba(10, 122, 132, 0.20);
+}
+
+.request-form-save:hover {
+    color: #ffffff;
+
+    box-shadow:
+            0 10px 20px rgba(10, 122, 132, 0.27);
+}
+
+.request-form-cancel {
+    color: #214153;
+
+    background: #edf3f5;
+
+    border: 1px solid #d8e4e8;
+}
+
+.request-form-cancel:hover {
+    color: #17384a;
+
+    box-shadow:
+            0 6px 14px rgba(30, 72, 87, 0.10);
+}
+
+
+/* =========================================================
+   RESPONSIVE
+   ========================================================= */
+
+@media (max-width: 800px) {
+
+    .request-form-page {
+        width: 94%;
+
+        padding-top: 22px;
+    }
+
+    .request-form-header {
+        flex-direction: column;
+        align-items: flex-start;
+
+        padding: 25px;
+    }
+
+    .request-form-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .request-form-field-full {
+        grid-column: auto;
+    }
+
+    .request-form-body {
+        padding: 25px;
+    }
+}
+
+@media (max-width: 550px) {
+
+    .request-form-card {
+        border-radius: 18px;
+    }
+
+    .request-form-header {
+        padding: 21px;
+    }
+
+    .request-form-heading {
+        align-items: flex-start;
+    }
+
+    .request-form-heading-text h1 {
+        font-size: 1.4rem;
+    }
+
+    .request-form-body {
+        padding: 20px 16px 24px;
+    }
+
+    .request-form-section {
+        padding: 18px;
+    }
+
+    .request-form-actions {
+        flex-direction: column;
+    }
+
+    .request-form-action {
+        width: 100%;
+    }
+
+    .request-form-code-box {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+}
