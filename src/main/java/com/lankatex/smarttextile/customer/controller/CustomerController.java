@@ -71,8 +71,8 @@ public class CustomerController {
                 service.saveCustomer(customer);
             }
             ra.addFlashAttribute("message", "Customer saved successfully.");
-        } catch (IllegalArgumentException ex) {
-            ra.addFlashAttribute("error", ex.getMessage());
+        } catch (Exception ex) {
+            ra.addFlashAttribute("error", extractErrorMessage(ex));
         }
         return "redirect:/customer/customers";
     }
@@ -90,6 +90,17 @@ public class CustomerController {
         return "redirect:/customer/customers";
     }
 
+    @PostMapping("/customers/delete/{id}")
+    public String deleteCustomer(@PathVariable Long id, RedirectAttributes ra) {
+        try {
+            service.deleteCustomer(id);
+            ra.addFlashAttribute("message", "Customer permanently deleted.");
+        } catch (Exception ex) {
+            ra.addFlashAttribute("error", extractErrorMessage(ex));
+        }
+        return "redirect:/customer/customers";
+    }
+
     /// QUOTATIONS
 
     @GetMapping("/quotations")
@@ -101,7 +112,9 @@ public class CustomerController {
         }
         model.addAttribute("quotation", quotation);
         model.addAttribute("quotationsList", service.getAllQuotations());
-        model.addAttribute("customers", service.getActiveCustomers());
+        model.addAttribute("customers", quotation.getCustomerId() != null
+                ? service.getActiveCustomers(quotation.getCustomerId())
+                : service.getActiveCustomers());
         model.addAttribute("customerMap", service.getCustomerMap());
         return "customer/quotations";
     }
@@ -111,8 +124,8 @@ public class CustomerController {
         try {
             service.saveQuotation(quotation);
             ra.addFlashAttribute("message", "Quotation saved successfully.");
-        } catch (IllegalArgumentException ex) {
-            ra.addFlashAttribute("error", ex.getMessage());
+        } catch (Exception ex) {
+            ra.addFlashAttribute("error", extractErrorMessage(ex));
         }
         return "redirect:/customer/quotations";
     }
@@ -148,6 +161,17 @@ public class CustomerController {
         return "redirect:/customer/quotations";
     }
 
+    @PostMapping("/quotations/delete/{id}")
+    public String deleteQuotation(@PathVariable Long id, RedirectAttributes ra) {
+        try {
+            service.deleteQuotation(id);
+            ra.addFlashAttribute("message", "Quotation permanently deleted.");
+        } catch (Exception ex) {
+            ra.addFlashAttribute("error", extractErrorMessage(ex));
+        }
+        return "redirect:/customer/quotations";
+    }
+
     ///CUSTOMER ORDERS
     @GetMapping("/orders")
     public String orders(@RequestParam(required = false) Long editId,
@@ -166,7 +190,9 @@ public class CustomerController {
         }
         model.addAttribute("customerOrder", order);
         model.addAttribute("ordersList", service.getAllCustomerOrders());
-        model.addAttribute("customers", service.getActiveCustomers());
+        model.addAttribute("customers", order.getCustomerId() != null
+                ? service.getActiveCustomers(order.getCustomerId())
+                : service.getActiveCustomers());
         model.addAttribute("approvedQuotations", service.getApprovedQuotations());
         model.addAttribute("customerMap", service.getCustomerMap());
         model.addAttribute("quotationMap", service.getQuotationMap());
@@ -178,8 +204,8 @@ public class CustomerController {
         try {
             service.saveCustomerOrder(order);
             ra.addFlashAttribute("message", "Customer Order saved successfully.");
-        } catch (IllegalArgumentException ex) {
-            ra.addFlashAttribute("error", ex.getMessage());
+        } catch (Exception ex) {
+            ra.addFlashAttribute("error", extractErrorMessage(ex));
         }
         return "redirect:/customer/orders";
     }
@@ -188,8 +214,8 @@ public class CustomerController {
         try {
             service.approveOrder(id, approvedBy);
             ra.addFlashAttribute("message", "Customer Order approved.");
-        } catch (IllegalArgumentException ex) {
-            ra.addFlashAttribute("error", ex.getMessage());
+        } catch (Exception ex) {
+            ra.addFlashAttribute("error", extractErrorMessage(ex));
         }
         return "redirect:/customer/orders";
     }
@@ -209,8 +235,19 @@ public class CustomerController {
         try {
             service.updateOrderStatus(id, status);
             ra.addFlashAttribute("message", "Order status updated.");
-        } catch (IllegalArgumentException ex) {
-            ra.addFlashAttribute("error", ex.getMessage());
+        } catch (Exception ex) {
+            ra.addFlashAttribute("error", extractErrorMessage(ex));
+        }
+        return "redirect:/customer/orders";
+    }
+
+    @PostMapping("/orders/delete/{id}")
+    public String deleteOrder(@PathVariable Long id, RedirectAttributes ra) {
+        try {
+            service.deleteCustomerOrder(id);
+            ra.addFlashAttribute("message", "Customer Order permanently deleted.");
+        } catch (Exception ex) {
+            ra.addFlashAttribute("error", extractErrorMessage(ex));
         }
         return "redirect:/customer/orders";
     }
@@ -235,8 +272,8 @@ public class CustomerController {
         try {
             service.saveDelivery(delivery);
             ra.addFlashAttribute("message", "Delivery recorded successfully.");
-        } catch (IllegalArgumentException ex) {
-            ra.addFlashAttribute("error", ex.getMessage());
+        } catch (Exception ex) {
+            ra.addFlashAttribute("error", extractErrorMessage(ex));
         }
         return "redirect:/customer/deliveries";
     }
@@ -253,12 +290,36 @@ public class CustomerController {
         try {
             service.restoreDelivery(id);
             ra.addFlashAttribute("message", "Delivery restored.");
-        } catch (IllegalArgumentException ex) {
-            ra.addFlashAttribute("error", ex.getMessage());
+        } catch (Exception ex) {
+            ra.addFlashAttribute("error", extractErrorMessage(ex));
         }
         return "redirect:/customer/deliveries";
     }
 
+    @PostMapping("/deliveries/delete/{id}")
+    public String deleteDelivery(@PathVariable Long id, RedirectAttributes ra) {
+        try {
+            service.deleteDelivery(id);
+            ra.addFlashAttribute("message", "Delivery record permanently deleted.");
+        } catch (Exception ex) {
+            ra.addFlashAttribute("error", extractErrorMessage(ex));
+        }
+        return "redirect:/customer/deliveries";
+    }
 
+    private String extractErrorMessage(Exception ex) {
+        Throwable cause = ex;
+        while (cause != null) {
+            if (cause instanceof jakarta.validation.ConstraintViolationException cve) {
+                return cve.getConstraintViolations().stream()
+                        .map(jakarta.validation.ConstraintViolation::getMessage)
+                        .distinct()
+                        .sorted()
+                        .collect(java.util.stream.Collectors.joining(". "));
+            }
+            cause = cause.getCause();
+        }
+        return ex.getMessage() != null ? ex.getMessage() : "An unexpected error occurred.";
+    }
 
 }
