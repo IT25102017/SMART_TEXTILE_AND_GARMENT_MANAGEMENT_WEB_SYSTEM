@@ -30,6 +30,7 @@
         <form th:action="@{/customer/orders/save}" th:object="${customerOrder}" method="post">
             <input type="hidden" th:field="*{orderId}">
             <input type="hidden" th:field="*{status}">
+            <input type="hidden" th:field="*{approvedBy}">
             <div class="form-section row">
                 <div class="col-md-6 mb-3">
                     <label class="form-label">Customer</label>
@@ -78,7 +79,7 @@
                     <input class="form-control" th:field="*{size}">
                 </div>
             </div>
-            <button class="customer-btn btn-main" type="submit">Save Order</button>
+            <button class="customer-btn btn-main" type="submit" th:text="${customerOrder.orderId == null ? 'Save Order' : 'Update Order'}">Save Order</button>
             <a class="customer-btn btn-muted" th:href="@{/customer/orders}">Clear</a>
         </form>
     </section>
@@ -129,6 +130,9 @@
                                 <option value="CANCELLED">CANCELLED</option>
                             </select>
                             <button class="customer-btn btn-main" type="submit">Update</button>
+                        </form>
+                        <form class="d-inline" method="post" th:action="@{/customer/orders/delete/{id}(id=${o.orderId})}" onsubmit="return confirm('Are you sure you want to permanently delete this order?');">
+                            <button class="customer-btn btn-delete" type="submit">Delete</button>
                         </form>
                     </td>
                 </tr>

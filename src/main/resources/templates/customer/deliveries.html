@@ -94,6 +94,9 @@
                         <form th:if="${d.status == 'ARCHIVED'}" class="d-inline" method="post" th:action="@{/customer/deliveries/restore/{id}(id=${d.deliveryId})}">
                             <button class="customer-btn btn-approve" type="submit">Restore</button>
                         </form>
+                        <form class="d-inline" method="post" th:action="@{/customer/deliveries/delete/{id}(id=${d.deliveryId})}" onsubmit="return confirm('Are you sure you want to permanently delete this delivery record?');">
+                            <button class="customer-btn btn-delete" type="submit">Delete</button>
+                        </form>
                     </td>
                 </tr>
                 <tr th:if="${#lists.isEmpty(deliveriesList)}">

@@ -8,6 +8,7 @@ import jakarta.validation.constraints.Positive;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.springframework.format.annotation.DateTimeFormat;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
@@ -33,10 +34,12 @@ public class CustomerOrder {
     private Long quotationId;
 
     @NotNull(message = "Order date is required")
+    @DateTimeFormat(iso = DateTimeFormat.ISO.DATE)
     @Column(name = "order_date", nullable = false)
     private LocalDate orderDate;
 
     @NotNull(message = "Required delivery date is required")
+    @DateTimeFormat(iso = DateTimeFormat.ISO.DATE)
     @Column(name = "required_delivery_date", nullable = false)
     private LocalDate requiredDeliveryDate;
 
@@ -64,6 +67,7 @@ public class CustomerOrder {
     @Column(name = "approved_by")
     private Long approvedBy;
 
+    @Transient
     public Long getCustomerOrderId() {
         return orderId;
     }

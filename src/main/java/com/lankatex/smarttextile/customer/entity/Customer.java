@@ -37,7 +37,7 @@ public class Customer {
     private String contactPerson;
 
     @NotBlank(message = "Phone number is required")
-    @Pattern(regexp = "^(\\+?[0-9]{1,4}[\\s-]?)?[0-9]{9,12}$", message = "Phone number must be a valid 9-12 digit phone number (e.g. 0771234567)")
+    @Pattern(regexp = "^(?=(?:\\D*\\d){9,12}\\D*$)\\+?[0-9\\s-]+$", message = "Phone number must be a valid 9-12 digit phone number (e.g. 0771234567)")
     @Column(name = "phone")
     private String phone;
 
@@ -73,6 +73,7 @@ public class Customer {
         }
     }
 
+    @Transient
     public String getPhoneNumber() {
         return phone;
     }
@@ -81,6 +82,7 @@ public class Customer {
         this.phone = phoneNumber;
     }
 
+    @Transient
     public String getEmailAddress() {
         return email;
     }

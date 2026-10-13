@@ -8,6 +8,7 @@ import jakarta.validation.constraints.Positive;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.springframework.format.annotation.DateTimeFormat;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
@@ -29,21 +30,27 @@ public class Quotation {
     private Long customerId;
 
     @NotNull(message = "Quotation date is required")
+    @DateTimeFormat(iso = DateTimeFormat.ISO.DATE)
     @Column(name = "quotation_date", nullable = false)
     private LocalDate quotationDate;
 
     @NotNull(message = "Valid until date is required")
+    @DateTimeFormat(iso = DateTimeFormat.ISO.DATE)
     @Column(name = "valid_until", nullable = false)
     private LocalDate validUntil;
 
     /// new
     @NotNull(message = "Requested delivery date is required")
+    @DateTimeFormat(iso = DateTimeFormat.ISO.DATE)
     @Column(name = "requested_delivery_date", nullable = true)
     private LocalDate requestedDeliveryDate;
 
     /// Line items (persisted in quotation_items table, transient here for form binding)
     @Transient
     private String garmentType;
+
+    @Transient
+    private String specifications;
 
     @Transient
     private String colour;
@@ -72,6 +79,7 @@ public class Quotation {
         }
     }
 
+    @Transient
     public LocalDate getValidityPeriod() {
         return validUntil;
     }
@@ -80,6 +88,7 @@ public class Quotation {
         this.validUntil = validityPeriod;
     }
 
+    @Transient
     public LocalDate getDeliveryPeriod() {
         return requestedDeliveryDate;
     }

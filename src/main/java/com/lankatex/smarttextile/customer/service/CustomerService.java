@@ -3,6 +3,7 @@ package com.lankatex.smarttextile.customer.service;
 import com.lankatex.smarttextile.customer.dto.CustomerDashboardStats;
 import com.lankatex.smarttextile.customer.entity.*;
 import com.lankatex.smarttextile.customer.repository.*;
+import com.lankatex.smarttextile.production.repository.ProductionPlanRepository;
 import com.lankatex.smarttextile.quality.entity.QualityHold;
 import com.lankatex.smarttextile.quality.repository.QualityHoldRepository;
 import org.springframework.data.domain.Sort;
@@ -16,10 +17,10 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
+import jakarta.validation.ConstraintViolation;
+import jakarta.validation.Validator;
 import java.util.function.Function;
 import java.util.stream.Collectors;
-
-
 
 @Service
 @Transactional
@@ -35,6 +36,9 @@ public class CustomerService {
     private final DeliveryRepository deliveryRepository;
     private final DeliveryItemRepository deliveryItemRepository;
     private final QualityHoldRepository qualityHoldRepository;
+    private final ProductionPlanRepository productionPlanRepository;
+    private final Validator validator;
+
     public CustomerService(
             CustomerRepository customerRepository,
             LocalCustomerRepository localCustomerRepository,
@@ -45,7 +49,9 @@ public class CustomerService {
             CustomerOrderItemRepository customerOrderItemRepository,
             DeliveryRepository deliveryRepository,
             DeliveryItemRepository deliveryItemRepository,
-            QualityHoldRepository qualityHoldRepository) {
+            QualityHoldRepository qualityHoldRepository,
+            ProductionPlanRepository productionPlanRepository,
+            Validator validator) {
         this.customerRepository = customerRepository;
         this.localCustomerRepository = localCustomerRepository;
         this.exportCustomerRepository = exportCustomerRepository;
@@ -56,6 +62,22 @@ public class CustomerService {
         this.deliveryRepository = deliveryRepository;
         this.deliveryItemRepository = deliveryItemRepository;
         this.qualityHoldRepository = qualityHoldRepository;
+        this.productionPlanRepository = productionPlanRepository;
+        this.validator = validator;
+    }
+
+    private <T> void validateEntity(T entity) {
+        if (validator != null && entity != null) {
+            Set<ConstraintViolation<T>> violations = validator.validate(entity);
+            if (!violations.isEmpty()) {
+                String error = violations.stream()
+                        .map(ConstraintViolation::getMessage)
+                        .distinct()
+                        .sorted()
+                        .collect(Collectors.joining(". "));
+                throw new IllegalArgumentException(error);
+            }
+        }
     }
 
     /// DASHBOARD
@@ -102,9 +124,16 @@ public class CustomerService {
         return customerRepository.findAll(Sort.by(Sort.Direction.DESC, "customerId"));
     }
     public List<Customer> getActiveCustomers() {
-        return getAllCustomers().stream()
-                .filter(c -> !"ARCHIVED".equalsIgnoreCase(c.getStatus()))
+        return getActiveCustomers(null);
+    }
+
+    public List<Customer> getActiveCustomers(Long includeCustomerId) {
+        List<Customer> active = getAllCustomers().stream()
+                .filter(c -> c.getStatus() == null
+                        || !"ARCHIVED".equalsIgnoreCase(c.getStatus().trim())
+                        || (includeCustomerId != null && includeCustomerId.equals(c.getCustomerId())))
                 .toList();
+        return active.isEmpty() ? getAllCustomers() : active;
     }
 
     public Map<Long, Customer> getCustomerMap() {
@@ -117,9 +146,6 @@ public class CustomerService {
     }
 
     public Customer saveCustomer(Customer customer) {
-        if (customer.getCustomerName() == null || customer.getCustomerName().isBlank()) {
-            throw new IllegalArgumentException("Customer name is required.");
-        }
         if (customer.getStatus() == null || customer.getStatus().isBlank()) {
             customer.setStatus("ACTIVE");
         }
@@ -127,19 +153,58 @@ public class CustomerService {
             customer.setRegistrationDate(LocalDate.now());
         }
 
+        // Validate incoming entity before proceeding
+        validateEntity(customer);
+
+        // UPDATE EXISTING CUSTOMER
+        if (customer.getCustomerId() != null) {
+            Customer existing = customerRepository.findById(customer.getCustomerId())
+                    .orElseThrow(() -> new IllegalArgumentException("Customer not found."));
+
+            existing.setCustomerName(customer.getCustomerName());
+            existing.setCustomerType(customer.getCustomerType());
+            existing.setContactPerson(customer.getContactPerson());
+            existing.setPhone(customer.getPhone());
+            existing.setEmail(customer.getEmail());
+            existing.setBillingAddress(customer.getBillingAddress());
+            existing.setDeliveryAddress(customer.getDeliveryAddress());
+            if (customer.getStatus() != null && !customer.getStatus().isBlank()) {
+                existing.setStatus(customer.getStatus());
+            }
+
+            if (existing instanceof ExportCustomer existingExport) {
+                if (customer instanceof ExportCustomer ec) {
+                    existingExport.setCountry(ec.getCountry());
+                    existingExport.setExportRegistrationDetails(ec.getExportRegistrationDetails());
+                    existingExport.setShippingPreferences(ec.getShippingPreferences());
+                }
+                validateEntity(existingExport);
+                return exportCustomerRepository.save(existingExport);
+            }
+
+            validateEntity(existing);
+            return customerRepository.save(existing);
+        }
+
+        // CREATE NEW CUSTOMER
         if (customer instanceof ExportCustomer ec) {
+            validateEntity(ec);
             return exportCustomerRepository.save(ec);
         } else if (customer instanceof LocalCustomer lc) {
+            validateEntity(lc);
             return localCustomerRepository.save(lc);
         } else if ("EXPORT".equalsIgnoreCase(customer.getCustomerType())) {
             ExportCustomer ec = new ExportCustomer();
             copyCustomerProperties(customer, ec);
+            validateEntity(ec);
             return exportCustomerRepository.save(ec);
         } else if ("LOCAL".equalsIgnoreCase(customer.getCustomerType())) {
             LocalCustomer lc = new LocalCustomer();
             copyCustomerProperties(customer, lc);
+            validateEntity(lc);
             return localCustomerRepository.save(lc);
         }
+        validateEntity(customer);
         return customerRepository.save(customer);
     }
 
@@ -166,6 +231,32 @@ public class CustomerService {
         Customer customer = getCustomer(id);
         customer.setStatus("ACTIVE");
         customerRepository.save(customer);
+    }
+
+    public void deleteCustomer(Long id) {
+        Customer customer = getCustomer(id);
+        boolean hasQuotations = quotationRepository.findAll().stream()
+                .anyMatch(q -> Objects.equals(q.getCustomerId(), id));
+        if (hasQuotations) {
+            throw new IllegalArgumentException("Cannot permanently delete this Customer because related quotations exist. Archive the customer instead.");
+        }
+        boolean hasOrders = customerOrderRepository.findAll().stream()
+                .anyMatch(o -> Objects.equals(o.getCustomerId(), id));
+        if (hasOrders) {
+            throw new IllegalArgumentException("Cannot permanently delete this Customer because related orders exist. Archive the customer instead.");
+        }
+
+        ExportCustomer ec = exportCustomerRepository.findById(id).orElse(null);
+        if (ec != null) {
+            exportCustomerRepository.delete(ec);
+        } else {
+            LocalCustomer lc = localCustomerRepository.findById(id).orElse(null);
+            if (lc != null) {
+                localCustomerRepository.delete(lc);
+            } else {
+                customerRepository.delete(customer);
+            }
+        }
     }
 
     /// QUOTATIONS
@@ -198,6 +289,7 @@ public class CustomerService {
         if (!items.isEmpty()) {
             QuotationItem first = items.get(0);
             q.setGarmentType(first.getGarmentType());
+            q.setSpecifications(first.getSpecifications());
             q.setColour(first.getColour());
             q.setSize(first.getSize());
             q.setQuantity(first.getQuantity());
@@ -209,8 +301,9 @@ public class CustomerService {
     }
 
     public Quotation saveQuotation(Quotation quotation) {
+        validateEntity(quotation);
         Customer customer = getCustomer(quotation.getCustomerId());
-        if ("ARCHIVED".equalsIgnoreCase(customer.getStatus())) {
+        if (quotation.getQuotationId() == null && "ARCHIVED".equalsIgnoreCase(customer.getStatus())) {
             throw new IllegalArgumentException("Archived customers cannot be used for a quotation.");
         }
         if (quotation.getQuotationDate() == null || quotation.getValidUntil() == null) {
@@ -236,6 +329,7 @@ public class CustomerService {
             QuotationItem item = items.isEmpty() ? new QuotationItem() : items.get(0);
             item.setQuotationId(saved.getQuotationId());
             item.setGarmentType(quotation.getGarmentType());
+            item.setSpecifications(quotation.getSpecifications());
             item.setColour(quotation.getColour());
             item.setSize(quotation.getSize());
             item.setQuantity(quotation.getQuantity());
@@ -270,6 +364,22 @@ public class CustomerService {
         Quotation quotation = getQuotation(id);
         quotation.setStatus("PENDING");
         quotationRepository.save(quotation);
+    }
+
+    public void deleteQuotation(Long id) {
+        Quotation quotation = getQuotation(id);
+        boolean hasOrder = customerOrderRepository.findAll().stream()
+                .anyMatch(o -> Objects.equals(o.getQuotationId(), id));
+        if (hasOrder) {
+            throw new IllegalArgumentException("Cannot permanently delete this Quotation because a Customer Order has already been created from it.");
+        }
+        if ("APPROVED".equalsIgnoreCase(quotation.getStatus())) {
+            throw new IllegalArgumentException("Approved quotations cannot be deleted directly. Reject or Archive the quotation instead, or delete only PENDING/REJECTED quotations.");
+        }
+
+        List<QuotationItem> items = quotationItemRepository.findByQuotationId(id);
+        quotationItemRepository.deleteAll(items);
+        quotationRepository.delete(quotation);
     }
 
     /// CUSTOMER ORDERS
@@ -323,8 +433,9 @@ public class CustomerService {
     }
 
     public CustomerOrder saveCustomerOrder(CustomerOrder order) {
+        validateEntity(order);
         Customer customer = getCustomer(order.getCustomerId());
-        if ("ARCHIVED".equalsIgnoreCase(customer.getStatus())) {
+        if (order.getOrderId() == null && "ARCHIVED".equalsIgnoreCase(customer.getStatus())) {
             throw new IllegalArgumentException("Archived customers cannot be used for a new order.");
         }
 
@@ -402,6 +513,27 @@ public class CustomerService {
         CustomerOrder order = getCustomerOrder(id);
         order.setStatus(newStatus);
         customerOrderRepository.save(order);
+    }
+
+    public void deleteCustomerOrder(Long id) {
+        CustomerOrder order = getCustomerOrder(id);
+        List<Delivery> deliveries = deliveryRepository.findByOrderIdOrderByDeliveryDateAsc(id);
+        if (!deliveries.isEmpty()) {
+            throw new IllegalArgumentException("Cannot permanently delete this Customer Order because delivery records exist. Archive or delete deliveries first.");
+        }
+        boolean hasProductionPlan = productionPlanRepository.findAll().stream()
+                .anyMatch(p -> Objects.equals(p.getOrderId(), id));
+        if (hasProductionPlan) {
+            throw new IllegalArgumentException("Cannot delete this Customer Order because a Production Plan has already been scheduled for it. Cancel the order instead.");
+        }
+        String status = normalize(order.getStatus());
+        if (!Set.of("PENDING", "CANCELLED", "ARCHIVED", "REJECTED").contains(status)) {
+            throw new IllegalArgumentException("Only PENDING or CANCELLED customer orders can be deleted. Cancel or Archive active orders instead.");
+        }
+
+        List<CustomerOrderItem> items = customerOrderItemRepository.findByCustomerOrderId(id);
+        customerOrderItemRepository.deleteAll(items);
+        customerOrderRepository.delete(order);
     }
 
     /// DELIVERIES
@@ -495,6 +627,7 @@ public class CustomerService {
         if (delivery.getConfirmation() == null || delivery.getConfirmation().isBlank()) {
             delivery.setConfirmation("CONFIRMED");
         }
+        validateEntity(delivery);
         Delivery saved = deliveryRepository.save(delivery);
 
         // Keep DELIVERY_ITEM synchronized with CustomerOrderItem
@@ -543,6 +676,23 @@ public class CustomerService {
         deliveryRepository.save(delivery);
         order.setStatus(getRemainingQuantity(order.getOrderId()).signum() == 0 ? "DELIVERED" : "READY");
         customerOrderRepository.save(order);
+    }
+
+    public void deleteDelivery(Long id) {
+        Delivery delivery = getDelivery(id);
+        Long orderId = delivery.getOrderId();
+        CustomerOrder order = orderId != null ? customerOrderRepository.findById(orderId).orElse(null) : null;
+        if (order != null && "DELIVERED".equalsIgnoreCase(order.getStatus()) && !"ARCHIVED".equalsIgnoreCase(delivery.getStatus())) {
+            throw new IllegalArgumentException("Cannot delete this delivery record because the order is already fully completed/delivered. Archive the delivery record first.");
+        }
+        List<DeliveryItem> items = deliveryItemRepository.findByDeliveryId(id);
+        deliveryItemRepository.deleteAll(items);
+        deliveryRepository.delete(delivery);
+
+        if (order != null && !"CANCELLED".equalsIgnoreCase(order.getStatus())) {
+            order.setStatus(getRemainingQuantity(orderId).signum() == 0 ? "DELIVERED" : "READY");
+            customerOrderRepository.save(order);
+        }
     }
 
 
